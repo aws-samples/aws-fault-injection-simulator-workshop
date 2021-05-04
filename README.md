@@ -1,17 +1,15 @@
-## My Project
+# AWS Fault Injection Simulator workshop
 
-TODO: Fill this README out!
+Work in progress. Please send any suggestions for features to rudpot@amazon.com
 
-Be sure to:
+To preview the workshop clone this repo, and serve it locally with [hugo](https://gohugo.io/):
 
-* Change the title in this README
-* Edit your repository description on GitHub
+```
+cd Aws-fault-injection-simulator-workshop
+cd workshp
+hugo server
+```
 
-## Security
+and browse to http://localhost:1313
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
-
-## License
-
-This library is licensed under the MIT-0 License. See the LICENSE file.
-
+This workshop was built from a template. The iriginal README for the template is [here](README-template.md)

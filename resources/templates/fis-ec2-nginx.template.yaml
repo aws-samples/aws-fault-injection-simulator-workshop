@@ -1,0 +1,302 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  AWS CloudFormation template to stand up CS:GO server
+
+Parameters:
+  NginxVpcId:
+    Description: 'VPC ID in which to start the server'
+    Type: 'AWS::EC2::VPC::Id'
+  NginxSubnetId:
+    Description: 'Subnet ID for a public subnet in which to start the server..'
+    Type: 'AWS::EC2::Subnet::Id'
+  Amzn2LatestAmiId:
+    Description: 'AMI ID for most recent Ubuntu image'
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-ebs'
+  RootDiskSize:
+    Description: 'Size of root disk in GB'
+    Type: String
+    AllowedPattern: '[0-9]+'
+    Default: 8
+  InstanceType:
+    Description: 'Server instance type'
+    Type: String
+    Default: t3.micro
+  SshKeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  SshAccessFromThisCidrOnly:
+    Description: The IP address range that can be used to SSH to the EC2 instances
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: '0.0.0.0/0'
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+
+Resources:
+  NginxServer: 
+    Type: AWS::EC2::Instance
+    Properties: 
+      InstanceType: !Ref 'InstanceType'
+      ImageId: !Ref Amzn2LatestAmiId
+      KeyName: !Ref SshKeyName
+      BlockDeviceMappings: 
+      - DeviceName: "/dev/xvda"
+        Ebs: 
+          VolumeType: "gp3"
+          DeleteOnTermination: true
+          VolumeSize: !Ref RootDiskSize
+      SubnetId: !Ref NginxSubnetId
+      SecurityGroupIds:
+        - !GetAtt NginxServerSecurityGroup.GroupId
+      IamInstanceProfile: !Ref NginxInstanceProfile
+      UserData:
+        # # Helper for searching out right incantation. Paste result in script below
+        # for pkg in steam steamcmd; do
+        #   for arch in "" ":i386"; do
+        #     echo echo ${pkg}${arch} ${pkg}/question select '"I AGREE"' \| debconf-set-selections
+        #     echo echo ${pkg}${arch} ${pkg}/license  select '"Ok"' \| debconf-set-selections
+        #   done
+        # done
+        Fn::Base64: |
+          #!/bin/bash
+          # Run system updates
+          yum update -y
+          # Install NGINX 1.12
+          amazon-linux-extras install nginx1.12
+          # Install PHP 7.2
+          amazon-linux-extras install php7.2
+          # Update php-fpm config
+          mv /etc/php-fpm.d/www.conf /etc/php-fpm.d/www.conf.orig
+          cat >/etc/php-fpm.d/www.conf <<"EOF"
+          [www]
+          user = nginx
+          group = nginx
+          listen = /run/php-fpm/www.sock
+          listen.acl_users = apache,nginx
+          listen.allowed_clients = 127.0.0.1
+          pm = dynamic
+          pm.max_children = 50
+          pm.start_servers = 5
+          pm.min_spare_servers = 5
+          pm.max_spare_servers = 35
+          slowlog = /var/log/php-fpm/www-slow.log
+          php_admin_value[error_log] = /var/log/php-fpm/www-error.log
+          php_admin_flag[log_errors] = on
+          php_value[session.save_handler] = files
+          php_value[session.save_path]    = /var/lib/php/session
+          php_value[soap.wsdl_cache_dir]  = /var/lib/php/wsdlcache
+          EOF
+          # Update nginx config
+          mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
+          mv /etc/nginx/conf.d/php-fpm.conf /etc/nginx/conf.d/php-fpm.conf.orig
+          mv /etc/nginx/default.d/php.conf /etc/nginx/default.d/php.conf.orig
+          cat >/etc/nginx/nginx.conf <<"EOT"
+          user nginx;
+          worker_processes auto;
+          error_log /var/log/nginx/error.log;
+          pid /run/nginx.pid;
+          include /usr/share/nginx/modules/*.conf;
+
+          events {
+              worker_connections 1024;
+          }
+
+          http {
+              log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                                '$status $body_bytes_sent "$http_referer" '
+                                '"$http_user_agent" "$http_x_forwarded_for"';
+
+              log_format json_combined escape=json
+                '{'
+                  '"time_local":"$time_local",'
+                  '"remote_addr":"$remote_addr",'
+                  '"remote_user":"$remote_user",'
+                  '"request":"$request",'
+                  '"status": "$status",'
+                  '"body_bytes_sent":"$body_bytes_sent",'
+                  '"request_time":"$request_time",'
+                  '"http_referrer":"$http_referer",'
+                  '"http_user_agent":"$http_user_agent"'
+                '}';
+
+              access_log  /var/log/nginx/access.log  json;
+
+              sendfile            on;
+              tcp_nopush          on;
+              tcp_nodelay         on;
+              keepalive_timeout   65;
+              types_hash_max_size 2048;
+
+              include             /etc/nginx/mime.types;
+              default_type        application/octet-stream;
+              include             /etc/nginx/conf.d/*.conf;
+
+              server {
+                  listen       80 default_server;
+                  listen       [::]:80 default_server;
+                  # server_name  34.218.235.51;
+                  server_name  _;
+                  root         /usr/share/nginx/html;
+                  index        index.php index.html index.htm;
+
+                  include /etc/nginx/default.d/*.conf;
+
+                  location / {
+                      # This is cool because no php is touched for static content.
+                      # include the "?" part so non-default permalinks doesn't break when using query string
+                      # try_files \$uri \$uri/ /index.php?\$args;
+                      # try_files \$uri \$uri/ =404;
+                  }
+
+                  location ~ \.php$ {
+                          # try_files $uri /index.php =404;
+                          fastcgi_pass unix:/run/php-fpm/www.sock;
+                          fastcgi_index index.php;
+                          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                          include fastcgi_params;
+                  }
+
+                  error_page 404 /404.html;
+                      location = /40x.html {
+                  }
+
+                  error_page 500 502 503 504 /50x.html;
+                      location = /50x.html {
+                  }
+              }
+          }
+          EOT
+          # Create phpinfo file for testing
+          cat >/usr/share/nginx/html/phpinfo.php <<"EOT"
+          <?php
+          phpinfo();
+          phpinfo(INFO_MODULES);
+          ?>
+          EOT
+          # Start services and set to start on boot
+          systemctl start nginx
+          systemctl enable nginx
+          systemctl start php-fpm
+          systemctl enable php-fpm
+          # install CW unified agent
+          yum install -y amazon-cloudwatch-agent
+          amazon-linux-extras install collectd 
+          cat >/opt/aws/amazon-cloudwatch-agent/bin/config.json <<"EOT"
+          {"agent":{"metrics_collection_interval":10,"run_as_user":"root"},"logs":{"logs_collected":{"files":{"collect_list":[{"file_path":"/var/log/nginx/access.log","log_group_name":"/fis-workshop/nginx-access-log","log_stream_name":"{instance_id}"},{"file_path":"/var/log/nginx/error.log","log_group_name":"/fis-workshop/nginx-error-log","log_stream_name":"{instance_id}"}]}}},"metrics":{"append_dimensions":{"AutoScalingGroupName":"${aws:AutoScalingGroupName}","ImageId":"${aws:ImageId}","InstanceId":"${aws:InstanceId}","InstanceType":"${aws:InstanceType}"},"metrics_collected":{"collectd":{"metrics_aggregation_interval":60},"cpu":{"measurement":["cpu_usage_idle","cpu_usage_iowait","cpu_usage_user","cpu_usage_system"],"metrics_collection_interval":10,"resources":["*"],"totalcpu":false},"disk":{"measurement":["used_percent","inodes_free"],"metrics_collection_interval":10,"resources":["*"]},"diskio":{"measurement":["io_time","write_bytes","read_bytes","writes","reads"],"metrics_collection_interval":10,"resources":["*"]},"mem":{"measurement":["mem_used_percent"],"metrics_collection_interval":10},"netstat":{"measurement":["tcp_established","tcp_time_wait"],"metrics_collection_interval":10},"statsd":{"metrics_aggregation_interval":60,"metrics_collection_interval":10,"service_address":":8125"},"swap":{"measurement":["swap_used_percent"],"metrics_collection_interval":10}}}}
+          EOT
+          systemctl start collectd
+          systemctl enable collectd
+          /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
+          systemctl start amazon-cloudwatch-agent
+      Tags:
+        - Key: Name
+          Value: fis-server
+
+  NginxMetricsFilterRequestTime:
+    Type: AWS::Logs::MetricFilter
+    Properties: 
+      FilterPattern: "{$.request_time >= 0}"
+      # Fix this to be a ref
+      LogGroupName: /fis-workshop/nginx-access-log
+      MetricTransformations: 
+        - 
+          MetricValue: "$.request_time"
+          MetricNamespace: "fisworkshop"
+          MetricName: "duration"
+          DefaultValue: 0
+
+  NginxMetricsFilter2xx:
+    Type: AWS::Logs::MetricFilter
+    Properties: 
+      FilterPattern: "{$.status = 2*}"
+      # Fix this to be a ref
+      LogGroupName: /fis-workshop/nginx-access-log
+      MetricTransformations: 
+        - 
+          MetricValue: "1"
+          MetricNamespace: "fisworkshop"
+          MetricName: "2xx"
+          DefaultValue: 0
+
+  NginxMetricsFilter5xx:
+    Type: AWS::Logs::MetricFilter
+    Properties: 
+      FilterPattern: "{$.status = 5*}"
+      # Fix this to be a ref
+      LogGroupName: /fis-workshop/nginx-access-log
+      MetricTransformations: 
+        - 
+          MetricValue: "1"
+          MetricNamespace: "fisworkshop"
+          MetricName: "5xx"
+          DefaultValue: 0
+
+  NginxServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access and open Nginx ports
+      VpcId: !Ref NginxVpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref 'SshAccessFromThisCidrOnly'
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: '0.0.0.0/0'
+      Tags:
+        - Key: Name
+          Value: fis-server
+
+  NginxInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles: 
+        - !Ref NginxInstanceRole
+
+  NginxInstanceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Tags:
+        - Key: Name
+          Value: fis-server
+      Path: /
+      ManagedPolicyArns:
+        # Allow SSM access
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+        
+
+  IPAddress:
+    Type: AWS::EC2::EIP
+    Properties:
+      Tags:
+        - Key: Name
+          Value: fis-server
+
+  IPAssoc:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      InstanceId: !Ref 'NginxServer'
+      EIP: !Ref 'IPAddress'
+
+Outputs:
+  InstanceId:
+    Description: InstanceId of the newly created EC2 instance
+    Value: !Ref 'NginxServer'
+  InstanceIPAddress:
+    Description: IP address of the newly created EC2 instance
+    Value: !Ref 'IPAddress'
