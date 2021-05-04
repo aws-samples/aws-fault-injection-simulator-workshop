@@ -1,0 +1,184 @@
+{
+    "widgets": [
+        {
+            "height": 6,
+            "width": 12,
+            "y": 0,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "goad", "duration_max", "ServiceName", "goad-redux-LoadGenerator-KNKGIDONIWP6", "ServiceType", "AWS::Lambda::Function", { "yAxis": "right", "visible": false } ],
+                    [ ".", "duration_avg", ".", ".", ".", ".", { "yAxis": "right", "color": "#17becf", "visible": false } ],
+                    [ ".", "duration_min", ".", ".", ".", ".", { "yAxis": "right", "color": "#9edae5", "visible": false } ],
+                    [ ".", "error_connect", ".", ".", ".", "." ],
+                    [ ".", "error_read", ".", ".", ".", ".", { "color": "#e377c2" } ],
+                    [ ".", "status_5xx", ".", ".", ".", ".", { "color": "#ff9896" } ],
+                    [ ".", "status_4xx", ".", ".", ".", ".", { "color": "#f7b6d2" } ],
+                    [ ".", "status_2xx", ".", ".", ".", ".", { "color": "#98df8a" } ],
+                    [ ".", "success", ".", ".", ".", "." ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "us-west-2",
+                "stat": "Average",
+                "period": 1,
+                "title": "goad connection status",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "max": 100
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 6,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "goad", "duration_max", "ServiceName", "goad-redux-LoadGenerator-KNKGIDONIWP6", "ServiceType", "AWS::Lambda::Function", { "yAxis": "left" } ],
+                    [ ".", "duration_avg", ".", ".", ".", ".", { "yAxis": "left", "color": "#17becf" } ],
+                    [ ".", "duration_min", ".", ".", ".", ".", { "yAxis": "left", "color": "#9edae5" } ],
+                    [ ".", "error_connect", ".", ".", ".", ".", { "visible": false, "yAxis": "right" } ],
+                    [ ".", "error_read", ".", ".", ".", ".", { "color": "#e377c2", "visible": false, "yAxis": "right" } ],
+                    [ ".", "status_5xx", ".", ".", ".", ".", { "color": "#ff9896", "visible": false, "yAxis": "right" } ],
+                    [ ".", "status_4xx", ".", ".", ".", ".", { "color": "#f7b6d2", "visible": false, "yAxis": "right" } ],
+                    [ ".", "status_2xx", ".", ".", ".", ".", { "color": "#98df8a", "visible": false, "yAxis": "right" } ],
+                    [ ".", "success", ".", ".", ".", ".", { "visible": false, "yAxis": "right" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "us-west-2",
+                "stat": "Average",
+                "period": 1,
+                "title": "goad response times",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0,
+                        "max": 100
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 0,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "fisworkshop", "2xx", { "color": "#2ca02c" } ],
+                    [ ".", "5xx" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "us-west-2",
+                "stat": "Average",
+                "period": 1,
+                "title": "nginx connection status",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "max": 1
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 12,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "CWAgent", "cpu_usage_user", "InstanceId", "i-08ab3083aa48d223e", "ImageId", "ami-013843f4de272c002", "cpu", "cpu0", "InstanceType", "t3.micro", { "color": "#1f77b4" } ],
+                    [ "...", "cpu1", ".", ".", { "color": "#1f77b4" } ],
+                    [ ".", "cpu_usage_system", ".", ".", ".", ".", ".", "cpu0", ".", ".", { "color": "#ff7f0e" } ],
+                    [ "...", "cpu1", ".", ".", { "color": "#ff7f0e" } ],
+                    [ ".", "cpu_usage_idle", ".", ".", ".", ".", ".", "cpu0", ".", ".", { "color": "#2ca02c" } ],
+                    [ "...", "cpu1", ".", ".", { "color": "#2ca02c" } ],
+                    [ ".", "cpu_usage_iowait", ".", ".", ".", ".", ".", "cpu0", ".", ".", { "color": "#d62728" } ],
+                    [ "...", "cpu1", ".", ".", { "color": "#d62728" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "us-west-2",
+                "stat": "Average",
+                "period": 1,
+                "title": "server cpu",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "max": 100
+                    },
+                    "right": {
+                        "min": 0,
+                        "max": 100
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 12,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "CWAgent", "netstat_tcp_established", "InstanceId", "i-08ab3083aa48d223e", "ImageId", "ami-013843f4de272c002", "InstanceType", "t3.micro", { "color": "#2ca02c" } ],
+                    [ ".", "netstat_tcp_time_wait", ".", ".", ".", ".", ".", ".", { "color": "#d62728" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "us-west-2",
+                "stat": "Average",
+                "period": 1,
+                "title": "network status",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    },
+                    "right": {
+                        "min": 0
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 6,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "fisworkshop", "duration" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "us-west-2",
+                "stat": "Average",
+                "period": 1,
+                "title": "nginx response time",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
+            }
+        }
+    ]
+}

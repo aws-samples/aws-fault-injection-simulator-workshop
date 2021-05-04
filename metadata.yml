@@ -1,0 +1,26 @@
+#name - DNS-friendly name for the workshop. This will be used when generating the hosting URL (ie. https://my-first-workshop.workshops.aws/)
+name: my-first-workshop
+#title - The title of your workshop
+title: My First Workshop 
+#description - A short description that will be displayed in search results
+description: Creating unicorns with serverless bitcoin magic! 
+#categories - Refer to official AWS categories covered by the workshop content here
+categories: 
+  - Networking
+  - Compute
+#services - Refer to the official AWS service names covered by the workshop content here
+services: 
+   - Api Gateway
+   - Lambda
+#level - Approximate skill level needed for this workshop
+level: 100 
+#duration - Estimated duration in minutes
+duration: 60 
+#cost - Cost in USD. If the content is offered without cost, enter 0
+cost: 0 
+#author - Amazon alias of the primary author of the content
+author: mpgoetz 
+#audience - Names of the personas associated with this workshop
+audience: 
+  - IT Professional
+  - Developer
