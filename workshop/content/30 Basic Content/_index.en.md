@@ -17,15 +17,3 @@ This workshop is focused on how to inject fault into an existing infrastructure.
 {{< img "BasicASG.png" "Image of architecture to be injected with chaos" >}}
 
 You can click on these images to enlarge them.
-
-TODO LIST
-
-* CloudWatch dashboard to monitor environment
-* extensive tagging for filter examples
-* RDS to keep state and demonstrate RDS failure / fail-over actions
-* RDS Aurora - not actually FIS but sufficiently related to include here - https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.FaultInjectionQueries.html
-* EC2 instances without ASG - to demonstrate stop/start; SSM commands to kill/stress
-* EC2 instances with ASG/ALB - to demonstrate scaling behavior and chaos injecton under load: terminate instances as well as ; SSM commands to kill/stress
-* CI/CD pipeline to demonstrate running chaos injection as part of testing process
-* ECS cluster to simulate container failure/draining
-* EKS cluster to demonstrate worker node/node-group failure
