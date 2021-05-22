@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  goad redux
+  
+  Inspired by https://goad.io/ this focuses purely on load generation from a single lambda.
+  For purposes of observability it creates cloudformation metrics. You can enable:
+    * 1 minute resolution via Cloudwatch Embedded Metrics format
+    * 1 second resolution via Cloudwatch PutMetrics API call
+
+Parameters:
+  Enable1mMetrics:
+    Type: String
+    Default: "false"
+    AllowedValues: ["true", "false"]
+    Description: "Enable Cloudwatch Metrics via EMF with 1 minute resolution [true/false]"
+  Enable1sMetrics:
+    Type: String
+    Default: "true"
+    AllowedValues: ["true", "false"]
+    Description: "Enable Cloudwatch Metrics via PutMetrics with 1 second resolution [true/false]"
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 900
+    MemorySize: 1024
+
+Resources:
+  # HelloWorldFunction:
+  #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  #   Properties:
+  #     CodeUri: hello-world/
+  #     Handler: hello-world
+  #     Runtime: go1.x
+  #     Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+  #     Events:
+  #       CatchAll:
+  #         Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+  #         Properties:
+  #           Path: /hello
+  #           Method: GET
+  #     Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+  #       Variables:
+  #         PARAM1: VALUE
+
+  LoadGenerator:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: load-gen/
+      Handler: load-gen
+      Runtime: go1.x
+      Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+      Environment:
+        Variables:
+          USE_PUT_METRICS: !Ref Enable1sMetrics
+          USE_LOG_METRICS: !Ref Enable1mMetrics
+      Policies:
+        - Statement:
+          - Sid: AllowPutMetrics
+            Effect: Allow
+            Action: cloudwatch:PutMetricData
+            Resource: '*'
+            
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  # HelloWorldAPI:
+  #   Description: "API Gateway endpoint URL for Prod environment for First Function"
+  #   Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/load_gen/"
+  # HelloWorldFunction:
+  #   Description: "First Lambda Function ARN"
+  #   Value: !GetAtt HelloWorldFunction.Arn
+  # HelloWorldFunctionIamRole:
+  #   Description: "Implicit IAM Role created for Hello World function"
+  #   Value: !GetAtt HelloWorldFunctionRole.Arn
+  LoadGenArn:
+    Description: ARN of load generator lambda function
+    Value: !GetAtt LoadGenerator.Arn
+    Export: 
+      Name: !Sub "${AWS::StackName}-LoadGenArn"
+  LoadGenName:
+    Description: ARN of load generator lambda function
+    Value: !Ref LoadGenerator
+    Export: 
+      Name: !Sub "${AWS::StackName}-LoadGenName"
