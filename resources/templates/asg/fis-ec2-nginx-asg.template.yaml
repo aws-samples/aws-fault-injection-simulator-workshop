@@ -6,12 +6,18 @@ Parameters:
   NginxVpcId:
     Description: 'VPC ID in which to start the server'
     Type: 'AWS::EC2::VPC::Id'
-  Subnets:
+  AlbSubnets:
     Type: List<AWS::EC2::Subnet::Id>
-    Description: The list of SubnetIds in your Virtual Private Cloud (VPC)
+    Description: A list of public SubnetIds in your Virtual Private Cloud (VPC)
     ConstraintDescription: must be a list of at least two existing subnets associated
       with at least two different availability zones. They should be residing in the
-      selected Virtual Private Cloud.
+      selected Virtual Private Cloud and must be public facing.
+  BackendSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: A list of private SubnetIds in your Virtual Private Cloud (VPC)
+    ConstraintDescription: must be a list of at least two existing subnets associated
+      with at least two different availability zones. They should be residing in the
+      selected Virtual Private Cloud and should be private but not isolated.
   Amzn2LatestAmiId:
     Description: 'AMI ID for most recent Ubuntu image'
     Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
@@ -25,10 +31,10 @@ Parameters:
     Description: 'Server instance type'
     Type: String
     Default: t2.micro
-  SshKeyName:
-    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
-    Type: AWS::EC2::KeyPair::KeyName
-    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  # SshKeyName:
+  #   Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+  #   Type: AWS::EC2::KeyPair::KeyName
+  #   ConstraintDescription: must be the name of an existing EC2 KeyPair.
   SshAccessFromThisCidrOnly:
     Description: The IP address range that can be used to SSH to the EC2 instances
     Type: String
@@ -37,33 +43,54 @@ Parameters:
     Default: '0.0.0.0/0'
     AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
     ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
-  OperatorEMail:
-    Description: EMail address to notify if there are any scaling operations
-    Type: String
-    AllowedPattern: ([a-zA-Z0-9_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)
-    ConstraintDescription: must be a valid email address.
+  # OperatorEMail:
+  #   Description: EMail address to notify if there are any scaling operations
+  #   Type: String
+  #   AllowedPattern: ([a-zA-Z0-9_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)
+  #   ConstraintDescription: must be a valid email address.
   AccessLogPath:
     Description: Base path for cloudwatch logs
     Type: String
     AllowedPattern: (/[a-zA-Z0-9\-\_]+)+
     Default: /fis-workshop
+  LoadGenFunctionName:
+    Description: Name of goad-redux function to identify metrics source
+    Type: String
+    AllowedPattern: ([a-zA-Z0-9\-\_]+)
 
 Resources:
 
   NotificationTopic:
     Type: AWS::SNS::Topic
     Properties:
-      Subscription:
-        - Endpoint: !Ref 'OperatorEMail'
-          Protocol: email
+      DisplayName: "HookForNotificationEmail"
+      # Subscription:
+      #   - Endpoint: !Ref 'OperatorEMail'
+      #     Protocol: email
 
   WebServerGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
-      VPCZoneIdentifier: !Ref 'Subnets'
+      VPCZoneIdentifier: !Ref 'BackendSubnets'
       LaunchConfigurationName: !Ref 'LaunchConfig'
       MinSize: "1"
       MaxSize: "3"
+      MetricsCollection:
+        - Granularity: 1Minute
+          Metrics:
+            - GroupMinSize
+            - GroupMaxSize
+            - GroupDesiredCapacity
+            - GroupInServiceInstances
+            - GroupPendingInstances
+            - GroupStandbyInstances
+            - GroupTerminatingInstances
+            - GroupTotalInstances
+            - GroupInServiceCapacity
+            - GroupPendingCapacity
+            - GroupStandbyCapacity
+            - GroupTerminatingCapacity
+            - GroupTotalCapacity
       TargetGroupARNs:
         - !Ref 'ALBTargetGroup'
       NotificationConfigurations:
@@ -87,6 +114,8 @@ Resources:
         MaxBatchSize: 1
         PauseTime: PT15M
         WaitOnResourceSignals: true
+
+
 
   # Useful link for cleanup - https://cloudonaut.io/migrating-to-amazon-linux-2/
   LaunchConfig:
@@ -259,7 +288,7 @@ Resources:
                   - /etc/cfn/cfn-hup.conf
                   - /etc/cfn/hooks.d/cfn-auto-reloader.conf
     Properties:
-      KeyName: !Ref SshKeyName
+      # KeyName: !Ref SshKeyName
       ImageId: !Ref Amzn2LatestAmiId
       SecurityGroups:
         - !Ref InstanceSecurityGroup
@@ -525,7 +554,7 @@ Resources:
   ApplicationLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Subnets: !Ref 'Subnets'
+      Subnets: !Ref 'AlbSubnets'
       SecurityGroups:
         - !Ref ALBSecurityGroup
 
@@ -582,11 +611,17 @@ Resources:
             - !GetAtt 'ApplicationLoadBalancer.SecurityGroups'
       VpcId: !Ref 'NginxVpcId'
 
+  NginxLogGroupAccess:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: !Sub "${AccessLogPath}/nginx-access-log"
+
   NginxMetricsFilterRequestTime:
     Type: AWS::Logs::MetricFilter
     Properties: 
       FilterPattern: "{$.request_time >= 0}"
-      LogGroupName: !Sub "${AccessLogPath}/nginx-access-log"
+      # LogGroupName: !Sub "${AccessLogPath}/nginx-access-log"
+      LogGroupName: !Ref NginxLogGroupAccess
       MetricTransformations: 
         - 
           MetricValue: "$.request_time"
@@ -598,7 +633,8 @@ Resources:
     Type: AWS::Logs::MetricFilter
     Properties: 
       FilterPattern: "{$.status = 2*}"
-      LogGroupName: !Sub "${AccessLogPath}/nginx-access-log"
+      # LogGroupName: !Sub "${AccessLogPath}/nginx-access-log"
+      LogGroupName: !Ref NginxLogGroupAccess
       MetricTransformations: 
         - 
           MetricValue: "1"
@@ -610,7 +646,8 @@ Resources:
     Type: AWS::Logs::MetricFilter
     Properties: 
       FilterPattern: "{$.status = 5*}"
-      LogGroupName: !Sub "${AccessLogPath}/nginx-access-log"
+      # LogGroupName: !Sub "${AccessLogPath}/nginx-access-log"
+      LogGroupName: !Ref NginxLogGroupAccess
       MetricTransformations: 
         - 
           MetricValue: "1"
@@ -622,7 +659,7 @@ Resources:
   NginxAsgDashboard:
     Type: AWS::CloudWatch::Dashboard
     Properties:
-      DashboardName: 'fis-dashboard-asg'
+      DashboardName: !Sub 'fis-dashboard-asg-${AWS::Region}'
       DashboardBody: !Sub |
         {
             "widgets": [
@@ -634,15 +671,12 @@ Resources:
                     "type": "metric",
                     "properties": {
                         "metrics": [
-                            [ "goad", "duration_max", "ServiceName", "goad-redux-LoadGenerator-KNKGIDONIWP6", "ServiceType", "AWS::Lambda::Function", { "yAxis": "right", "visible": false } ],
-                            [ ".", "duration_avg", ".", ".", ".", ".", { "yAxis": "right", "color": "#17becf", "visible": false } ],
-                            [ ".", "duration_min", ".", ".", ".", ".", { "yAxis": "right", "color": "#9edae5", "visible": false } ],
-                            [ ".", "error_connect", ".", ".", ".", "." ],
-                            [ ".", "error_read", ".", ".", ".", ".", { "color": "#e377c2" } ],
-                            [ ".", "status_5xx", ".", ".", ".", ".", { "color": "#ff9896" } ],
-                            [ ".", "status_4xx", ".", ".", ".", ".", { "color": "#f7b6d2" } ],
-                            [ ".", "status_2xx", ".", ".", ".", ".", { "color": "#98df8a" } ],
-                            [ ".", "success", ".", ".", ".", "." ]
+                            [ { "expression": "AVG(SEARCH('goad AND error_connect', 'Sum', 1))", "id": "error_connect", "period": 1, "color": "#d62728", "region": "${AWS::Region}" } ],
+                            [ { "expression": "AVG(SEARCH('goad AND error_read',    'Sum', 1))", "id": "error_read",    "period": 1, "color": "#e377c2", "region": "${AWS::Region}" } ],
+                            [ { "expression": "AVG(SEARCH('goad AND status_5xx',    'Sum', 1))", "id": "status_5xx",    "period": 1, "color": "#ff9896", "region": "${AWS::Region}" } ],
+                            [ { "expression": "AVG(SEARCH('goad AND status_4xx',    'Sum', 1))", "id": "status_4xx",    "period": 1, "color": "#f7b6d2", "region": "${AWS::Region}" } ],
+                            [ { "expression": "AVG(SEARCH('goad AND status_2xx',    'Sum', 1))", "id": "status_2xx",    "period": 1, "color": "#98df8a", "region": "${AWS::Region}" } ],
+                            [ { "expression": "AVG(SEARCH('goad AND success',       'Sum', 1))", "id": "success",       "period": 1, "color": "#bcbd22", "region": "${AWS::Region}" } ]
                         ],
                         "view": "timeSeries",
                         "stacked": false,
@@ -669,15 +703,9 @@ Resources:
                     "type": "metric",
                     "properties": {
                         "metrics": [
-                            [ "goad", "duration_max", "ServiceName", "goad-redux-LoadGenerator-KNKGIDONIWP6", "ServiceType", "AWS::Lambda::Function", { "yAxis": "left" } ],
-                            [ ".", "duration_avg", ".", ".", ".", ".", { "yAxis": "left", "color": "#17becf" } ],
-                            [ ".", "duration_min", ".", ".", ".", ".", { "yAxis": "left", "color": "#9edae5" } ],
-                            [ ".", "error_connect", ".", ".", ".", ".", { "visible": false, "yAxis": "right" } ],
-                            [ ".", "error_read", ".", ".", ".", ".", { "color": "#e377c2", "visible": false, "yAxis": "right" } ],
-                            [ ".", "status_5xx", ".", ".", ".", ".", { "color": "#ff9896", "visible": false, "yAxis": "right" } ],
-                            [ ".", "status_4xx", ".", ".", ".", ".", { "color": "#f7b6d2", "visible": false, "yAxis": "right" } ],
-                            [ ".", "status_2xx", ".", ".", ".", ".", { "color": "#98df8a", "visible": false, "yAxis": "right" } ],
-                            [ ".", "success", ".", ".", ".", ".", { "visible": false, "yAxis": "right" } ]
+                            [ { "expression": "MAX(SEARCH('goad AND duration_max', 'Maximum', 1))", "id": "duration_max", "period": 1, "color": "#1f77b4", "region": "${AWS::Region}" } ],
+                            [ { "expression": "MAX(SEARCH('goad AND duration_avg', 'Maximum', 1))", "id": "duration_avg", "period": 1, "color": "#17becf", "region": "${AWS::Region}" } ],
+                            [ { "expression": "MAX(SEARCH('goad AND duration_min', 'Maximum', 1))", "id": "duration_min", "period": 1, "color": "#9edae5", "region": "${AWS::Region}" } ]
                         ],
                         "view": "timeSeries",
                         "stacked": false,
@@ -729,8 +757,8 @@ Resources:
                     "type": "metric",
                     "properties": {
                         "metrics": [
-                            [ { "expression": "SUM(SEARCH('CWAgent AND fis-asg AND netstat_tcp_established', 'Maximum', 1))", "id": "sum_tcp_established", "period": 1, "color": "#2ca02c", "region": "${AWS::Region}" } ],
-                            [ { "expression": "SUM(SEARCH('CWAgent AND fis-asg AND netstat_tcp_time_wait', 'Maximum', 1))", "id": "sum_tcp_time_wait", "period": 1, "color": "#d62728", "region": "${AWS::Region}" } ]
+                            [ { "expression": "SUM(SEARCH('CWAgent AND ${WebServerGroup} AND netstat_tcp_established', 'Maximum', 1))", "id": "sum_tcp_established", "period": 1, "color": "#2ca02c", "region": "${AWS::Region}" } ],
+                            [ { "expression": "SUM(SEARCH('CWAgent AND ${WebServerGroup} AND netstat_tcp_time_wait', 'Maximum', 1))", "id": "sum_tcp_time_wait", "period": 1, "color": "#d62728", "region": "${AWS::Region}" } ]
                         ],
                         "view": "timeSeries",
                         "stacked": false,
@@ -779,10 +807,10 @@ Resources:
                     "type": "metric",
                     "properties": {
                         "metrics": [
-                            [ { "expression": "AVG(SEARCH('CWAgent AND fis-asg AND cpu_usage_idle', 'Average', 1))", "id": "avg_cpu_idle", "period": 1, "color": "#2ca02c", "region": "${AWS::Region}" } ],
-                            [ { "expression": "AVG(SEARCH('CWAgent AND fis-asg AND cpu_usage_user', 'Average', 1))", "id": "avg_cpu_user", "period": 1, "color": "#1f77b4", "region": "${AWS::Region}" } ],
-                            [ { "expression": "AVG(SEARCH('CWAgent AND fis-asg AND cpu_usage_system', 'Average', 1))", "id": "avg_cpu_system", "period": 1, "color": "#ff7f0e", "region": "${AWS::Region}" } ],
-                            [ { "expression": "AVG(SEARCH('CWAgent AND fis-asg AND cpu_usage_iowait', 'Average', 1))", "id": "avg_cpu_iowait", "period": 1, "color": "#d62728", "region": "${AWS::Region}" } ]
+                            [ { "expression": "AVG(SEARCH('CWAgent AND ${WebServerGroup} AND cpu_usage_idle', 'Average', 1))", "id": "avg_cpu_idle", "period": 1, "color": "#2ca02c", "region": "${AWS::Region}" } ],
+                            [ { "expression": "AVG(SEARCH('CWAgent AND ${WebServerGroup} AND cpu_usage_user', 'Average', 1))", "id": "avg_cpu_user", "period": 1, "color": "#1f77b4", "region": "${AWS::Region}" } ],
+                            [ { "expression": "AVG(SEARCH('CWAgent AND ${WebServerGroup} AND cpu_usage_system', 'Average', 1))", "id": "avg_cpu_system", "period": 1, "color": "#ff7f0e", "region": "${AWS::Region}" } ],
+                            [ { "expression": "AVG(SEARCH('CWAgent AND ${WebServerGroup} AND cpu_usage_iowait', 'Average', 1))", "id": "avg_cpu_iowait", "period": 1, "color": "#d62728", "region": "${AWS::Region}" } ]
                         ],
                         "view": "timeSeries",
                         "stacked": false,
@@ -824,7 +852,7 @@ Resources:
   NginxAsgDashboard1:
     Type: AWS::CloudWatch::Dashboard
     Properties:
-      DashboardName: 'fis-dashboard-1'
+      DashboardName: !Sub 'fis-dashboard-1-${AWS::Region}'
       DashboardBody: !Sub |
         {
             "widgets": [
