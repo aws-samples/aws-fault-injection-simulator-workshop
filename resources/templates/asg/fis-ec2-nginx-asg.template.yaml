@@ -703,9 +703,9 @@ Resources:
                     "type": "metric",
                     "properties": {
                         "metrics": [
-                            [ { "expression": "MAX(SEARCH('goad AND duration_max', 'Maximum', 1))", "id": "duration_max", "period": 1, "color": "#1f77b4", "region": "${AWS::Region}" } ],
-                            [ { "expression": "MAX(SEARCH('goad AND duration_avg', 'Maximum', 1))", "id": "duration_avg", "period": 1, "color": "#17becf", "region": "${AWS::Region}" } ],
-                            [ { "expression": "MAX(SEARCH('goad AND duration_min', 'Maximum', 1))", "id": "duration_min", "period": 1, "color": "#9edae5", "region": "${AWS::Region}" } ]
+                            [ { "expression": "AVG(SEARCH('goad AND duration_max', 'Average', 1))", "id": "duration_max", "period": 1, "color": "#1f77b4", "region": "${AWS::Region}" } ],
+                            [ { "expression": "AVG(SEARCH('goad AND duration_avg', 'Average', 1))", "id": "duration_avg", "period": 1, "color": "#17becf", "region": "${AWS::Region}" } ],
+                            [ { "expression": "AVG(SEARCH('goad AND duration_min', 'Average', 1))", "id": "duration_min", "period": 1, "color": "#9edae5", "region": "${AWS::Region}" } ]
                         ],
                         "view": "timeSeries",
                         "stacked": false,

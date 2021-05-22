@@ -40,7 +40,7 @@ To gain visibility into the user experience from the sysops side we've used the 
 {{< img "fis-dashboard-1.png" "Image of architecture to be injected with chaos" >}}
 
 {{%expand "Accessing the dashboard from the console" %}}
-To access the dashboard log into the AWS console as described in **Getting Started**. From the "Services" dropdown navigate to "CloudWatch" under "Management & Governance" or use the search bar. On the top left select "Dahsboards" and choose "fis-dashboard-1".
+To access the dashboard log into the AWS console as described in **Getting Started**. From the "Services" dropdown navigate to "CloudWatch" under "Management & Governance" or use the search bar. On the top left select "Dashboards" and choose "fis-dashboard-1".
 {{% /expand%}}
 
 In the next section we will cover how to measure the user experience. 
