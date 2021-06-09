@@ -10,7 +10,7 @@ To preview the workshop clone this repo, and serve it locally with [hugo](https:
 ```
 cd aws-fault-injection-simulator-workshop
 
-cd workshp
+cd workshop
 hugo server
 ```
 
@@ -18,7 +18,7 @@ and browse to http://localhost:1313
 
 ## Instantiating workshop resources
 
-Currently this is a hodgepodge of source types (cdk, SAM, CFN) which will all eventually need to be merged into plain CFN for EE use. For now to instantiate the resources on a Mac/Linux box with installed `bash`, `jq`, `AWS CLI`, `SAM CLI` and `CDK CLI`: 
+Currently this is a hodgepodge of source types (cdk, SAM, CFN) which will all eventually need to be merged into plain CFN for EE use. For now to instantiate the resources on a Mac/Linux box with installed `bash`, `jq`, `AWS CLI`, `SAM CLI` and `CDK CLI`:
 
 ```
 cd aws-fault-injection-simulator-workshop
