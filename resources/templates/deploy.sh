@@ -74,4 +74,11 @@ esac
 
 )
 
+# rds stack uses cdk to synth
+(
+    cd rds
+    npm install
+    npx cdk deploy FisStackVpc --require-approval never --outputs-file outputs.json
+)
+
 echo next step
