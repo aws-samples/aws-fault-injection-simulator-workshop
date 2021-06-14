@@ -67,7 +67,7 @@ esac
         --stack-name FisStackAsg \
         --template-body file://fis-ec2-nginx-asg.template.yaml \
         --parameters file://params.json \
-        --capabilities CAPABILITY_IAM
+        --capabilities CAPABILITY_IAM && \
     aws cloudformation wait stack-${MODE}-complete \
         --stack-name FisStackAsg
 
@@ -78,7 +78,7 @@ esac
 (
     cd rds
     npm install
-    npx cdk deploy FisStackVpc --require-approval never --outputs-file outputs.json
+    npx cdk deploy FisStackRdsAurora --require-approval never --outputs-file outputs.json
 )
 
 echo next step
