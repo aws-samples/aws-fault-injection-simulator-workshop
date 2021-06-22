@@ -34,82 +34,82 @@ EOF
 mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
 mv /etc/nginx/conf.d/php-fpm.conf /etc/nginx/conf.d/php-fpm.conf.orig
 mv /etc/nginx/default.d/php.conf /etc/nginx/default.d/php.conf.orig
-cat >/etc/nginx/nginx.conf <<"EOT"
-user nginx;
-worker_processes auto;
-error_log /var/log/nginx/error.log;
-pid /run/nginx.pid;
-include /usr/share/nginx/modules/*.conf;
+# cat >/etc/nginx/nginx.conf <<"EOT"
+# user nginx;
+# worker_processes auto;
+# error_log /var/log/nginx/error.log;
+# pid /run/nginx.pid;
+# include /usr/share/nginx/modules/*.conf;
 
-events {
-    worker_connections 1024;
-}
+# events {
+#     worker_connections 1024;
+# }
 
-http {
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                        '$status $body_bytes_sent "$http_referer" '
-                        '"$http_user_agent" "$http_x_forwarded_for"';
+# http {
+#     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+#                         '$status $body_bytes_sent "$http_referer" '
+#                         '"$http_user_agent" "$http_x_forwarded_for"';
 
-    log_format json_combined escape=json
-        '{'
-        '"time_local":"$time_local",'
-        '"remote_addr":"$remote_addr",'
-        '"remote_user":"$remote_user",'
-        '"request":"$request",'
-        '"status": "$status",'
-        '"body_bytes_sent":$body_bytes_sent,'
-        '"request_time":$request_time,'
-        '"http_referrer":"$http_referer",'
-        '"http_user_agent":"$http_user_agent"'
-        '}';
+#     log_format json_combined escape=json
+#         '{'
+#         '"time_local":"$time_local",'
+#         '"remote_addr":"$remote_addr",'
+#         '"remote_user":"$remote_user",'
+#         '"request":"$request",'
+#         '"status": "$status",'
+#         '"body_bytes_sent":$body_bytes_sent,'
+#         '"request_time":$request_time,'
+#         '"http_referrer":"$http_referer",'
+#         '"http_user_agent":"$http_user_agent"'
+#         '}';
 
-    access_log  /var/log/nginx/access.log  json_combined;
+#     access_log  /var/log/nginx/access.log  json_combined;
 
-    sendfile            on;
-    tcp_nopush          on;
-    tcp_nodelay         on;
-    keepalive_timeout   65;
-    types_hash_max_size 2048;
+#     sendfile            on;
+#     tcp_nopush          on;
+#     tcp_nodelay         on;
+#     keepalive_timeout   65;
+#     types_hash_max_size 2048;
 
-    include             /etc/nginx/mime.types;
-    default_type        application/octet-stream;
-    include             /etc/nginx/conf.d/*.conf;
+#     include             /etc/nginx/mime.types;
+#     default_type        application/octet-stream;
+#     include             /etc/nginx/conf.d/*.conf;
 
-    server {
-        listen       80 default_server;
-        listen       [::]:80 default_server;
-        # server_name  34.218.235.51;
-        server_name  _;
-        root         /usr/share/nginx/html;
-        index        index.php index.html index.htm;
+#     server {
+#         listen       80 default_server;
+#         listen       [::]:80 default_server;
+#         # server_name  34.218.235.51;
+#         server_name  _;
+#         root         /usr/share/nginx/html;
+#         index        index.php index.html index.htm;
 
-        include /etc/nginx/default.d/*.conf;
+#         include /etc/nginx/default.d/*.conf;
 
-        location / {
-            # This is cool because no php is touched for static content.
-            # include the "?" part so non-default permalinks doesn't break when using query string
-            # try_files \$uri \$uri/ /index.php?\$args;
-            # try_files \$uri \$uri/ =404;
-        }
+#         location / {
+#             # This is cool because no php is touched for static content.
+#             # include the "?" part so non-default permalinks doesn't break when using query string
+#             # try_files \$uri \$uri/ /index.php?\$args;
+#             # try_files \$uri \$uri/ =404;
+#         }
 
-        location ~ \.php$ {
-                # try_files $uri /index.php =404;
-                fastcgi_pass unix:/run/php-fpm/www.sock;
-                fastcgi_index index.php;
-                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-                include fastcgi_params;
-        }
+#         location ~ \.php$ {
+#                 # try_files $uri /index.php =404;
+#                 fastcgi_pass unix:/run/php-fpm/www.sock;
+#                 fastcgi_index index.php;
+#                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+#                 include fastcgi_params;
+#         }
 
-        error_page 404 /404.html;
-            location = /40x.html {
-        }
+#         error_page 404 /404.html;
+#             location = /40x.html {
+#         }
 
-        error_page 500 502 503 504 /50x.html;
-            location = /50x.html {
-        }
-    }
-}
-EOT
+#         error_page 500 502 503 504 /50x.html;
+#             location = /50x.html {
+#         }
+#     }
+# }
+# EOT
 # Start services and set to start on boot
 systemctl start nginx
 systemctl enable nginx
