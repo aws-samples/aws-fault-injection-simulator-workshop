@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
-import { GoadCdkTestStack } from '../lib/goad-cdk-test-stack';
+import { AsgCdkTestStack } from '../lib/asg-cdk-test-stack';
 
 const app = new cdk.App();
-new GoadCdkTestStack(app, 'GoadCdkTestStack', {
+new AsgCdkTestStack(app, 'FisStackAsg', {
   env: { 
     account: process.env.CDK_DEFAULT_ACCOUNT, 
     region: process.env.CDK_DEFAULT_REGION 
