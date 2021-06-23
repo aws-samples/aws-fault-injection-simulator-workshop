@@ -110,6 +110,9 @@ mv /etc/nginx/default.d/php.conf /etc/nginx/default.d/php.conf.orig
 #     }
 # }
 # EOT
+# Install components needed for RDS tests
+yum install -y mysql telnet
+pip3 install mysql-connector-python pymysql boto3
 # Start services and set to start on boot
 systemctl start nginx
 systemctl enable nginx
@@ -123,4 +126,5 @@ systemctl start collectd
 systemctl enable collectd
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
 systemctl start amazon-cloudwatch-agent
+#
 /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WebServerGroup --region ${AWS::Region}

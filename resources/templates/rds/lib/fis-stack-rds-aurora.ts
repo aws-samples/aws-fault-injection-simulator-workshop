@@ -3,6 +3,7 @@ import * as ec2 from '@aws-cdk/aws-ec2';
 import * as rds from '@aws-cdk/aws-rds';
 import { InstanceType } from '@aws-cdk/aws-ec2';
 import * as ssm from '@aws-cdk/aws-ssm';
+import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 
 export class FisStackRdsAurora extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -12,7 +13,6 @@ export class FisStackRdsAurora extends cdk.Stack {
       vpcName: 'FisStackVpc/FisVpc'
     });
     
-    const credentials = rds.Credentials.fromGeneratedSecret('clusteradmin');
 
     const rdsSecurityGroup = new ec2.SecurityGroup(this, 'rdsSecurityGroup', {
       vpc,
@@ -21,18 +21,16 @@ export class FisStackRdsAurora extends cdk.Stack {
       allowAllOutbound: true   // Can be set to false
     });    
     rdsSecurityGroup.connections.allowFrom(rdsSecurityGroup, ec2.Port.tcp(3306), 'allow mysql access from self');
-    const rdsSecurityGroupParam = new ssm.StringParameter(this, 'FisWorkshopRdsSgId', {
-      parameterName: 'FisWorkshopRdsSgId',
-      stringValue: rdsSecurityGroup.securityGroupId
-    });
 
 
 
+    const auroraCredentials = rds.Credentials.fromGeneratedSecret('clusteradmin', { secretName: "FisAuroraSecret"});
     const aurora = new rds.DatabaseCluster(this, 'FisWorkshopRdsAurora', {
       engine: rds.DatabaseClusterEngine.auroraMysql({ 
         version: rds.AuroraMysqlEngineVersion.VER_5_7_12 
       }),
-      credentials: credentials,
+      credentials: auroraCredentials,
+      defaultDatabaseName: 'testdb',
       instanceProps: {
         vpcSubnets: {
           subnetType: ec2.SubnetType.PRIVATE,
@@ -43,6 +41,7 @@ export class FisStackRdsAurora extends cdk.Stack {
     });
 
     // based on https://bobbyhadz.com/blog/aws-cdk-rds-example
+    const mysqlCredentials = rds.Credentials.fromGeneratedSecret('clusteradmin', { secretName: "FisMysqlSecret"});
     const mysql = new rds.DatabaseInstance(this,"FisWorkshopRdsMySql",{
       vpc,
       vpcSubnets: {
@@ -54,7 +53,8 @@ export class FisStackRdsAurora extends cdk.Stack {
       engine: rds.DatabaseInstanceEngine.mysql({
         version: rds.MysqlEngineVersion.VER_5_7,
       }),
-      credentials: credentials,
+      credentials: mysqlCredentials,
+      databaseName: 'testdb',
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.BURSTABLE3,
         ec2.InstanceSize.MICRO,
@@ -62,9 +62,31 @@ export class FisStackRdsAurora extends cdk.Stack {
       multiAz: true,
       securityGroups: [rdsSecurityGroup]
     });
+    
+    // Store things in SSM so we can coordinate multiple stacks
+    const rdsSecurityGroupParam = new ssm.StringParameter(this, 'FisWorkshopRdsSgId', {
+      parameterName: 'FisWorkshopRdsSgId',
+      stringValue: rdsSecurityGroup.securityGroupId
+    });
+    const rdsAuroraSecretArn = new ssm.StringParameter(this, 'FisWorkshopAuroraSecretArn', {
+      parameterName: 'FisWorkshopAuroraSecretArn',
+      stringValue: aurora.secret?.secretFullArn ? aurora.secret?.secretFullArn : "UNDEFINED" 
+    });
+    const rdsMysqlSecretArn = new ssm.StringParameter(this, 'FisWorkshopMysqlSecretArn', {
+      parameterName: 'FisWorkshopMysqlSecretArn',
+      stringValue: mysql.secret?.secretFullArn ? mysql.secret?.secretFullArn : "UNDEFINED" 
+    });
 
-    const auroraConnectionString = new cdk.CfnOutput(this, 'FisAuroraConnectionString', {value: aurora.clusterEndpoint.hostname});
-    const mysqlConnectionString = new cdk.CfnOutput(this, 'FisMysqlConnectionString', {value: mysql.dbInstanceEndpointAddress});
-    const securityGroupParam = new cdk.CfnOutput(this, 'FisRdsSgParam', {value: rdsSecurityGroupParam.stringValue});
+    // Expose values to workshop users
+    const auroraHostName = new cdk.CfnOutput(this, 'FisAuroraHostName', {value: aurora.clusterEndpoint.hostname});
+    const mysqlHostName = new cdk.CfnOutput(this, 'FisMysqlHostName', {value: mysql.dbInstanceEndpointAddress});
+    // const securityGroupParam = new cdk.CfnOutput(this, 'FisRdsSgParam', {value: rdsSecurityGroupParam.stringValue});
+
+    const auroraSecret = new cdk.CfnOutput(this,"FisAuroraSecret", {value: aurora.secret?.secretFullArn ? aurora.secret?.secretFullArn : "UNDEFINED" })
+    const mysqlSecret = new cdk.CfnOutput(this,"FisMysqlSecret", {value: mysql.secret?.secretFullArn ? mysql.secret?.secretFullArn : "UNDEFINED" })
+
+    // const retrieveMysqlSecret = secretsmanager.Secret.f fromSecretAttributes(this,"FisAuroraSecret2",{ secretCompleteArn: aurora.secret?.secretFullArn } );
+    // // retrieveMysqlSecret.secretValueFromJson()
+    // const auroraLookup = new cdk.CfnOutput(this,"auroraLookup", {value: retrieveMysqlSecret.secretValueFromJson("host").toString()})
   }
 }

@@ -6,7 +6,8 @@ import * as alb from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as log from '@aws-cdk/aws-logs';
 import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import * as mustache from 'mustache';
-
+import * as ssm from '@aws-cdk/aws-ssm';
+import * as rds from '@aws-cdk/aws-rds';
 
 // import * as rds from '@aws-cdk/aws-rds';
 import * as fs  from 'fs';
@@ -25,6 +26,12 @@ export class AsgCdkTestStack extends cdk.Stack {
     
     // Create ASG
 
+    // Do bad things with security groups because CDK doesn't allow multiple SGs on Launch configs
+    const rdsSgId = ssm.StringParameter.fromStringParameterAttributes(this, 'MyValue', {
+      parameterName: 'FisWorkshopRdsSgId'
+    }).stringValue;
+    const rdsSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, 'FisWorkshopRdsSg', rdsSgId);
+
     const mySecurityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
       vpc,
       description: 'Allow HTTP access to ec2 instances',
@@ -35,6 +42,9 @@ export class AsgCdkTestStack extends cdk.Stack {
       ec2.Port.tcp(80), 
       'allow http access from the world'
     );
+    mySecurityGroup.connections.allowFrom(rdsSecurityGroup,ec2.Port.allTcp())
+    rdsSecurityGroup.connections.allowFrom(mySecurityGroup,ec2.Port.allTcp())
+
 
     const amazon2 = ec2.MachineImage.fromSSMParameter(
       '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-ebs', 
@@ -45,8 +55,13 @@ export class AsgCdkTestStack extends cdk.Stack {
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'),
         iam.ManagedPolicy.fromAwsManagedPolicyName('CloudWatchAgentServerPolicy')
-      ]
+      ],
     });
+    instanceRole.addToPrincipalPolicy(new iam.PolicyStatement({
+      resources: ['*'], // TODO find a way to query this 
+      actions: ['secretsmanager:GetSecretValue'],
+      effect: iam.Effect.ALLOW
+    }));
 
     const myASG = new autoscaling.AutoScalingGroup(this, 'ASG', {
       vpc,
@@ -58,6 +73,48 @@ export class AsgCdkTestStack extends cdk.Stack {
       groupMetrics: [autoscaling.GroupMetrics.all()],
       desiredCapacity: 1,
       init: ec2.CloudFormationInit.fromElements(
+        ec2.InitFile.fromString('/home/ec2-user/.aws/config',
+          `[default]\nregion = ${this.region}\n`, {
+          mode: '000600',
+          owner: 'ec2-user',
+          group: 'ec2-user'
+        }),
+        ec2.InitFile.fromString(
+          '/home/ec2-user/create_db.py', 
+          mustache.render(fs.readFileSync('./assets/create_db.py', 'utf8'),{
+            auroraSecretArn: 'FisAuroraSecret', //TODO: figure out a way to query this from secretmanager
+            mysqlSecretArn: 'FisMysqlSecret', //TODO: figure out a way to query this from secretmanager
+          }),          
+          {
+            mode: '000755',
+            owner: 'ec2-user',
+            group: 'ec2-user'
+            }
+        ),
+        ec2.InitFile.fromString(
+          '/home/ec2-user/test_mysql_connector_curses.py', 
+          mustache.render(fs.readFileSync('./assets/test_mysql_connector_curses.py', 'utf8'),{
+            auroraSecretArn: 'FisAuroraSecret', //TODO: figure out a way to query this from secretmanager
+            mysqlSecretArn: 'FisMysqlSecret', //TODO: figure out a way to query this from secretmanager
+          }),          
+          {
+            mode: '000755',
+            owner: 'ec2-user',
+            group: 'ec2-user'
+            }
+        ),
+        ec2.InitFile.fromString(
+          '/home/ec2-user/test_pymysql_curses.py', 
+          mustache.render(fs.readFileSync('./assets/test_pymysql_curses.py', 'utf8'),{
+            auroraSecretArn: 'FisAuroraSecret', //TODO: figure out a way to query this from secretmanager
+            mysqlSecretArn: 'FisMysqlSecret', //TODO: figure out a way to query this from secretmanager
+          }),          
+          {
+            mode: '000755',
+            owner: 'ec2-user',
+            group: 'ec2-user'
+            }
+        ),
         ec2.InitFile.fromString(
           '/opt/aws/amazon-cloudwatch-agent/bin/config.json', 
           mustache.render(fs.readFileSync('./assets/cwagent-config.json', 'utf8'),{
