@@ -17,3 +17,5 @@
 .aws-sam
 
 outputs.json
+cdk.context.json
+outputs.json
