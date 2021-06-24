@@ -42,4 +42,15 @@ Like tenets all of these are up for debate
 * ultimate deliverable has to work with EE and thus be CFN code but we are ok starting with CDK. If you want to use CDK for any part please use TS so we can easily integrate
 * backlog is currently under [issues, labeled with "backlog"](resources/templates/)
 * you can't push straight to main, we want pull-requests. If reviews become a bottleneck we can revisit this
-
+* suggested structure for each section so we don't just focus on "click here":
+  ```
+  ## Experiment idea
+  Idea
+  * **Given**: our setup for resilience
+  * **Hypothesis**: breaking component x will have no adverse effect / will have adverse effect quantified below critical threshold
+  ## Experiment setup
+  ## Validation procedure
+  ## Run FIS experiment
+  ### Review results
+  ## Learning and improving
+  ```
