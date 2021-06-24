@@ -4,13 +4,16 @@ date =  2021-04-14T17:25:17-06:00
 weight = 3
 +++
 
-In the previous section we saw how
+## Experiment idea
 
-* hypothesis: with ASG killing off an instance under normal load will not negatively affect users
+In the previous section we ensured that we can measure the user experience. We have also configured an autoscaling group that should ensure that we can "always" provide a good experience to the customer. Let's validate this:
 
-* do not scale up
+* **Given**: we have an autoscaling group with multiple instances
+* **Hypothesis**: failure of a single EC2 instances may lead to slower response times but our customers will always have service.
 
-## Create FIS service role
+## Experiment setup
+
+### Create FIS service role
 
 We need to create a [role for the FIS service](https://docs.aws.amazon.com/fis/latest/userguide/getting-started-iam.html#getting-started-iam-service-role) to grant it permissions to inject chaos. While we could have pre-created this role for you we think it is important to review the scope of this role.
 
@@ -151,7 +154,7 @@ Replace the policy document with the following:
 ```
 
 
-## Create FIS experiment template
+### Create FIS experiment template
 
 To run an experiment we need to first create a template _defining_ the [Actions](https://docs.aws.amazon.com/fis/latest/userguide/actions.html), [Targets](https://docs.aws.amazon.com/fis/latest/userguide/targets.html), and optionally [Stop Conditions](https://docs.aws.amazon.com/fis/latest/userguide/stop-conditions.html).  
 
@@ -165,19 +168,19 @@ Note: if you've used FIS before you may not see the splash screen. In that case 
 
 For our first experiment we will jump around in the definition page so follow closely.
 
-### Template name
+#### Template name
 
 First, let's give our template a short name to be used on the list page. To do this scroll to the "Tags" section at the bottom, select "Add new tag", then enter `Name` in the "Key" field and `FisWorkshopExp1` for "Value"
 
 {{< img "create-template-2-name.en.png" "Set FIS template name" >}}
 
-### Template description and permissions
+#### Template description and permissions
 
 Next let's set description and role for the first run of the experiment. Scroll back to the "Description and permission" section at the top. For "Description" enter `Terminate half of the instances in the autoscaling group` and for "Role" select the `FisWorkshopServiceRole` role you created above.
 
 {{< img "create-template-2-description.en.png" "Set FIS description and role" >}}
 
-### Target selection
+#### Target selection
 
 Now we need to define targets. For our first experiment we will start with the hypothesis that due to our auto-scaling setup we can safely impact half the instances in our autoscaling group. Scroll to the "Targets" section and select "Add Target"
 
@@ -187,7 +190,7 @@ On the "Add target" popup enter `FisWorkshopAsg-50Percent` for name and select `
 
 {{< img "create-template-2-targets-2.en.png" "Add FIS target" >}}
 
-### Action definition
+#### Action definition
 
 With targets defined we define the action to take. To test the hypothesis that we can safely impact half the instances in our autoscaling group we will terminate those instances. Scroll to the "Actions" section" and select "Add Action"
 
@@ -201,7 +204,7 @@ Under "Target" select the `FisWorkshopAsg-50Percent` target created above. Selec
 
 {{< img "create-template-2-actions-2.en.png" "Add FIS actions" >}}
 
-### Creating template without stop conditions
+#### Creating template without stop conditions
 
 Scroll to the bottom of the template definition page and select "Create experiment template". Since we didn't specify a stop condition we receive a warning:
 
@@ -210,6 +213,10 @@ Scroll to the bottom of the template definition page and select "Create experime
 This is ok, for this experiment we don't need a stop condition. Type `create` in the text box as indicated and select "Create experiment template".
 
 {{< img "create-template-3-confirm.en.png" "Save FIS template" >}}
+
+## Validation procedure
+
+We will be using the CloudWatch dashboard from the previous sections for validaton, no additional setup required.
 
 ## Run FIS experiment
 
@@ -246,7 +253,7 @@ Because you are about to start a potentially destructive process you will be ask
 
 {{< img "start-experiment-3.en.png" "Start experiment" >}}
 
-## Review results
+### Review results
 
 If you are not already on the pane viewing your experiment, navigate to the [FIS console](https://console.aws.amazon.com/fis/home?#Experiments), select "Experiments", and select the experiment ID for the experiment you just started.
 
@@ -257,6 +264,8 @@ Look at the "State" entry. If this still shows pending, feel free to select the 
 Click on the failed result to get more information about why it failed. The message should say "Target resolution returned empty set". To see why this would happen, have a look at the autoscaling group from which we tried to select instances. Navigate to the [EC2 console](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select "Auto Scaling Groups" on the bottom of the left menu, and search for "FisStackAsg-WebServerGroup":
 
 {{< img "review-1-asg-1.en.png" "Review ASG" >}}
+
+## Learning and improving
 
 It looks like our ASG was configured to scale down to just one instance while idle. Since we can't shut down half of one instance our 50% selector came up empty and the experiment failed.
 
@@ -444,3 +453,9 @@ aws fis get-experiment-template --id EXT5KVPKSbd2fEr5n
 ```
 
 {{% /expand %}}
+
+
+
+
+
+
