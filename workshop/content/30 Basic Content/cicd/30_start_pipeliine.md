@@ -1,7 +1,7 @@
 +++
 title = "Start the Pipeline"
 date =  2021-04-14T17:25:37-06:00
-weight = 20
+weight = 30
 +++
 
 To start our pipeline we need to commit files to our CodeCommit repository. 
@@ -54,3 +54,22 @@ Click on the pipeline name to view the step details.
 Wait for the infrastructure provisioning step to complete. 
 After this step, our Experiment will start.
 You can monitor the progress of your experiment from both the CodePipeline details page of the [FIS console](https://console.aws.amazon.com/fis/home?#Experiments). 
+
+Click on the running experiment.
+You should see the experiment in a running status. 
+
+![Running Experiment](fisrunning.png)
+
+After a few minutes refresh the page. 
+You should see the experiment is completed successfully.
+
+![Successful Experiment](fissuccessfully.png)
+
+Finally navigate back to the [AWS Code Pipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
+You should also see that your pipeline has completed successfully.
+
+![Successful Pipeline](codepipelinesuccessfully.png)
+
+Congratulations! You have successfully integrated a Fault Injection Simulator Experiment into a CICD pipeline.
+In this scenario, we completed a happy path to ensure that our infrastructure and experiment completed without error. 
+Continue on to the next section, where we will deploy a new version of our CloudFormation template and force our experiment (and pipeline) fail. 

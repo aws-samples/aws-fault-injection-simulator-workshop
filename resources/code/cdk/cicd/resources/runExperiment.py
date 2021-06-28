@@ -37,7 +37,7 @@ def main(argv):
     if(experimentStatus == 'completed'):
         return 0
     else: 
-        return -1
+        raise NameError('ExperimentFailed')
 
 def getExperimentTemplateID(experiment):
     print("Getting experiment template for " + experiment)

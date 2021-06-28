@@ -19,8 +19,6 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/AmazonSSMManagedInstanceCore
-    Metadata:
-      aws:cdk:path: FisExampleStack/ssm-instance-role/Resource
   instance0InstanceSecurityGroup56F2543E:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -41,15 +39,9 @@ Resources:
     Properties:
       Roles:
         - Ref: ssminstancerole0E7D791C
-    Metadata:
-      aws:cdk:path: FisExampleStack/instance-0/InstanceProfile
   instance0B661231D:
     Type: AWS::EC2::Instance
     Properties:
-      AvailabilityZone:
-        Fn::Select:
-          - 0
-          - Fn::GetAZs: ""
       IamInstanceProfile:
         Ref: instance0InstanceProfile493621FA
       ImageId:
@@ -59,6 +51,8 @@ Resources:
         - Fn::GetAtt:
             - instance0InstanceSecurityGroup56F2543E
             - GroupId
+      SubnetId:
+        Ref: SubnetParameterValue
       Tags:
         - Key: FIS-Target
           Value: "true"
@@ -85,8 +79,6 @@ Resources:
       Statistic: Average
       Threshold: 10
       TreatMissingData: missing
-    Metadata:
-      aws:cdk:path: FisExampleStack/cw-alarm/Resource
   fisrole33E76559:
     Type: AWS::IAM::Role
     Properties:
@@ -103,8 +95,6 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/AmazonEC2FullAccess
-    Metadata:
-      aws:cdk:path: FisExampleStack/fis-role/Resource
   fisroleDefaultPolicy53088256:
     Type: AWS::IAM::Policy
     Properties:
@@ -120,8 +110,6 @@ Resources:
       PolicyName: fisroleDefaultPolicy53088256
       Roles:
         - Ref: fisrole33E76559
-    Metadata:
-      aws:cdk:path: FisExampleStack/fis-role/DefaultPolicy/Resource
   fistemplatedemostopinstance:
     Type: AWS::FIS::ExperimentTemplate
     Properties:
@@ -131,11 +119,12 @@ Resources:
           - fisrole33E76559
           - Arn
       StopConditions:
-        - Source: aws:cloudwatch:alarm
-          Value:
-            Fn::GetAtt:
-              - cwalarm8A77F56F
-              - Arn
+        - Source: none
+      #  - Source: aws:cloudwatch:alarm
+      #    Value:
+      #      Fn::GetAtt:
+      #        - cwalarm8A77F56F
+      #        - Arn
       Tags:
         Name: StopStartInstanceById
       Targets:
@@ -158,11 +147,11 @@ Resources:
             startInstancesAfterDuration: PT1M
           Targets:
             Instances: instanceTargets
-    Metadata:
-      aws:cdk:path: FisExampleStack/fis-template-demo-stop-instance
 Parameters:
   SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
   VPCParameterValue:
     Type: AWS::EC2::VPC::Id
+  SubnetParameterValue:
+    Type: AWS::EC2::Subnet::Id
