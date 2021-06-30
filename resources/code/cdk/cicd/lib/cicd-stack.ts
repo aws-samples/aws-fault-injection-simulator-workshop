@@ -4,11 +4,16 @@ import * as codecommit from '@aws-cdk/aws-codecommit';
 import * as codepipeline from '@aws-cdk/aws-codepipeline';
 import * as codepipeline_actions from '@aws-cdk/aws-codepipeline-actions';
 import * as iam from '@aws-cdk/aws-iam'
+import * as ec2 from '@aws-cdk/aws-ec2'
 
 export class CicdStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const vpc = ec2.Vpc.fromLookup(this, 'FisVpc', { 
+      vpcName: 'FisStackVpc/FisVpc'
+    });
+    
     const fisRepo = new codecommit.Repository(this,'fisRepo',{
       repositoryName: "FIS_Workshop",
       description: "Sample Fault Injection Simulator Workshop Repository",
@@ -52,7 +57,11 @@ export class CicdStack extends cdk.Stack {
               actionName: "Create_Infrastructure",
               stackName: "fisWorkshopDemo",
               adminPermissions: true,
-              templatePath: new codepipeline.ArtifactPath(sourceOutput, "cfn_fis_demos.yaml")
+              templatePath: new codepipeline.ArtifactPath(sourceOutput, "cfn_fis_demos.yaml"),
+              parameterOverrides: {
+                VPCParameterValue: vpc.vpcId,
+                SubnetParameterValue: vpc.publicSubnets[0].subnetId
+              }
             })
           ]
         },
