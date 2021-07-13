@@ -18,12 +18,18 @@ export class AsgCdkTestStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    // Set some constants for convenience
+
+    const nginxAccessLogGroup = '/fis-workshop/asg-access-log';
+    const nginxErrorLogGroup = '/fis-workshop/asg-error-log';
+    
     // Query existing resources - will this work if we pull this into an app?
 
     const vpc = ec2.Vpc.fromLookup(this, 'FisVpc', { 
       vpcName: 'FisStackVpc/FisVpc'
     });
     
+
     // Create ASG
 
     // Do bad things with security groups because CDK doesn't allow multiple SGs on Launch configs
@@ -65,7 +71,7 @@ export class AsgCdkTestStack extends cdk.Stack {
 
     const myASG = new autoscaling.AutoScalingGroup(this, 'ASG', {
       vpc,
-      instanceType: new ec2.InstanceType('t3.large'),
+      instanceType: new ec2.InstanceType('t2.micro'),
       role: instanceRole,
       machineImage: amazon2,
       minCapacity: 1,
@@ -118,7 +124,8 @@ export class AsgCdkTestStack extends cdk.Stack {
         ec2.InitFile.fromString(
           '/opt/aws/amazon-cloudwatch-agent/bin/config.json', 
           mustache.render(fs.readFileSync('./assets/cwagent-config.json', 'utf8'),{
-            accessLogPath: "/fis-workshop"
+            nginxAccessLogGroup,
+            nginxErrorLogGroup
           }),          
           {
             mode: '000644',
@@ -170,7 +177,11 @@ export class AsgCdkTestStack extends cdk.Stack {
     const userDataScript = fs.readFileSync('./assets/user-data.sh', 'utf8');
     myASG.addUserData(userDataScript);
 
-    
+    myASG.scaleOnCpuUtilization('KeepSpareCPU', {
+      targetUtilizationPercent: 50,
+      cooldown: cdk.Duration.minutes(1)
+    });
+
     const lb = new alb.ApplicationLoadBalancer(this, 'FisAsgLb', {
       vpc,
       internetFacing: true
@@ -187,12 +198,12 @@ export class AsgCdkTestStack extends cdk.Stack {
 
     listener.connections.allowDefaultPortFromAnyIpv4('Open to the world');
 
-    const lbUrl = new cdk.CfnOutput(this, 'FisAsgUrl', {value: lb.loadBalancerDnsName});
+    const lbUrl = new cdk.CfnOutput(this, 'FisAsgUrl', {value: 'http://' + lb.loadBalancerDnsName});
 
     // Set up logs, metrics, and dashboards
 
     const logGroupNginxAccess = new log.LogGroup(this, 'FisLogGroupNginxAccess', {
-      logGroupName: '/fis-workshop/asg-access-log',
+      logGroupName: nginxAccessLogGroup,
       retention: log.RetentionDays.ONE_WEEK,
     });
     
@@ -217,7 +228,7 @@ export class AsgCdkTestStack extends cdk.Stack {
     });        
 
     const logGroupNginxError = new log.LogGroup(this, 'FisLogGroupNginxError', {
-      logGroupName: '/fis-workshop/asg-error-log',
+      logGroupName: nginxErrorLogGroup,
       retention: log.RetentionDays.ONE_WEEK,
     });
 

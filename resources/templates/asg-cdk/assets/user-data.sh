@@ -31,7 +31,7 @@ php_value[session.save_path]    = /var/lib/php/session
 php_value[soap.wsdl_cache_dir]  = /var/lib/php/wsdlcache
 EOF
 # Update nginx config
-mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
+# mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
 mv /etc/nginx/conf.d/php-fpm.conf /etc/nginx/conf.d/php-fpm.conf.orig
 mv /etc/nginx/default.d/php.conf /etc/nginx/default.d/php.conf.orig
 # cat >/etc/nginx/nginx.conf <<"EOT"
