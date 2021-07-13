@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -30,7 +31,11 @@ func handler(control controlData) {
 
 	// Parameter validation and setting defaults
 	if control.ConnectionTargetUrl == "" {
-		log.Fatal("Must provide at least ConnectionTargetUrl in calling paramweters!")
+		log.Fatal("Must provide at least ConnectionTargetUrl in calling parameters!")
+		return
+	}
+	if !(strings.HasPrefix(control.ConnectionTargetUrl, "http://") || strings.HasPrefix(control.ConnectionTargetUrl, "https://")) {
+		log.Fatal("Must provide at least ConnectionTargetUrl in calling parameters!")
 		return
 	}
 	if control.ExperimentDurationSeconds == 0 {
