@@ -5,6 +5,7 @@ import * as autoscaling from '@aws-cdk/aws-autoscaling';
 import * as alb from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as log from '@aws-cdk/aws-logs';
 import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
+import * as cwactions from '@aws-cdk/aws-cloudwatch-actions';
 import * as mustache from 'mustache';
 import * as ssm from '@aws-cdk/aws-ssm';
 import * as rds from '@aws-cdk/aws-rds';
@@ -12,7 +13,7 @@ import * as rds from '@aws-cdk/aws-rds';
 // import * as rds from '@aws-cdk/aws-rds';
 import * as fs  from 'fs';
 import { isMainThread } from 'worker_threads';
-import { GroupMetrics } from '@aws-cdk/aws-autoscaling';
+import { AdjustmentType, AutoScalingGroup, GroupMetrics, StepScalingAction } from '@aws-cdk/aws-autoscaling';
 
 export class AsgCdkTestStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -177,10 +178,73 @@ export class AsgCdkTestStack extends cdk.Stack {
     const userDataScript = fs.readFileSync('./assets/user-data.sh', 'utf8');
     myASG.addUserData(userDataScript);
 
-    myASG.scaleOnCpuUtilization('KeepSpareCPU', {
-      targetUtilizationPercent: 50,
-      cooldown: cdk.Duration.minutes(1)
+    // This works but doesn't expose alarms for introspection
+    // Moving to explicit alarm based scaling instead
+    //
+    // myASG.scaleOnCpuUtilization('KeepSpareCPU', {
+    //   targetUtilizationPercent: 50,
+    //   cooldown: cdk.Duration.minutes(1)
+    // });
+
+    // This works but doesn't allow asymmetric timing
+    //
+    // myASG.scaleOnMetric('ScaleOnCpu', {
+    //   metric: myAsgCpuMetric,
+    //   evaluationPeriods: 1,
+    //   scalingSteps: [
+    //     { upper: 90, change: +1 },
+    //     { lower: 20, change: -1 }
+    //   ]
+    // });
+
+    // This is a bit convoluted in comparison to CFN but at least
+    // exposes the same controls
+    
+    const myAsgCpuMetric = new cloudwatch.Metric({
+      namespace: 'AWS/EC2',
+      metricName: 'CPUUtilization',
+      dimensions: { 
+        'AutoScalingGroupName': myASG.autoScalingGroupName
+      },
+      period: cdk.Duration.minutes(1) 
     });
+
+    const myAsgCpuAlarmHigh = new cloudwatch.Alarm(this, 'FisAsgHighCpuAlarm', {
+      metric: myAsgCpuMetric,
+      threshold: 90.0,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      evaluationPeriods: 1,
+      datapointsToAlarm: 1,
+    });
+
+    const myAsgCpuAlarmLow = new cloudwatch.Alarm(this, 'FisAsgLowCpuAlarm', {
+      metric: myAsgCpuMetric,
+      threshold: 20.0,
+      comparisonOperator: cloudwatch.ComparisonOperator.LESS_THAN_OR_EQUAL_TO_THRESHOLD,
+      evaluationPeriods: 3,
+      datapointsToAlarm: 2,
+    });
+
+    const myAsgManualScalingActionUp = new autoscaling.StepScalingAction(this,"ScaleUp", {
+      autoScalingGroup: myASG,
+      adjustmentType: autoscaling.AdjustmentType.CHANGE_IN_CAPACITY
+    });
+    myAsgManualScalingActionUp.addAdjustment({
+      adjustment: 1, 
+      lowerBound: 1
+    });
+    myAsgCpuAlarmHigh.addAlarmAction(new cwactions.AutoScalingAction(myAsgManualScalingActionUp))
+
+    const myAsgManualScalingActionDown = new autoscaling.StepScalingAction(this,"ScaleDown", {
+      autoScalingGroup: myASG,
+      adjustmentType: autoscaling.AdjustmentType.CHANGE_IN_CAPACITY
+    });
+    myAsgManualScalingActionDown.addAdjustment({
+      adjustment: -1,
+      lowerBound: 1
+    });
+    myAsgCpuAlarmLow.addAlarmAction(new cwactions.AutoScalingAction(myAsgManualScalingActionDown))
+
 
     const lb = new alb.ApplicationLoadBalancer(this, 'FisAsgLb', {
       vpc,
