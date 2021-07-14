@@ -214,7 +214,7 @@ export class AsgCdkTestStack extends cdk.Stack {
       threshold: 90.0,
       comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       evaluationPeriods: 1,
-      datapointsToAlarm: 1,
+      // datapointsToAlarm: 1,
     });
 
     const myAsgCpuAlarmLow = new cloudwatch.Alarm(this, 'FisAsgLowCpuAlarm', {
@@ -222,26 +222,30 @@ export class AsgCdkTestStack extends cdk.Stack {
       threshold: 20.0,
       comparisonOperator: cloudwatch.ComparisonOperator.LESS_THAN_OR_EQUAL_TO_THRESHOLD,
       evaluationPeriods: 3,
-      datapointsToAlarm: 2,
+      // datapointsToAlarm: 2,
     });
 
     const myAsgManualScalingActionUp = new autoscaling.StepScalingAction(this,"ScaleUp", {
       autoScalingGroup: myASG,
-      adjustmentType: autoscaling.AdjustmentType.CHANGE_IN_CAPACITY
+      adjustmentType: autoscaling.AdjustmentType.CHANGE_IN_CAPACITY,
+      // cooldown: cdk.Duration.minutes(1)
     });
     myAsgManualScalingActionUp.addAdjustment({
-      adjustment: 1, 
-      lowerBound: 1
+      adjustment: 1,
+      lowerBound: 0,
+      // upperBound: 100
     });
     myAsgCpuAlarmHigh.addAlarmAction(new cwactions.AutoScalingAction(myAsgManualScalingActionUp))
 
     const myAsgManualScalingActionDown = new autoscaling.StepScalingAction(this,"ScaleDown", {
       autoScalingGroup: myASG,
-      adjustmentType: autoscaling.AdjustmentType.CHANGE_IN_CAPACITY
+      adjustmentType: autoscaling.AdjustmentType.CHANGE_IN_CAPACITY,
+      // cooldown: cdk.Duration.minutes(1)
     });
     myAsgManualScalingActionDown.addAdjustment({
       adjustment: -1,
-      lowerBound: 1
+      upperBound: 0,
+      // lowerBound: -100
     });
     myAsgCpuAlarmLow.addAlarmAction(new cwactions.AutoScalingAction(myAsgManualScalingActionDown))
 
