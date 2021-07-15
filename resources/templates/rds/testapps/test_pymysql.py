@@ -3,6 +3,8 @@ import pymysql
 import random
 import sys
 import signal
+import boto3
+import json
 
 def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
@@ -11,11 +13,15 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 def init_aurora():
+    client = boto3.client('secretsmanager')
+    # response = json.loads(client.get_secret_value(SecretId={{{auroraSecretArn}}}))
+    response = json.loads(client.get_secret_value(SecretId='FisAuroraSecret')['SecretString'])
+
     mydb = pymysql.connect(
-        user="admin",
-        password="DbAdmin1!",
-        host="aurora-mysql-prod.cluster-ckbixk6kxbqw.us-west-2.rds.amazonaws.com",
-        database="testdb",
+        user=response['username'],
+        password=response['password'],
+        host=response['host'],
+        database='testdb',
         read_timeout=1,
         write_timeout=1,
         connect_timeout=1
@@ -23,11 +29,15 @@ def init_aurora():
     return mydb
 
 def init_rds():
+    client = boto3.client('secretsmanager')
+    # response = json.loads(client.get_secret_value(SecretId={{{mysqlSecretArn}}}))
+    response = json.loads(client.get_secret_value(SecretId='FisMysqlSecret')['SecretString'])
+
     mydb = pymysql.connect(
-        user="admin",
-        password="DbAdmin1!",
-        host="standard-mysql-prod.ckbixk6kxbqw.us-west-2.rds.amazonaws.com",
-        database="testdb",
+        user=response['username'],
+        password=response['password'],
+        host=response['host'],
+        database='testdb',
         read_timeout=1,
         write_timeout=1,
         connect_timeout=1
