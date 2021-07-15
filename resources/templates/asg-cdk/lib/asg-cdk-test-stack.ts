@@ -5,6 +5,7 @@ import * as autoscaling from '@aws-cdk/aws-autoscaling';
 import * as alb from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as log from '@aws-cdk/aws-logs';
 import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
+import * as cwactions from '@aws-cdk/aws-cloudwatch-actions';
 import * as mustache from 'mustache';
 import * as ssm from '@aws-cdk/aws-ssm';
 import * as rds from '@aws-cdk/aws-rds';
@@ -12,18 +13,24 @@ import * as rds from '@aws-cdk/aws-rds';
 // import * as rds from '@aws-cdk/aws-rds';
 import * as fs  from 'fs';
 import { isMainThread } from 'worker_threads';
-import { GroupMetrics } from '@aws-cdk/aws-autoscaling';
+import { AdjustmentType, AutoScalingGroup, GroupMetrics, StepScalingAction } from '@aws-cdk/aws-autoscaling';
 
 export class AsgCdkTestStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    // Set some constants for convenience
+
+    const nginxAccessLogGroup = '/fis-workshop/asg-access-log';
+    const nginxErrorLogGroup = '/fis-workshop/asg-error-log';
+    
     // Query existing resources - will this work if we pull this into an app?
 
     const vpc = ec2.Vpc.fromLookup(this, 'FisVpc', { 
       vpcName: 'FisStackVpc/FisVpc'
     });
     
+
     // Create ASG
 
     // Do bad things with security groups because CDK doesn't allow multiple SGs on Launch configs
@@ -65,7 +72,7 @@ export class AsgCdkTestStack extends cdk.Stack {
 
     const myASG = new autoscaling.AutoScalingGroup(this, 'ASG', {
       vpc,
-      instanceType: new ec2.InstanceType('t3.large'),
+      instanceType: new ec2.InstanceType('t2.micro'),
       role: instanceRole,
       machineImage: amazon2,
       minCapacity: 1,
@@ -118,7 +125,8 @@ export class AsgCdkTestStack extends cdk.Stack {
         ec2.InitFile.fromString(
           '/opt/aws/amazon-cloudwatch-agent/bin/config.json', 
           mustache.render(fs.readFileSync('./assets/cwagent-config.json', 'utf8'),{
-            accessLogPath: "/fis-workshop"
+            nginxAccessLogGroup,
+            nginxErrorLogGroup
           }),          
           {
             mode: '000644',
@@ -170,7 +178,78 @@ export class AsgCdkTestStack extends cdk.Stack {
     const userDataScript = fs.readFileSync('./assets/user-data.sh', 'utf8');
     myASG.addUserData(userDataScript);
 
+    // This works but doesn't expose alarms for introspection
+    // Moving to explicit alarm based scaling instead
+    //
+    // myASG.scaleOnCpuUtilization('KeepSpareCPU', {
+    //   targetUtilizationPercent: 50,
+    //   cooldown: cdk.Duration.minutes(1)
+    // });
+
+    // This works but doesn't allow asymmetric timing
+    //
+    // myASG.scaleOnMetric('ScaleOnCpu', {
+    //   metric: myAsgCpuMetric,
+    //   evaluationPeriods: 1,
+    //   scalingSteps: [
+    //     { upper: 90, change: +1 },
+    //     { lower: 20, change: -1 }
+    //   ]
+    // });
+
+    // This is a bit convoluted in comparison to CFN but at least
+    // exposes the same controls
     
+    const myAsgCpuMetric = new cloudwatch.Metric({
+      namespace: 'AWS/EC2',
+      metricName: 'CPUUtilization',
+      dimensions: { 
+        'AutoScalingGroupName': myASG.autoScalingGroupName
+      },
+      period: cdk.Duration.minutes(1) 
+    });
+
+    const myAsgCpuAlarmHigh = new cloudwatch.Alarm(this, 'FisAsgHighCpuAlarm', {
+      metric: myAsgCpuMetric,
+      threshold: 90.0,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      evaluationPeriods: 1,
+      // datapointsToAlarm: 1,
+    });
+
+    const myAsgCpuAlarmLow = new cloudwatch.Alarm(this, 'FisAsgLowCpuAlarm', {
+      metric: myAsgCpuMetric,
+      threshold: 20.0,
+      comparisonOperator: cloudwatch.ComparisonOperator.LESS_THAN_OR_EQUAL_TO_THRESHOLD,
+      evaluationPeriods: 3,
+      // datapointsToAlarm: 2,
+    });
+
+    const myAsgManualScalingActionUp = new autoscaling.StepScalingAction(this,"ScaleUp", {
+      autoScalingGroup: myASG,
+      adjustmentType: autoscaling.AdjustmentType.CHANGE_IN_CAPACITY,
+      // cooldown: cdk.Duration.minutes(1)
+    });
+    myAsgManualScalingActionUp.addAdjustment({
+      adjustment: 1,
+      lowerBound: 0,
+      // upperBound: 100
+    });
+    myAsgCpuAlarmHigh.addAlarmAction(new cwactions.AutoScalingAction(myAsgManualScalingActionUp))
+
+    const myAsgManualScalingActionDown = new autoscaling.StepScalingAction(this,"ScaleDown", {
+      autoScalingGroup: myASG,
+      adjustmentType: autoscaling.AdjustmentType.CHANGE_IN_CAPACITY,
+      // cooldown: cdk.Duration.minutes(1)
+    });
+    myAsgManualScalingActionDown.addAdjustment({
+      adjustment: -1,
+      upperBound: 0,
+      // lowerBound: -100
+    });
+    myAsgCpuAlarmLow.addAlarmAction(new cwactions.AutoScalingAction(myAsgManualScalingActionDown))
+
+
     const lb = new alb.ApplicationLoadBalancer(this, 'FisAsgLb', {
       vpc,
       internetFacing: true
@@ -187,12 +266,12 @@ export class AsgCdkTestStack extends cdk.Stack {
 
     listener.connections.allowDefaultPortFromAnyIpv4('Open to the world');
 
-    const lbUrl = new cdk.CfnOutput(this, 'FisAsgUrl', {value: lb.loadBalancerDnsName});
+    const lbUrl = new cdk.CfnOutput(this, 'FisAsgUrl', {value: 'http://' + lb.loadBalancerDnsName});
 
     // Set up logs, metrics, and dashboards
 
     const logGroupNginxAccess = new log.LogGroup(this, 'FisLogGroupNginxAccess', {
-      logGroupName: '/fis-workshop/asg-access-log',
+      logGroupName: nginxAccessLogGroup,
       retention: log.RetentionDays.ONE_WEEK,
     });
     
@@ -217,7 +296,7 @@ export class AsgCdkTestStack extends cdk.Stack {
     });        
 
     const logGroupNginxError = new log.LogGroup(this, 'FisLogGroupNginxError', {
-      logGroupName: '/fis-workshop/asg-error-log',
+      logGroupName: nginxErrorLogGroup,
       retention: log.RetentionDays.ONE_WEEK,
     });
 

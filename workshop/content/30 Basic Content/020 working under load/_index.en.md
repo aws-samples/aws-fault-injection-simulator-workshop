@@ -86,7 +86,7 @@ for ii in 1 2 3; do
     --function-name ${LAMBDA_ARN} \
     --payload "{
           \"ConnectionTargetUrl\": \"${URL_PHP}\", 
-          \"ExperimentDurationSeconds\": 180,
+          \"ExperimentDurationSeconds\": 300,
           \"ConnectionsPerSecond\": 1000,
           \"ReportingMilliseconds\": 1000,
           \"ConnectionTimeoutMilliseconds\": 2000,

@@ -8,23 +8,23 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "AVG(SEARCH('goad AND error_connect', 'Sum', 1))", "id": "error_connect", "period": 1, "color": "#d62728", "region": "{{{region}}}" } ],
-                    [ { "expression": "AVG(SEARCH('goad AND error_read',    'Sum', 1))", "id": "error_read",    "period": 1, "color": "#e377c2", "region": "{{{region}}}" } ],
-                    [ { "expression": "AVG(SEARCH('goad AND status_5xx',    'Sum', 1))", "id": "status_5xx",    "period": 1, "color": "#ff9896", "region": "{{{region}}}" } ],
-                    [ { "expression": "AVG(SEARCH('goad AND status_4xx',    'Sum', 1))", "id": "status_4xx",    "period": 1, "color": "#f7b6d2", "region": "{{{region}}}" } ],
-                    [ { "expression": "AVG(SEARCH('goad AND status_2xx',    'Sum', 1))", "id": "status_2xx",    "period": 1, "color": "#98df8a", "region": "{{{region}}}" } ],
-                    [ { "expression": "AVG(SEARCH('goad AND success',       'Sum', 1))", "id": "success",       "period": 1, "color": "#bcbd22", "region": "{{{region}}}" } ]
+                    [ { "expression": "SUM(SEARCH('{goad,SiteName} MetricName=error_connect', 'Sum', 10)) / DATAPOINT_COUNT(SEARCH('{goad,SiteName} MetricName=error_connect', 'Sum', 10))", "id": "error_connect", "period": 10, "color": "#d62728", "region": "{{{region}}}" } ],
+                    [ { "expression": "SUM(SEARCH('{goad,SiteName} MetricName=error_read',    'Sum', 10)) / DATAPOINT_COUNT(SEARCH('{goad,SiteName} MetricName=error_read',    'Sum', 10))", "id": "error_read",    "period": 10, "color": "#e377c2", "region": "{{{region}}}" } ],
+                    [ { "expression": "SUM(SEARCH('{goad,SiteName} MetricName=status_5xx',    'Sum', 10)) / DATAPOINT_COUNT(SEARCH('{goad,SiteName} MetricName=status_5xx',    'Sum', 10))", "id": "status_5xx",    "period": 10, "color": "#ff9896", "region": "{{{region}}}" } ],
+                    [ { "expression": "SUM(SEARCH('{goad,SiteName} MetricName=status_4xx',    'Sum', 10)) / DATAPOINT_COUNT(SEARCH('{goad,SiteName} MetricName=status_4xx',    'Sum', 10))", "id": "status_4xx",    "period": 10, "color": "#f7b6d2", "region": "{{{region}}}" } ],
+                    [ { "expression": "SUM(SEARCH('{goad,SiteName} MetricName=status_2xx',    'Sum', 10)) / DATAPOINT_COUNT(SEARCH('{goad,SiteName} MetricName=status_2xx',    'Sum', 10))", "id": "status_2xx",    "period": 10, "color": "#98df8a", "region": "{{{region}}}" } ],
+                    [ { "expression": "SUM(SEARCH('{goad,SiteName} MetricName=success',       'Sum', 10)) / DATAPOINT_COUNT(SEARCH('{goad,SiteName} MetricName=success',       'Sum', 10))", "id": "success",       "period": 10, "color": "#bcbd22", "region": "{{{region}}}" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "{{{region}}}",
                 "stat": "Average",
-                "period": 1,
-                "title": "goad connection status",
+                "period": 10,
+                "title": "Customer (load test) connection status",
                 "yAxis": {
                     "left": {
-                        "min": 0,
-                        "max": 100
+                        "label": "count",
+                        "min": 0
                     },
                     "right": {
                         "min": 0
@@ -40,23 +40,24 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "AVG(SEARCH('goad AND duration_max', 'Average', 1))", "id": "duration_max", "period": 1, "color": "#1f77b4", "region": "{{{region}}}" } ],
-                    [ { "expression": "AVG(SEARCH('goad AND duration_avg', 'Average', 1))", "id": "duration_avg", "period": 1, "color": "#17becf", "region": "{{{region}}}" } ],
-                    [ { "expression": "AVG(SEARCH('goad AND duration_min', 'Average', 1))", "id": "duration_min", "period": 1, "color": "#9edae5", "region": "{{{region}}}" } ]
+                    [ { "expression": "SUM(SEARCH('{goad,SiteName} MetricName=duration_max', 'Maximum', 10)) / DATAPOINT_COUNT(SEARCH('{goad,SiteName} MetricName=duration_max', 'Maximum', 10))", "id": "duration_max", "period": 10, "color": "#1f77b4", "region": "{{{region}}}" } ],
+                    [ { "expression": "SUM(SEARCH('{goad,SiteName} MetricName=duration_avg', 'Average', 10)) / DATAPOINT_COUNT(SEARCH('{goad,SiteName} MetricName=duration_avg', 'Average', 10))", "id": "duration_avg", "period": 10, "color": "#17becf", "region": "{{{region}}}" } ],
+                    [ { "expression": "SUM(SEARCH('{goad,SiteName} MetricName=duration_min', 'Minimum', 10)) / DATAPOINT_COUNT(SEARCH('{goad,SiteName} MetricName=duration_min', 'Minimum', 10))", "id": "duration_min", "period": 10, "color": "#9edae5", "region": "{{{region}}}" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "{{{region}}}",
                 "stat": "Average",
-                "period": 1,
-                "title": "goad response times",
+                "period": 10,
+                "title": "Customer (load test) response times",
                 "yAxis": {
                     "left": {
-                        "min": 0
+                        "label": "ms",
+                        "min": 0,
+                        "max": 3000
                     },
                     "right": {
-                        "min": 0,
-                        "max": 100
+                        "min": 0
                     }
                 }
             }
@@ -69,17 +70,18 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "fisworkshop", "2xx", { "color": "#2ca02c" } ],
-                    [ ".", "5xx" ]
+                    [ "fisworkshop", "2xx", { "color": "#98df8a" } ],
+                    [ "."          , "5xx", { "color": "#ff9896" }  ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "{{{region}}}",
                 "stat": "Average",
-                "period": 1,
-                "title": "nginx connection status",
+                "period": 10,
+                "title": "Server (nginx) connection status",
                 "yAxis": {
                     "left": {
+                        "label": "fraction",
                         "min": 0,
                         "max": 1
                     }
@@ -94,17 +96,18 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "SUM(SEARCH('CWAgent AND {{{asgName}}} AND netstat_tcp_established', 'Maximum', 1))", "id": "sum_tcp_established", "period": 1, "color": "#2ca02c", "region": "{{{region}}}" } ],
-                    [ { "expression": "SUM(SEARCH('CWAgent AND {{{asgName}}} AND netstat_tcp_time_wait', 'Maximum', 1))", "id": "sum_tcp_time_wait", "period": 1, "color": "#d62728", "region": "{{{region}}}" } ]
+                    [ "CWAgent", "netstat_tcp_established",   "AutoScalingGroupName", "{{{asgName}}}", { "period": 10, "id": "tcp_established", "color": "#2ca02c", "region": "{{{region}}}" } ],
+                    [ ".",       "netstat_tcp_time_wait",     ".",                    ".",             { "period": 10, "id": "tcp_time_wait",   "color": "#d62728", "region": "{{{region}}}" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "{{{region}}}",
                 "stat": "Average",
-                "period": 1,
-                "title": "network status",
+                "period": 10,
+                "title": "Server (nginx) network status",
                 "yAxis": {
                     "left": {
+                        "label": "count",
                         "min": 0
                     },
                     "right": {
@@ -121,16 +124,17 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "fisworkshop", "duration" ]
+                    [ "fisworkshop", "duration", { "id": "duration_avg", "period": 10, "color": "#17becf"} ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "{{{region}}}",
                 "stat": "Average",
-                "period": 1,
-                "title": "nginx response time",
+                "period": 10,
+                "title": "Server (nginx) response time",
                 "yAxis": {
                     "left": {
+                        "label": "s",
                         "min": 0
                     }
                 }
@@ -144,17 +148,17 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "AVG(SEARCH('CWAgent AND {{{asgName}}} AND cpu_usage_idle', 'Average', 1))", "id": "avg_cpu_idle", "period": 1, "color": "#2ca02c", "region": "{{{region}}}" } ],
-                    [ { "expression": "AVG(SEARCH('CWAgent AND {{{asgName}}} AND cpu_usage_user', 'Average', 1))", "id": "avg_cpu_user", "period": 1, "color": "#1f77b4", "region": "{{{region}}}" } ],
-                    [ { "expression": "AVG(SEARCH('CWAgent AND {{{asgName}}} AND cpu_usage_system', 'Average', 1))", "id": "avg_cpu_system", "period": 1, "color": "#ff7f0e", "region": "{{{region}}}" } ],
-                    [ { "expression": "AVG(SEARCH('CWAgent AND {{{asgName}}} AND cpu_usage_iowait', 'Average', 1))", "id": "avg_cpu_iowait", "period": 1, "color": "#d62728", "region": "{{{region}}}" } ]
+                    [ "CWAgent", "cpu_usage_idle",   "AutoScalingGroupName", "{{{asgName}}}", { "period": 10, "color": "#2ca02c" } ],
+                    [ ".",       "cpu_usage_user",   ".",                    "."            , { "period": 10, "color": "#1f77b4" } ],
+                    [ ".",       "cpu_usage_system", ".",                    "."            , { "period": 10, "color": "#ff7f0e" } ],
+                    [ ".",       "cpu_usage_iowait", ".",                    "."            , { "period": 10, "color": "#d62728" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "{{{region}}}",
                 "stat": "Average",
-                "period": 1,
-                "title": "server cpu"
+                "period": 10,
+                "title": "Server CPU"
             }
         },
         {
@@ -165,16 +169,16 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/AutoScaling", "GroupMaxSize", "AutoScalingGroupName", "{{{asgName}}}" ],
-                    [ ".", "GroupDesiredCapacity", ".", "." ],
-                    [ ".", "GroupInServiceInstances", ".", "." ],
-                    [ ".", "GroupMinSize", ".", ".", { "color": "#1f77b4" } ]
+                    [ "AWS/AutoScaling", "GroupMaxSize",            "AutoScalingGroupName", "{{{asgName}}}", { "color": "#1f77b4" } ],
+                    [ ".",               "GroupDesiredCapacity",    ".",                    ".",             { "color": "#ff7f0e" } ],
+                    [ ".",               "GroupInServiceInstances", ".",                    ".",             { "color": "#2ca02c" } ],
+                    [ ".",               "GroupMinSize",            ".",                    ".",             { "color": "#1f77b4" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "{{{region}}}",
                 "stat": "Average",
-                "period": 1,
+                "period": 10,
                 "title": "ASG number of instances",
                 "yAxis": {
                     "left": {
