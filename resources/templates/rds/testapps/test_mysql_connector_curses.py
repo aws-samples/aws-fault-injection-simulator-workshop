@@ -5,6 +5,8 @@ import sys
 import signal
 import curses
 import socket
+import boto3
+import json
 
 stdscr = curses.initscr()
 
@@ -16,21 +18,29 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 def init_aurora():
+    client = boto3.client('secretsmanager')
+    # response = json.loads(client.get_secret_value(SecretId={{{auroraSecretArn}}}))
+    response = json.loads(client.get_secret_value(SecretId='FisAuroraSecret')['SecretString'])
+
     mydb = mysql.connector.connect(
-        user="admin",
-        password="DbAdmin1!",
-        host="aurora-mysql-prod.cluster-ckbixk6kxbqw.us-west-2.rds.amazonaws.com",
-        database="testdb",
+        user=response['username'],
+        password=response['password'],
+        host=response['host'],
+        database='testdb',
         connection_timeout=1
     )
     return mydb
 
 def init_rds():
+    client = boto3.client('secretsmanager')
+    # response = json.loads(client.get_secret_value(SecretId={{{mysqlSecretArn}}}))
+    response = json.loads(client.get_secret_value(SecretId='FisMysqlSecret')['SecretString'])
+
     mydb = mysql.connector.connect(
-        user="admin",
-        password="DbAdmin1!",
-        host="standard-mysql-prod.ckbixk6kxbqw.us-west-2.rds.amazonaws.com",
-        database="testdb",
+        user=response['username'],
+        password=response['password'],
+        host=response['host'],
+        database='testdb',
         connection_timeout=1
     )
     return mydb
