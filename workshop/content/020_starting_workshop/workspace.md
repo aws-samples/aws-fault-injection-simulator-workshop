@@ -35,7 +35,7 @@ Navigate to the Cloud9 console: https://console.aws.amazon.com/cloud9
 
 - Select **Create environment**
 - Name it **fisworkshop**, click Next.
-- Choose **t3.small** for instance type, take all default values and click **Create environment**
+- Choose **t3.small** for instance type, go through the wizard with the default values and click **Create environment**
 
 When it comes up, customize the environment by:
 
