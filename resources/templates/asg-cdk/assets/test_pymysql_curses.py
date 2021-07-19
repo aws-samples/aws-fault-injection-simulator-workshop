@@ -21,13 +21,13 @@ signal.signal(signal.SIGINT, signal_handler)
 def init_aurora():
     client = boto3.client('secretsmanager')
     # response = json.loads(client.get_secret_value(SecretId={{{auroraSecretArn}}}))
-    response = json.loads(client.get_secret_value(SecretId='FisAuroraSecret')['SecretString'])
+    response = json.loads(client.get_secret_value(SecretId='{{{auroraSecretArn}}}')['SecretString'])
 
     mydb = pymysql.connect(
         user=response['username'],
         password=response['password'],
         host=response['host'],
-        database='testdb',
+        database=response['dbname'],
         read_timeout=1,
         write_timeout=1,
         connect_timeout=1
@@ -36,14 +36,14 @@ def init_aurora():
 
 def init_rds():
     client = boto3.client('secretsmanager')
-    # response = json.loads(client.get_secret_value(SecretId={{{auroraSecretArn}}}))
-    response = json.loads(client.get_secret_value(SecretId='FisAuroraSecret')['SecretString'])
+    # response = json.loads(client.get_secret_value(SecretId={{{mysqlSecretArn}}}))
+    response = json.loads(client.get_secret_value(SecretId='{{{mysqlSecretArn}}}')['SecretString'])
 
     mydb = pymysql.connect(
         user=response['username'],
         password=response['password'],
         host=response['host'],
-        database='testdb',
+        database=response['dbname'],
         read_timeout=1,
         write_timeout=1,
         connect_timeout=1
@@ -64,6 +64,7 @@ while True:
     # Read aurora data
     try:
         aur_cur.execute("insert into test (value) values (%d)" % int(32768*random.random()))
+        aur_con.commit()
         aur_cur.execute("select * from test order by id desc limit 10")
         aur_data.append("%-30s" % socket.gethostbyname("aurora-mysql-prod.cluster-ckbixk6kxbqw.us-west-2.rds.amazonaws.com"))
         for line in aur_cur:
@@ -78,6 +79,7 @@ while True:
     # Read aurora data
     try:
         rds_cur.execute("insert into test (value) values (%d)" % int(32768*random.random()))
+        rds_con.commit()
         rds_cur.execute("select * from test order by id desc limit 10")
         rds_data.append("%-30s" % socket.gethostbyname("standard-mysql-prod.ckbixk6kxbqw.us-west-2.rds.amazonaws.com"))
         for line in rds_cur:
