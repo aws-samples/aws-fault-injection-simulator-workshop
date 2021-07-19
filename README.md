@@ -60,10 +60,9 @@ Use this guide to determine where to place assets.
 
 ### Design Conventions
 
-We are using the following conventions in this workshop:
-- No upper case characters and/or spaces in any directory names. 
-- Use snake case i.e. underscores and all lower case characters.
-- If required, use a 3 digit prefix to sort assets in directories.
+We are using the following convetions in this workshop:
+- No upper case characters and/or spaces in directory names. Use snake case i.e. underscores and all lower case characters
+- Use 3 digit prefix to sort content
 
 ## Charter / decisions
 

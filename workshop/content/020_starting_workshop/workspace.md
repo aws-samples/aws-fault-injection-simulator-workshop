@@ -33,6 +33,7 @@ When it comes up, customize the environment by:
 - Your workspace should now look like this
 ![c9after](/images/020_starting_workshop/cloud9-4.png)
 
+<<<<<<< HEAD
 ### Increase the disk size on the Cloud9 instance
 
 {{% notice note %}}
@@ -71,3 +72,6 @@ if [ $? -eq 0 ]; then
 fi
 
 ```
+=======
+
+>>>>>>> main
