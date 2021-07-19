@@ -1,4 +1,9 @@
 #!/bin/bash
+
+set -e
+set -u
+set -o pipefail
+
 #
 # This is a hack for development and assembly. Eventually there should be a single template 
 # to deploy
@@ -17,6 +22,15 @@
 #         exit 1
 #         ;;
 # esac
+
+REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
+ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
+
+echo "Deploying to AWS Account: ${ACCOUNT_ID}"
+echo "Deploying to Region: ${REGION}"
+
+echo "Boostrapping account with CDK"
+cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
 
 # VPC stack uses CDK
 (
