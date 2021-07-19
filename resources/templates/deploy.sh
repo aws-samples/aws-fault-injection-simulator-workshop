@@ -34,6 +34,7 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
 
 # VPC stack uses CDK
 (
+    echo "Provisioning VPC..."
     cd vpc
     npm install
     npx cdk deploy FisStackVpc --require-approval never --outputs-file outputs.json
@@ -41,6 +42,7 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
 
 # Goad stack moved to CDK
 (
+    echo "Provisioning Load Generator..."
     cd goad-cdk
     npm install
     npx cdk deploy FisStackLoadGen --require-approval never --outputs-file outputs.json
@@ -48,6 +50,7 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
 
 # RDS/aurora stack uses CDK
 (
+    echo "Provisioning RDS..."
     cd rds
     npm install
     npx cdk deploy FisStackRdsAurora --require-approval never --outputs-file outputs.json
@@ -55,6 +58,7 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
 
 # ASG stack moved to CDK
 (
+    echo "Provisioning EC2 Autoscaling Group..."
     cd asg-cdk
     npm install
     npx cdk deploy FisStackAsg --require-approval never --outputs-file outputs.json
