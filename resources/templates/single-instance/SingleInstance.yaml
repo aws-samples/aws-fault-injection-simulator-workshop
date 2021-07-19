@@ -62,6 +62,16 @@ Resources:
   FISRole:
     Type: AWS::IAM::Role
     Properties:
+      Policies:
+        - PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                  - s3:GetObject
+                Resource: 
+                  - !Sub 'arn:aws:s3:::aws-ssm-${AWS::Region}/*'
+                Effect: Allow
+          PolicyName: ssm-custom-s3-policy
       ManagedPolicyArns:
         - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEC2FullAccess'
       AssumeRolePolicyDocument:
@@ -154,7 +164,7 @@ Resources:
                   "runCommand": [
                     "try {",
                     "    $NumThreads = Get-WmiObject win32_processor | Select-Object -ExpandProperty NumberOfLogicalProcessors",
-                    "    $StartDate = Get-Date",
+                    "    $StartDate = Get-Date -ErrorAction Stop",
                     "    Write-Output \"============= CPU Stress Test Started: $StartDate =============\"",
                     "    foreach ($loopnumber in 1..$NumThreads){",
                     "        Start-Job -ScriptBlock{",
@@ -162,14 +172,16 @@ Resources:
                     "            foreach ($number in 1..2147483647){",
                     "                $result = $result * $number",
                     "            }",
-                    "        } -Name SSMCpuJob$loopnumber",
+                    "        } -Name SSMCpuJob$loopnumber -ErrorAction Stop",
                     "    }",
                     "    Start-Sleep -s {{duration}}",
-                    "    Stop-Job -Name SSMCpuJob*",
-                    "    $EndDate = Get-Date",
+                    "    Stop-Job -Name SSMCpuJob* -ErrorAction Stop",
+                    "    $EndDate = Get-Date -ErrorAction Stop",
                     "    Write-Output \"============= CPU Stress Test Complete: $EndDate =============\"",
+                    "    Get-Job -ErrorAction Stop | Remove-Job -ErrorAction Stop",
                     "} catch {",
                     "    Write-Host \"Failed to Run CPU Stress Test\"",
+                    "    Get-Job -ErrorAction Stop | Remove-Job -ErrorAction Stop",
                     "    Exit 1",
                     "}"
                   ]
@@ -177,4 +189,3 @@ Resources:
               }
             ]
         }
-            
