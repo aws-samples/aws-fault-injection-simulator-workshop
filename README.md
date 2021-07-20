@@ -20,6 +20,8 @@ and browse to http://localhost:1313
 
 Currently this is a hodgepodge of source types (cdk, SAM, CFN) which will all eventually need to be merged into plain CFN for EE use. For now to instantiate the resources on a Mac/Linux box with installed `bash`, `jq`, `AWS CLI`, `SAM CLI` and `CDK CLI`:
 
+* The deploy script uses the default profile set for AWS CLI. Modify lines 26 and 27 to use a custom profile *
+
 ```
 cd aws-fault-injection-simulator-workshop
 
