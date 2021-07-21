@@ -157,7 +157,7 @@ If you were watching the output of your test script carefully you might also hav
 
 As this was essentially the same as the previous **RDS DB Instance Reboot** section there are not new learnings here.
 
-However, you may want to experiment with Aurora specific [fault injection queries](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.FaultInjectionQueries.html).
+However, you may want to experiment further built-in Aurora [fault injection queries](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.FaultInjectionQueries.html).
 
 To access your Aurora database, you can extract the connection information from the [AWS Secrets Manager console](https://console.aws.amazon.com/secretsmanager/home?#!/secret?name=FisAuroraSecret) by selecting the `FisAuroraSecret` and selecting "Retrieve secret value":
 
@@ -169,8 +169,9 @@ Using the information you can open another terminal, e.g. from the same instance
 mysql -h HOST -u USERNAME -p DBNAME
 ```
 
-you can then run fault injection queries and observe the effect on the test script, e.g.:
+you can then run fault injection queries as further explained in this [blog post](https://aws.amazon.com/blogs/architecture/perform-chaos-testing-on-your-amazon-aurora-cluster/) and observe the effect on the test script, e.g.:
 
 ```sql
 ALTER SYSTEM CRASH NODE;
 ```
+
