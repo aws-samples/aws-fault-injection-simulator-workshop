@@ -35,7 +35,7 @@ aws cloudformation create-stack --stack-name CpuStress --template-body file://Si
 ## Windows Setup
 
 ```
-aws cloudformation create-stack --stack-name WinCpuStress --template-body file://SingleInstance.yaml  --parameters ParameterKey=ImageId,ParameterValue=/aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base --capabilities CAPABILITY_IAM
+aws cloudformation create-stack --stack-name CpuStress --template-body file://SingleInstance.yaml  --parameters ParameterKey=ImageId,ParameterValue=/aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base --capabilities CAPABILITY_IAM
 ```
 
 The stack will take a few minutes to complete. 

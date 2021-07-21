@@ -67,11 +67,20 @@ Resources:
             Version: '2012-10-17'
             Statement:
               - Action:
-                  - s3:GetObject
-                Resource: 
-                  - !Sub 'arn:aws:s3:::aws-ssm-${AWS::Region}/*'
+                  - ssm:SendCommand
+                  - ssm:ListCommands
+                  - ssm:CancelCommands
+                Resource: !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:instance/*
+                Condition:
+                  StringEquals:
+                    'ssm:ResourceTag/aws:cloudformation:stack-name': !Ref AWS::StackName
                 Effect: Allow
-          PolicyName: ssm-custom-s3-policy
+              - Effect: Allow
+                Action: ssm:SendCommand
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:*:document/AWSFIS-Run-Cpu-Stress
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:*:document/${WinStressDocument}
+          PolicyName: SSMPolicy
       ManagedPolicyArns:
         - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEC2FullAccess'
       AssumeRolePolicyDocument:
@@ -137,7 +146,7 @@ Resources:
                 "description": "(Optional) The path to the working directory on your instance.",
                 "maxChars": 4096
               },
-              "duration": {
+              "durationSeconds": {
                 "type": "String",
                 "default": "120",
                 "description": "Duration of test in seconds.",
@@ -174,7 +183,7 @@ Resources:
                     "            }",
                     "        } -Name SSMCpuJob$loopnumber -ErrorAction Stop",
                     "    }",
-                    "    Start-Sleep -s {{duration}}",
+                    "    Start-Sleep -s {{durationSeconds}}",
                     "    Stop-Job -Name SSMCpuJob* -ErrorAction Stop",
                     "    $EndDate = Get-Date -ErrorAction Stop",
                     "    Write-Output \"============= CPU Stress Test Complete: $EndDate =============\"",
