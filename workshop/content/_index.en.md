@@ -1,7 +1,9 @@
 +++
-title = "Getting started"
+title = "Chaos Engineering on AWS"
 chapter = true
 weight = 1
 +++
 
-One day this will be the AWS FIS workshop
+Please use the orange arrows or the side menu to navigate the workshop.
+
+{{< img "fis-white.png" >}}

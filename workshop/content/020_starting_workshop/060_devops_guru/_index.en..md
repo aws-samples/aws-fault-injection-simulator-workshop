@@ -1,7 +1,7 @@
 ---
 title: "Optional: Setup for DevOps Guru"
 chapter: false
-weight: 30
+weight: 60
 ---
 
 {{% notice warning %}}

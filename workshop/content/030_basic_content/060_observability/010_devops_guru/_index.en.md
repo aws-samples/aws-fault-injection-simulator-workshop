@@ -5,7 +5,7 @@ weight: 10
 ---
 
 {{% notice warning %}}
-This section requires that you followed the [setup instructions]({{< ref "/020_starting_workshop/devops_guru_setup" >}}) at the beginning of the workshop and allowed enough time for DevOps Guru to establish a baseline. This section also presumes that you followed the load generating steps in the **Synthetic user experience** section.
+This section requires that you followed the [setup instructions]({{< ref "/020_starting_workshop/060_devops_guru" >}}) at the beginning of the workshop and allowed enough time for DevOps Guru to establish a baseline. This section also presumes that you followed the load generating steps in the **Synthetic user experience** section.
 {{% /notice %}}
 
 ## Dashboard overview

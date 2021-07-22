@@ -1,7 +1,7 @@
 ---
 title: "...at an AWS event"
 chapter: true
-weight: 12
+weight: 20
 ---
 
 ### Running the workshop at an AWS Event
@@ -9,7 +9,7 @@ weight: 12
 {{% notice warning %}}
 Only complete this section if you are at an AWS hosted event (such as re:Invent,
 AWS Summit, Immersion Day, or any other event hosted by an AWS employee). If you are running the workshop on your own, go to:
-[Start the workshop on your own]({{< ref "../self_paced/" >}}).
+[Start the workshop on your own]({{< ref "../010_self_paced/" >}}).
 {{% /notice %}}
 
 {{% children %}}
