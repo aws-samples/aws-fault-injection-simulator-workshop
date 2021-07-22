@@ -1,6 +1,6 @@
 +++
 title = "Baselining and Monitoring"
-weight = 1
+weight = 10
 +++
 
 Before we start down the path of injecting faults into our system we should consider the following thought experiment:

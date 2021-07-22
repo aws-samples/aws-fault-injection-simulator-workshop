@@ -1,6 +1,6 @@
 +++
 title = "Synthetic user experience"
-weight = 2
+weight = 20
 +++
 
 To gain insights from our fault-injection tests we want to be able to correlate the user experience with the sysops view we've gained in the previous section. In production we could instrument the clients to send telemetry back to us but in non-production we don't usually have sufficient load to do this - and _you_ probably have better things to do than sit there clicking reload on a browser page while your experiment is running.

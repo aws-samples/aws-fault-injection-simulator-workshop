@@ -1,7 +1,7 @@
 +++
 title = "Databases"
 date =  2021-04-14T17:25:37-06:00
-weight = 4
+weight = 50
 +++
 
 In this section we will cover working with databases. For this setup we are adding RDS MySQL and Aurora for MySQL to our test architecture:
