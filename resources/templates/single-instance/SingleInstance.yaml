@@ -198,3 +198,6 @@ Resources:
               }
             ]
         }
+Outputs:
+  WinStressDocumentArn:
+    Value: !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:*:document/${WinStressDocument}
