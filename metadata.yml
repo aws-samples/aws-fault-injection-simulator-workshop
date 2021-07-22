@@ -1,26 +1,38 @@
 #name - DNS-friendly name for the workshop. This will be used when generating the hosting URL (ie. https://my-first-workshop.workshops.aws/)
-name: my-first-workshop
+name: chaos-engineering
 #title - The title of your workshop
-title: My First Workshop 
+title: Chaos engineering on AWS
 #description - A short description that will be displayed in search results
-description: Creating unicorns with serverless bitcoin magic! 
+description: "This workshop provides an introduction to chaos engineering using AWS tooling, with a core focus on AWS Fault Injection Simulator. It introduces the core elements of chaos engineering: stress, observe. You will learn how to use FIS to stress / disrupt infrastructure to validate resilience in your system setup and demonstrates how to use other AWS tools to observe and improve your system resilience."
 #categories - Refer to official AWS categories covered by the workshop content here
 categories: 
-  - Networking
-  - Compute
+  - FIS
+  - Chaos Engineering
+  - Development
+  - Operations
+  - Observability
+
 #services - Refer to the official AWS service names covered by the workshop content here
 services: 
-   - Api Gateway
-   - Lambda
+  - "FIS"
+  - "CloudWatch"
+  - "DevOps Guru"
+  - "ECS"
+  - "EKS"
+  - "EC2"
+  - "RDS"
+  - "Aurora"
 #level - Approximate skill level needed for this workshop
-level: 100 
+level: 300 
 #duration - Estimated duration in minutes
-duration: 60 
+duration: 480 
 #cost - Cost in USD. If the content is offered without cost, enter 0
-cost: 0 
+cost: 10
 #author - Amazon alias of the primary author of the content
-author: mpgoetz 
+author: rudpot 
 #audience - Names of the personas associated with this workshop
 audience: 
   - IT Professional
   - Developer
+  - QA
+  - Ops

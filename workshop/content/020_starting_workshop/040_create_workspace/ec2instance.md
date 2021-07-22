@@ -1,7 +1,7 @@
 ---
 title: "Attach the IAM role to your Workspace"
 chapter: false
-weight: 17
+weight: 43
 draft: true
 ---
 
