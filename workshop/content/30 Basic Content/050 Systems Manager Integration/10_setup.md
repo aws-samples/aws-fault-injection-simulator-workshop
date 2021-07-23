@@ -21,21 +21,17 @@ git clone https://github.com:aws-samples/aws-fault-injection-simulator-workshop.
 Next change directory into the templates folder.
 
 ```
-cd aws-fault-injection-simulator-workshop/resources/templates/single-instance/
+cd aws-fault-injection-simulator-workshop/resources/templates/cpu-stress/
 ```
 
 Finally lets deploy our stack, choose the command for the Operating System you want to run this test against.
 
-## Linux Setup
+## Setup
+
+The template below will deploy the roles needed for the experiments, a windows instance and a linux instance. 
 
 ```
-aws cloudformation create-stack --stack-name CpuStress --template-body file://SingleInstance.yaml  --parameters ParameterKey=ImageId,ParameterValue=/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2 --capabilities CAPABILITY_IAM
-```
-
-## Windows Setup
-
-```
-aws cloudformation create-stack --stack-name CpuStress --template-body file://SingleInstance.yaml  --parameters ParameterKey=ImageId,ParameterValue=/aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base --capabilities CAPABILITY_IAM
+aws cloudformation create-stack --stack-name CpuStress --template-body file://CPUStressInstances.yaml  --parameters ParameterKey=ImageId,ParameterValue=/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2 --capabilities CAPABILITY_IAM
 ```
 
 The stack will take a few minutes to complete. 

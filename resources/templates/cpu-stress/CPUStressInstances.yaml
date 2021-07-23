@@ -14,13 +14,14 @@ Metadata:
       InstanceType:
         default: EC2 Instance Type
 Parameters:
-  ImageId:
-    AllowedValues:
-      - /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
-      - /aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base
+  LinuxImageId:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
-    Description: 'Enter a SSM Parameter Store Value for the AMI Id.'
+    Description: 'SSM Parameter for Amazon Linux AMI.'
+  WindowsImageId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base
+    Description: 'SSM Parameter for Windows 2019 AMI.'
   InstanceType:
     AllowedValues:
       - t3.nano
@@ -31,6 +32,9 @@ Parameters:
     Default: t3.medium
     Description: Amazon EC2 instance type for the Internet Information Services servers
     Type: String
+  #SubnetId:
+  #  Description: Subnet in which to instantiate VM - needed if no Default VPC was configured
+  #  Type: AWS::EC2::Subnet::Id
 Resources:
   SSMInstanceRole: 
     Type : AWS::IAM::Role
@@ -50,15 +54,28 @@ Resources:
     Properties:
       Roles:
       - !Ref SSMInstanceRole
-  EC2Instance:
+  WindowsInstance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref 'ImageId'
       IamInstanceProfile: !Ref 'SSMInstanceProfile'
       InstanceType: !Ref 'InstanceType'
+      Monitoring: true
+      #SubnetId: !Ref SubnetId   
       Tags:
         - Key: Name
-          Value: 'CPUStressTest'
+          Value: 'WindowsCPUStress'
+  LinuxInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref 'ImageId'
+      IamInstanceProfile: !Ref 'SSMInstanceProfile'
+      InstanceType: !Ref 'InstanceType'
+      Monitoring: true
+      #SubnetId: !Ref SubnetId   
+      Tags:
+        - Key: Name
+          Value: 'LinuxCPUStress'
   FISRole:
     Type: AWS::IAM::Role
     Properties:
@@ -66,23 +83,18 @@ Resources:
         - PolicyDocument:
             Version: '2012-10-17'
             Statement:
-              - Action:
-                  - ssm:SendCommand
+              - Effect: Allow
+                Action:
                   - ssm:ListCommands
-                  - ssm:CancelCommands
-                Resource: !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:instance/*
-                Condition:
-                  StringEquals:
-                    'ssm:ResourceTag/aws:cloudformation:stack-name': !Ref AWS::StackName
-                Effect: Allow
+                  - ssm:ListDocuments
+                Resource: '*'
               - Effect: Allow
                 Action: ssm:SendCommand
                 Resource:
                   - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:*:document/AWSFIS-Run-Cpu-Stress
-                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:*:document/${WinStressDocument}
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${WinStressDocument}
+                  - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:instance/*
           PolicyName: SSMPolicy
-      ManagedPolicyArns:
-        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEC2FullAccess'
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -200,4 +212,6 @@ Resources:
         }
 Outputs:
   WinStressDocumentArn:
-    Value: !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:*:document/${WinStressDocument}
+    Value: !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${WinStressDocument}
+  WindowsInstanceId:
+    Value: !Ref WindowsInstance
