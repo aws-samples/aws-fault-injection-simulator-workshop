@@ -20,6 +20,8 @@ and browse to http://localhost:1313
 
 Currently this is a hodgepodge of source types (cdk, SAM, CFN) which will all eventually need to be merged into plain CFN for EE use. For now to instantiate the resources on a Mac/Linux box with installed `bash`, `jq`, `AWS CLI`, `SAM CLI` and `CDK CLI`:
 
+* The deploy script uses the default profile set for AWS CLI. Modify lines 26 and 27 to use a custom profile *
+
 ```
 cd aws-fault-injection-simulator-workshop
 
@@ -34,6 +36,33 @@ If you need to make updates the deploy script can be called as
 ```
 
 This workshop was built from a template. The original README for the template is [here](README-template.md)
+
+## Repo structure
+
+Use this guide to determine where to place assets.
+
+```bash
+.
+├── metadata.yml                      <-- Metadata file with descriptive information about the workshop
+├── README.md                         <-- This instructions file
+├── deck                              <-- Directory for presentation deck (Future use)
+├── resources                         <-- Directory for workshop resources (Future use)
+│   ├── code                          <-- Directory for workshop modules code
+│   ├── policies                      <-- Directory for workshop modules IAM Roles and Policies
+│   ├── templates                     <-- Directory for workshop modules CloudFormation templates
+    └── Workshop Review document.doc  <-- Workshop Review document to be completed before your workshop is published
+└── workshop                          
+    ├── config.toml                   <-- Hugo configuration file for the workshop website
+    └── content                       <-- Markdown files for pages/steps in workshop
+    └── static                        <-- Any static assets to be hosted alongside the workshop (ie. images, scripts, documents, etc)
+    └── themes                        <-- AWS Style Hugo Theme (Do not edit!)
+```
+
+### Design Conventions
+
+We are using the following convetions in this workshop:
+- No upper case characters and/or spaces in directory names. Use snake case i.e. underscores and all lower case characters
+- Use 3 digit prefix to sort content
 
 ## Charter / decisions
 
