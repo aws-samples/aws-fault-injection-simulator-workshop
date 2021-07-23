@@ -18,15 +18,15 @@ Once in the Fault Injection Simulator console, lets click on **Experiment templa
 ![Fault Injection Simulator Menu](fismenu.png)
 
 Click on **Create Experiment** on  the upper right hand side of the console to start creating our experiment template. 
-![Click Create Experiment](createexperimentbutton.png)
 
-Next we will enter the description of the experiment and choose the IAM Role. The IAM role allows the FIS service permissions to execute the actions on your behalf. As part of the CloudFormation stack a role was created for this experiment that starts with LinuxCpuStress-FISRole*, select that role. Please Examine the CloudFormation template or IAM Role for the policies in this role. 
-![Experiment Description](experimentdescription.png)
+Next we will enter the description of the experiment and choose the IAM Role. Let's put **LinuxBurnCPUviaSSM** for the description. The IAM role allows the FIS service permissions to execute the actions on your behalf. As part of the CloudFormation stack a role was created for this experiment that starts with **CpuStress-FISRole**, select that role. Please Examine the CloudFormation template or IAM Role for the policies in this role. 
+
+![Linux Experiment Description and Role](experimentdescription.png)
 
 After we have entered a description and a role, we need to setup our actions. Click the **Add Action** Button in the Actions Section. 
 ![Add Action](addaction.png)
 
-Name the Action, and under Action Type select the AWSFIS-Run-Cpu-Stress. Match the rest of the settings as seen in the next screenshot and then click **Save**. This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes. 
+Name the Action, and under Action Type select the **aws:ssm:send-command/AWSFIS-Run-Cpu-Stress** action. This is an out of the box action to run stress test on Linux Instances using the stress-ng tool. Match the rest of the settings as seen in the next screenshot and then click **Save**. This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes. 
 ![Action Settings](StressActionSettings.png)
 
 Once we have saved the action, let's edit our targets. Click on **Edit targets**. 
@@ -36,12 +36,11 @@ We are going to target our Instances by tag. Match the settings in the next scre
 ![Target Settings](TargetSettings.png)
 
 Once we have actions and targets specified we can click on the **Create Experiment** button toward the bottom of the console. 
-![Click Create Experiment](createexperimentbutton.png)
 
 For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiemnts so they dont go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in *create* and then hit the **Create Experiment** button again to confirm. 
 ![Confirm Creation](ConfirmCreate.png)
 
-We have created our CPU stress experiment, now lets connect to our EC2 Instance.
+We have created our Linux CPU stress experiment, now lets connect to our EC2 Instance.
 
 ## Use AWS Systems Session Manager to connect to Target Instance
 
@@ -60,24 +59,20 @@ Let's head back to the [AWS Fault Injection Simulator Console](https://console.a
 Once in the Fault Injection Simulator console, lets click on Experiment templates again on the left side pane. 
 ![Fault Injection Simulator Menu](fismenu.png)
 
-Select the experiment with the BurnCPUviaSSM description, then click on the **Actions** button and select **Start Experiment**. 
-![Start Experiment](StartExperiment.png)
+Select the experiment with the LinuxBurnCPUviaSSM description, then click on the **Actions** button and select **Start Experiment**. This will allow us to start our experiment. 
 
 Now click on the **Start Experiment** button. 
-![Click Start Experiment](StartExperimentButton.png)
 
 Next type in start and click on **Start Experiment** again to confirm you want to start the experiment. 
 ![Confirm Start](confirmstart.png)
 
-This will take you to the experiment, in the detail section of the experiment under state you should see the experiemnt is initializing. Once the experiemnt is running, lets head back to the open session on the EC2 Instance. 
+This will take you to the experiment that is started from the template, in the detail section of the experiment under state you should see the experiment is initializing. Once the experiemnt is running, lets head back to the open session on the EC2 Instance. 
 ![Experiment State](RunningState.png)
 
 Watch the CPU percentage, it should hit 100% for a few minutes and then return back to 0%. Once we have observed the action we can click the terminate button to terminate our Session Manager session. 
 ![Linux Stressed](linuxStressed.png)
 
-To clean up this lab, delete the CloudFormation Stack named LinuxCPUStress.
-
-Congrats for completing this lab! In this lab you walked through running an experiment that took action within an EC2 Instance using AWS Systems Manager.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other choas engineering tools and frameworks. 
+Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Linux EC2 Instance using AWS Systems Manager.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other choas engineering tools and frameworks. 
 
 
 
