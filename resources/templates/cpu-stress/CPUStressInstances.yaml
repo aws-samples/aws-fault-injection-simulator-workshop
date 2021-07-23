@@ -1,16 +1,19 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Launch Single Instance for CPU Stress Test during FIS Workshop.  
+Description: Launch Windows and Linux Instance for CPU Stress Test during FIS Workshop.  
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
           default: EC2 Instance Configuration
         Parameters:
-          - ImageId
+          - LinuxImageId
+          - WindowsImageId
           - InstanceType
     ParameterLabels:
-      ImageId:
-        default: Amazon Machine Image (AMI) Id
+      LinuxImageId:
+        default: AMZ Linux Amazon Machine Image (AMI) Id
+      WindowsImageId:
+        default: AMZ Linux Amazon Machine Image (AMI) Id
       InstanceType:
         default: EC2 Instance Type
 Parameters:
@@ -57,7 +60,7 @@ Resources:
   WindowsInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: !Ref 'ImageId'
+      ImageId: !Ref 'WindowsImageId'
       IamInstanceProfile: !Ref 'SSMInstanceProfile'
       InstanceType: !Ref 'InstanceType'
       Monitoring: true
@@ -68,7 +71,7 @@ Resources:
   LinuxInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: !Ref 'ImageId'
+      ImageId: !Ref 'LinuxImageId'
       IamInstanceProfile: !Ref 'SSMInstanceProfile'
       InstanceType: !Ref 'InstanceType'
       Monitoring: true
