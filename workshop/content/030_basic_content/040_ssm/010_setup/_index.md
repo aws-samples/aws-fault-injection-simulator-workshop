@@ -1,5 +1,5 @@
 +++
-title = "CPU Stress Test Setup"
+title = "FIS SSM Setup"
 date =  2021-07-07T17:25:37-06:00
 weight = 10
 +++

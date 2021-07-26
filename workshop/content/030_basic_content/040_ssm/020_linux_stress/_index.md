@@ -4,7 +4,7 @@ date =  2021-07-07T17:25:37-06:00
 weight = 20
 +++
 
-In this section we will run a CPU Stress test using AWS Fault Injection Simulator against an Amazon Linux EC2 Instance. The Linux CPU stress test is an out of the box action. We will do the following: 
+In this section we will run a CPU Stress test using AWS Fault Injection Simulator against an Amazon Linux EC2 Instance. The Linux [CPU stress](https://docs.aws.amazon.com/fis/latest/userguide/actions-ssm-agent.html#fis-ssm-docs) test is an out of the box FIS action. We will do the following: 
 
 1. Create experiment template to stress CPU.
 2. Connect to a Linux EC2 Instance and run the Top Command.
@@ -46,7 +46,7 @@ We have created our Linux CPU stress experiment template, now lets connect to ou
 
 We will use the linux `top` system command to observe the increased CPU load. To do this we now need to connect to our EC2 Instance so we can observe the CPU being stressed. Head over to the [EC2 Console](https://console.aws.amazon.com/ec2/v2/home?#Instances:instanceState=running). 
 
-1. Once at the EC2 Console lets select our instance named `LinuxCpuStressTest` and click on the **Connect** button. 
+1. Once at the EC2 Console lets select our instance named `FisLinuxCpuStress` and click on the **Connect** button. 
 
 {{< img "SelectConnect.png" "Select Instance" >}}
 

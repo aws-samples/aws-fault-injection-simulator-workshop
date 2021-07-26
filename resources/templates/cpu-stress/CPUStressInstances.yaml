@@ -75,7 +75,7 @@ Resources:
       SubnetId: !If [UseDefaultVpc, !Ref "AWS::NoValue", !Ref SubnetId]
       Tags:
         - Key: Name
-          Value: 'WindowsCPUStress'
+          Value: 'FisWindowsCPUStress'
   LinuxInstance:
     Type: AWS::EC2::Instance
     Properties:
@@ -86,7 +86,7 @@ Resources:
       SubnetId: !If [UseDefaultVpc, !Ref "AWS::NoValue", !Ref SubnetId]
       Tags:
         - Key: Name
-          Value: 'LinuxCPUStress'
+          Value: 'FisLinuxCPUStress'
   FISRole:
     Type: AWS::IAM::Role
     Properties:
