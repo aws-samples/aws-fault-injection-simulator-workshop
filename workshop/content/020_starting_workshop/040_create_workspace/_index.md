@@ -71,3 +71,24 @@ if [ $? -eq 0 ]; then
 fi
 
 ```
+
+### Update tools and dependencies
+
+{{% notice info %}}
+At the time of this workshop creation, Cloud9 workspaces come with the following tools:<br />- cdk: 1.113.0<br />- npm: 6.14.12<br />- node: v10.24.1<br /><br />We want to update these to their latest version
+{{% /notice %}}
+
+Update to the latest stable release of npm and nodejs.
+```bash
+nvm install stable 
+```
+
+Install typescript
+```bash
+npm install -g typescript
+```
+
+Install CDK
+```bash
+npm install -g aws-cdk
+```
