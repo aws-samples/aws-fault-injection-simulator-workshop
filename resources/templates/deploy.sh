@@ -64,4 +64,4 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
     npx cdk deploy FisStackAsg --require-approval never --outputs-file outputs.json
 )
 
-echo next step
+echo Done.
