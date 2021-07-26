@@ -71,3 +71,20 @@ if [ $? -eq 0 ]; then
 fi
 
 ```
+
+### Update tools and dependencies
+
+Install the latest stable release of npm and nodejs.
+```bash
+nvm install stable 
+```
+
+Install typescript
+```bash
+npm install -g typescript
+```
+
+Install CDK
+```bash
+npm install -g aws-cdk
+```
