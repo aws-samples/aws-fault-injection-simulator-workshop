@@ -9,43 +9,37 @@ For this section we will use Linux and Windows instances created specifically fo
 {{< img StressTest-with-user.png >}}
 
 
+{{% notice info %}}
+The resources above have been created as part of the **Start the workshop** section. If you want to explore how the resources for this section have been created read on below. Otherwise continue to the next section.
+{{% /notice %}}
 
-In this section we will deploy EC2 Instances using CloudFormation and the AWS CLI. 
 
-## Deploy a Linux and Windows EC2 Instance
+## CloudFormation deployment example
 
-We will use the AWS CLI with CloudFormation to provision our instances. You can inspect the template to see how it creates an instance role with 
-the AWS Managed policy named *AmazonSSMManagedInstanceCore* attached, and how it attaches it to our instances via an Instance Profile. 
+To demonstrate how to configure EC2 instances with SSM access we will use the AWS CLI with CloudFormation to provision our instances. You can inspect the [template](https://github.com/aws-samples/aws-fault-injection-simulator-workshop/blob/main/resources/templates/cpu-stress/CPUStressInstances.yaml) to see how it creates an instance role with the AWS Managed policy named *AmazonSSMManagedInstanceCore* attached, and how it attaches it to our instances via an Instance Profile. 
 
-Using the Cloud9 instance you created in the **Start the workshop** section, clone the repository if you have not done so yet:
+If you want to try this yourself, using the Cloud9 instance you created in the **Start the workshop** section, clone the repository if you have not done so yet:
 
-```
+```bash
 cd ~/environment
 git clone https://github.com:aws-samples/aws-fault-injection-simulator-workshop.git
 ```
 
 Next change directory into the templates folder.
 
-```
+```bash
 cd aws-fault-injection-simulator-workshop/resources/templates/cpu-stress/
 ```
 
 In this folder you can examine the template file named `CPUStressInstances.yaml`.
 
-Finally lets deploy our stack.
+Finally deploy the stack. By default this template will deploy into the default VPC. In the context of this workshop we want to ensure the instances are deployed into the public subnet created in the **Start the workshop** section. We will use the first public subnet created by the initial setup. You could do this manually by navigating to the [CloudFormation console](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks?filteringStatus=active&filteringText=FisStackVpc&viewNested=true&hideStacks=false), selecting the `FisStackVpc` stack, selecting `Outputs` and picking the subnet ID associated with `FisPub1`. For your convenience we've added that as a CLI query in the code below:
 
-
-{{% notice info %}}
-If you are running this workshop at an AWS event the stack has already been created for you and you can continue in the next section.
-{{% /notice %}}
-
-To ensure the instances are deployed into a public subnet, we will use the first public subnet created by the initial setup. You could do this manually by navigating to the [CloudFormation console](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks?filteringStatus=active&filteringText=FisStackVpc&viewNested=true&hideStacks=false), selecting the `FisStackVpc` stack, selecting `Outputs` and picking the subnet ID associated with `FisPub1`. For your convenience we've added that as a CLI query in the code below:
-
-```
+```bash
 # Query public subnet from VPC stack
 SUBNET_ID=$( aws ec2 describe-subnets --query "Subnets[?Tags[?(Key=='aws-cdk:subnet-name') && (Value=='FisPub') ]] | [0].SubnetId" --output text )
 
-# 
+# Launch CloudFormation stack
 aws cloudformation create-stack \
   --stack-name FisCpuStress \
   --template-body file://CPUStressInstances.yaml  \
