@@ -23,6 +23,8 @@
   "dependencies": {
     "@aws-cdk/aws-ec2": "^1.115.0",
     "@aws-cdk/aws-rds": "^1.115.0",
+    "@aws-cdk/aws-secretsmanager": "^1.115.0",
+    "@aws-cdk/aws-ssm": "^1.115.0",
     "@aws-cdk/core": "1.115.0",
     "source-map-support": "^0.5.19"
   }
