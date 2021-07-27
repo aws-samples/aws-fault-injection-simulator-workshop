@@ -55,7 +55,7 @@ npm install -g aws-cdk
 
 To keep your NPM dependencies updated in the future use the [npm-check-updates](https://www.npmjs.com/package/npm-check-updates_) utility.
 
-Note, that all versions may not be compatible with each other and you may have to manually set versions in package.json. For example, CDK@1.115.0 is incompatible with jest@27.x.x.
+*Note* All versions may not be compatible with each other. You may have to manually set versions in package.json. For example, CDK@1.115.0 is incompatible with jest@27.0.6.
 
 ***The deploy script uses the default profile set for AWS CLI. Modify lines 26 and 27 to use a custom profile***
 
