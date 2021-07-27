@@ -41,7 +41,7 @@ npm install -g aws-cdk
 We recommend using nvm to manage your node environments. Install nvm using [brew](https://brew.sh/).
 
 ```bash
-# follow the post instructions to create .nvm dir and add PATH variables
+# Follow the instructions after running brew install to create .nvm dir and add PATH variables
 brew install nvm 
 # Reload configs or restart shell
 nvm install stable
