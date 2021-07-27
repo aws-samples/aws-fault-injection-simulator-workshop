@@ -28,6 +28,10 @@ Currently AWS does not provide a CPU stress document but we can create our own. 
 
 If you want to see an example how one might inject stress, you can have a look at the `WinStressDocument` resource in the [CloudFormation template](https://github.com/aws-samples/aws-fault-injection-simulator-workshop/blob/main/resources/templates/cpu-stress/CPUStressInstances.yaml). Alternatively you can follow the same search procedure as for the AWS owned documents but search the "Owned by me" or "Shared by me" tabs instead of "Owned by AWS".
 
+For additional SSM sample documents relating to FIS see these resources
+
+* https://github.com/adhorn/chaos-ssm-documents
+
 ### Working with custom SSM documents in FIS
 
 While writing custom SSM documents is outside the scope of this workshop, there are a few aspects of SSM documents you should be aware of:
