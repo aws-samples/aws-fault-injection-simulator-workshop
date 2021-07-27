@@ -22,9 +22,9 @@ Currently this is a hodgepodge of source types (cdk, SAM, CFN) which will all ev
 
 ### Tool versions
 
-CDK @ 1.115.0
-npm @ 7.19.1
-node @ 16.5.0
+- CDK @ 1.115.0
+- npm @ 7.19.1
+- node @ 16.5.0
 
 #### Upgrading Cloud9 environment
 
