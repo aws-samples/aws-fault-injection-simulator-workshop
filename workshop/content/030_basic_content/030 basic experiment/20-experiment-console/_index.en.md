@@ -60,11 +60,11 @@ Under "Target" select the `FisWorkshopAsg-50Percent` target created above. Selec
 
 #### Creating template without stop conditions
 
-Scroll to the bottom of the template definition page and select "Create experiment template". Since we didn't specify a stop condition we receive a warning:
+Scroll to the bottom of the template definition page. Optionally add a new tag `Name` with value `FisWorkshopTerminateAsg-1` and select "Create experiment template". 
 
-{{< img "create-template-2-actions-1.en.png" "Add FIS actions" >}}
+{{< img "create-template-3-create.en.png" "Add FIS actions" >}}
 
-This is ok, for this experiment we don't need a stop condition. Type `create` in the text box as indicated and select "Create experiment template".
+Since we didn't specify a stop condition we receive a warning. This is ok, for this experiment we don't need a stop condition. Type `create` in the text box as indicated and select "Create experiment template".
 
 {{< img "create-template-3-confirm.en.png" "Save FIS template" >}}
 
