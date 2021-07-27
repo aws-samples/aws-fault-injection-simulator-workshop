@@ -31,7 +31,7 @@ Before starting our first fault injection experiment, let's have a look at our m
 
 We have a user trying to access a website running on AWS. We have designed for high availability by using EC2 instances with an auto-scaling group and a load balancer to ensure that the the user will always be able to reach our website even under heavy load or if an instance fails.
 
-Once you've started the template as described in **Getting Started** you can navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the appropriate stack and click on the "Outputs" tab which will show you the server URL:
+Once you've started the template as described in **Getting Started** you can navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "FisStackAsg" stack and click on the "Outputs" tab which will show you the server URL:
 
 {{< img "cloudformation.en.png" "Image of architecture to be injected with chaos" >}}
 
