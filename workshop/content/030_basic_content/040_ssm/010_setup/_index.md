@@ -41,7 +41,7 @@ SUBNET_ID=$( aws ec2 describe-subnets --query "Subnets[?Tags[?(Key=='aws-cdk:sub
 
 # Launch CloudFormation stack
 aws cloudformation create-stack \
-  --stack-name FisCpuStress \
+  --stack-name CpuStress \
   --template-body file://CPUStressInstances.yaml  \
   --parameters \
     ParameterKey=SubnetId,ParameterValue=${SUBNET_ID} \

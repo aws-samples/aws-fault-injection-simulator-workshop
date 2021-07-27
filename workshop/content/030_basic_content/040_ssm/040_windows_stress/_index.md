@@ -4,14 +4,20 @@ date =  2021-07-07T17:25:37-06:00
 weight = 40
 +++
 
-In this section we will run a CPU Stress test using AWS Fault Injection Simulator against an Amazon Windows EC2 Instance. The Windows CPU stress test will use a custome command document. We will do the following: 
+{{% notice warning %}}
+This section requires that you have an RDP agent on your local machine. This section cannot be performed from a cloud9 instance. 
+{{% /notice %}}
+
+In this section we will run a CPU Stress test using AWS Fault Injection Simulator against an Amazon Windows EC2 Instance. The Windows CPU stress test will use a custom SSM command document. We will do the following: 
 
 1. Create experiment template to stress CPU.
 2. Reset password on Windows Instance
 2. Connect to Windows EC2 Instance and run task manager.
 3. Start experiment and observe results.
 
-## Create CPU Stress Experiment
+## Experiment Setup 
+
+### Create CPU Stress Experiment
 
 First, lets create our stress experiment. We can do this programmaticaly but we will walk through this on the console. 
 
@@ -39,27 +45,76 @@ Match the rest of the settings as seen in the next screenshot and then click **S
 
 **_Note:_** For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiemnts so they dont go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in *create* and then hit the **Create Experiment** button again to confirm. 
 
+{{< img "ConfirmCreate.png" "Confirm Creation" >}}
+
 We have created our Windows CPU stress experiment template, now lets connect to our EC2 Instance.
 
-## Use AWS Systems Manager Run Command to rest Password
+## Validation procedure
+
+We will use the Windows task manager to observe increased CPU load. To do this we now need to connect to our EC2 Instance so we can observe the CPU being stressed. 
+
+### Use AWS Systems Manager Run Command to reset Password
+
 When we deployed the instance we didnt use SSH Keys, and we dont know the password. However, with the SSM Agent along with the right IAM privileges we have a break glass scenario where we can reset the password. Please use the command below, replacing the **instanceid** with the `FisWindowsCPUStress` instance ID and **password** with your password of choice. 
 
 ```bash
-aws ssm send-command --document-name "AWS-RunPowerShellScript" --document-version "1" --targets '[{"Key":"InstanceIds","Values":["instanceid"]}]' --parameters '{"workingDirectory":[""],"executionTimeout":["3600"],"commands":["net user adminstrator password"]}' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --cloud-watch-output-config '{"CloudWatchOutputEnabled":false}' --region us-east-1
+# For readbility - passing passwords this way is not secure
+TMP_PASSWORD=ENTER_NEW_PASSWORD_HERE
 ```
 
-## Use AWS Systems Session Manager to connect to Target Instance
+```bash
+# For readability and convenience
+TMP_INSTANCE=$(  aws ec2 describe-instances --filter Name=tag:Name,Values=FisWindowsCPUStress --query 'Reservations[*].Instances[0].InstanceId' --output text )
+
+# Reset password on instance - this is not a secure method, 
+# in real life use AWS-PasswordReset document
+aws ssm send-command \
+  --document-name "AWS-RunPowerShellScript" \
+  --document-version "1" \
+  --targets '[{"Key":"InstanceIds","Values":["'${TMP_INSTANCE}'"]}]' --parameters '{"workingDirectory":[""],"executionTimeout":["3600"],"commands":["net user administrator '${TMP_PASSWORD}'"]}' \
+  --timeout-seconds 600 \
+  --max-concurrency "50" \
+  --max-errors "0" \
+  --cloud-watch-output-config '{"CloudWatchOutputEnabled":false}'
+```
+
+### Use AWS Systems Session Manager to connect to Target Instance
 
 We now need to connect to our EC2 Instance so we can observe the CPU being stressed. We are going to do this be using the port forwarding capability of AWS Systems Manager Session Manager and using RDP.
 
 1. Run the following command first, this will forward local port 56788 to port 3389 on the Windows EC2 Instance. Replace the **<instanceid>** with the instance ID of the Windows Instance.
 
-```
-aws ssm start-session --target <instanceid> --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["3389"],"localPortNumber":["56788"]}'
-```
-2. Once the command says waiting for connections you can launch the RDP client and enter localhost:56788 for the server name and login as administrator with the password you set in the previous section. Once you have RDP'ed into the Windows Instance, launch task manager so you can see the CPU graph as shown below. 
+    ```bash
+    # This presumes you set TMP_INSTANCE (see above)
+    aws ssm start-session --target ${TMP_INSTANCE} --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["3389"],"localPortNumber":["56788"]}'
+    ```
+
+2. Once the command says waiting for connections you can launch the RDP client and enter `localhost:56788` for the server name and login as `administrator` with the password you set in the previous section. 
+
+    {{% expand "Troubleshooting connectivity" %}}
+When running the `start-session` command above, you may get a message about a missing session manager plugin. If you do follow the [link in the message](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) and install the plugin.
+
+The second likely issue you are going to run into is a failed password reset, e.g. because your password did not meet the complexity criteria. To verify that password reset succeeded, navigate to the [AWS Systems Manager Run Command console](https://console.aws.amazon.com/systems-manager/run-command/executing-commands), select "Command history", and locate the `AWS-RunPowerShellScript` that you executed above. If in doubt compare the `CommandId` value from the CLI invocation with the "Command ID" value on the console.
+
+{{< img "run-command-history-1.en.png" "Run command history" >}}
+
+Click on the command ID link, then on the 
+
+{{< img "run-command-history-2.en.png" "Instance for history" >}}
+
+Then examine the Error output:
+
+{{< img "run-command-history-3.en.png" "Error output for command" >}}
+
+
+    {{% /expand %}}
+
+
+
+3. Once you have RDP'ed into the Windows Instance, launch task manager so you can see the CPU graph as shown below. 
 
 {{< img "WinNoStress.png" "Task Manager" >}}
+
 
 ## Run CPU Stress Experiment
 
@@ -72,13 +127,19 @@ Let's head back to the [AWS Fault Injection Simulator Console](https://console.a
 3. Next type in start and click on **Start Experiment** again to confirm you want to start the experiment. 
 {{< img "confirmstart.png" "Confirm Start" >}}
 
-This will take you to the running experiment, in the detail section of the experiment under state you should see the experiment is initializing. Once the experiment is running, lets go back to the RDP session and observer the task manager graph. 
+This will take you to the running experiment, in the detail section of the experiment under state you should see the experiment is initializing. Once the experiment is running, lets go back to the RDP session and observe the task manager graph. 
 
 Watch the CPU percentage, it should hit 100% for a few minutes and then return back to 0%. Once we have observed the action we can logout of the Windows Instance and hit CTRL + C on the window you ran the port forwarding command to close the session. 
  
 {{< img "WindowsStressed.png" "Windows Stressed" >}}
 
-To clean up this lab, delete the CloudFormation Stack named CPUStress.
+## Learning and improving
 
-Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Windows EC2 Instance using AWS Systems Manager.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other choas engineering tools and frameworks. 
+Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Windows EC2 Instance using AWS Systems Manager and a custom run command.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other choas engineering tools and frameworks. 
+
+Since this instance wasn't doing anything there aren't any actions. To think about how to use this to test a hypothesis and make an improvement consider building custom SSM scripts to run custom scenarios. We will conver some of these in the **Common Scenarios** section.
+
+## Cleanup
+
+If you created an additional `CpuStress` CloudFormation stack in the **FIS SSM Setup** section, make sure to delete that stack.
 
