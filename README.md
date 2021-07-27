@@ -26,6 +26,8 @@ Currently this is a hodgepodge of source types (cdk, SAM, CFN) which will all ev
 - npm @ 7.19.1
 - node @ 16.5.0
 
+*If you are upgrading your tooling to new versions you will need to delete the node_modules/ directory in each CDK project*
+
 #### Upgrading Cloud9 environment
 
 Cloud9 already comes with nvm. 
@@ -48,6 +50,13 @@ nvm install stable
 npm install -g typescript
 npm install -g aws-cdk
 ```
+
+#### Upgrading NPM dependencies 
+
+To keep your NPM dependencies updated in the future use the [npm-check-updates](https://www.npmjs.com/package/npm-check-updates_) utility.
+
+Note, that all versions may not be compatible with each other and you may have to manually set versions in package.json. For example, CDK@1.115.0 is incompatible with jest@27.x.x.
+
 ***The deploy script uses the default profile set for AWS CLI. Modify lines 26 and 27 to use a custom profile***
 
 ```
