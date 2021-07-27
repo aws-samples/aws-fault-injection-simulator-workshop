@@ -79,4 +79,5 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
         ParameterKey=SubnetId,ParameterValue=${SUBNET_ID} \
     --capabilities CAPABILITY_IAM
 )
-echo next step
+
+echo Done.
