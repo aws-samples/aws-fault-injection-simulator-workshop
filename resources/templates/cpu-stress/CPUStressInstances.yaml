@@ -35,9 +35,17 @@ Parameters:
     Default: t3.medium
     Description: Amazon EC2 instance type for the Internet Information Services servers
     Type: String
-  #SubnetId:
-  #  Description: Subnet in which to instantiate VM - needed if no Default VPC was configured
-  #  Type: AWS::EC2::Subnet::Id
+  SubnetId:
+   Description: Subnet in which to instantiate VM - needed if no Default VPC was configured
+   # Can't use Type: AWS::EC2::Subnet::Id because it checks the default before the condition
+   Type: String
+   AllowedPattern: "subnet-[a-z0-9]+"
+   Default: "subnet-000000"
+Conditions:
+  UseDefaultVpc:
+    !Equals
+      - !Ref SubnetId
+      - "subnet-000000"
 Resources:
   SSMInstanceRole: 
     Type : AWS::IAM::Role
@@ -64,10 +72,10 @@ Resources:
       IamInstanceProfile: !Ref 'SSMInstanceProfile'
       InstanceType: !Ref 'InstanceType'
       Monitoring: true
-      #SubnetId: !Ref SubnetId   
+      SubnetId: !If [UseDefaultVpc, !Ref "AWS::NoValue", !Ref SubnetId]
       Tags:
         - Key: Name
-          Value: 'WindowsCPUStress'
+          Value: 'FisWindowsCPUStress'
   LinuxInstance:
     Type: AWS::EC2::Instance
     Properties:
@@ -75,10 +83,10 @@ Resources:
       IamInstanceProfile: !Ref 'SSMInstanceProfile'
       InstanceType: !Ref 'InstanceType'
       Monitoring: true
-      #SubnetId: !Ref SubnetId   
+      SubnetId: !If [UseDefaultVpc, !Ref "AWS::NoValue", !Ref SubnetId]
       Tags:
         - Key: Name
-          Value: 'LinuxCPUStress'
+          Value: 'FisLinuxCPUStress'
   FISRole:
     Type: AWS::IAM::Role
     Properties:
