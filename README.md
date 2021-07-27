@@ -20,7 +20,35 @@ and browse to http://localhost:1313
 
 Currently this is a hodgepodge of source types (cdk, SAM, CFN) which will all eventually need to be merged into plain CFN for EE use. For now to instantiate the resources on a Mac/Linux box with installed `bash`, `jq`, `AWS CLI`, `SAM CLI` and `CDK CLI`:
 
-* The deploy script uses the default profile set for AWS CLI. Modify lines 26 and 27 to use a custom profile *
+### Tool versions
+
+CDK @ 1.115.0
+npm @ 7.19.1
+node @ 16.5.0
+
+#### Upgrading Cloud9 environment
+
+Cloud9 already comes with nvm. 
+
+```bash
+nvm install stable
+npm install -g typescript
+npm install -g aws-cdk
+```
+
+#### Upgrading local environment
+
+We recommend using nvm to manage your node environments. Install nvm using [brew](https://brew.sh/).
+
+```bash
+# follow the post instructions to create .nvm dir and add PATH variables
+brew install nvm 
+# Reload configs or restart shell
+nvm install stable
+npm install -g typescript
+npm install -g aws-cdk
+```
+***The deploy script uses the default profile set for AWS CLI. Modify lines 26 and 27 to use a custom profile***
 
 ```
 cd aws-fault-injection-simulator-workshop
