@@ -20,7 +20,7 @@ and browse to http://localhost:1313
 
 Currently this is a hodgepodge of source types (cdk, SAM, CFN) which will all eventually need to be merged into plain CFN for EE use. For now to instantiate the resources on a Mac/Linux box with installed `bash`, `jq`, `AWS CLI`, `SAM CLI` and `CDK CLI`:
 
-### Tool versions
+### Tooling
 
 - CDK @ 1.115.0
 - npm @ 7.19.1
