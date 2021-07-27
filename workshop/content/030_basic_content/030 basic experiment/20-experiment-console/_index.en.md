@@ -40,7 +40,7 @@ Now we need to define targets. For our first experiment we will start with the h
 
 {{< img "create-template-2-targets-1.en.png" "Add FIS target" >}}
 
-On the "Add target" popup enter `FisWorkshopAsg-50Percent` for name and select `aws:ec2:instances`. For "Target method" we will dynamically select resources based on an associated tag. Select the `Resource tags and filters` checkbox. Pick `Percent` from "Selection mode" and enter `50`. Under "Resource tags" enter `Name` in the "Key" field and `fis-asg-server` for "Value". Under filters enter `State.Name` in the "Attribute path" field and `running` under "Values". We wil cover filters in more detail in the next section. Select "Save".
+On the "Add target" popup enter `FisWorkshopAsg-50Percent` for name and select `aws:ec2:instances`. For "Target method" we will dynamically select resources based on an associated tag. Select the `Resource tags and filters` checkbox. Pick `Percent` from "Selection mode" and enter `50`. Under "Resource tags" enter `Name` in the "Key" field and `FisStackAsg/ASG` for "Value". Under filters enter `State.Name` in the "Attribute path" field and `running` under "Values". We wil cover filters in more detail in the next section. Select "Save".
 
 {{< img "create-template-2-targets-2.en.png" "Add FIS target" >}}
 
