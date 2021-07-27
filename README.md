@@ -26,7 +26,7 @@ Currently this is a hodgepodge of source types (cdk, SAM, CFN) which will all ev
 - npm @ 7.19.1
 - node @ 16.5.0
 
-*If you are upgrading your tooling to new versions you will need to delete the `node_modules/` directory in each CDK project*
+If you are upgrading your tooling to new versions you will need to delete the `node_modules/` directory in each CDK project
 
 #### Upgrading Cloud9 environment
 
