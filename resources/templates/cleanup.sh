@@ -99,4 +99,9 @@ echo "Cleanup in Region: ${REGION}"
     aws logs delete-log-group --log-group-name /fis-workshop/asg-error-log || echo "Log group /fis-workshop/asg-error-log already deleted"
 )
 
+# Remove cdk context files
+(
+    rm */cdk.context.json
+)
+
 echo Done.
