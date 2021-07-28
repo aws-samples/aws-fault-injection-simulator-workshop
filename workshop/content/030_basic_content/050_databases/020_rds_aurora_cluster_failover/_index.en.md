@@ -31,7 +31,7 @@ Now we need to define targets. Scroll to the "Targets" section and select "Add T
 
 On the "Add target" popup enter `FisWorkshopAuroraCluster` for name and select `aws:rds:cluster`. For "Target method" we will select resources based on the ID. Select the `Resource IDs` checkbox. Pick the target cluster then Pick `All` from "Selection mode". Select "Save".
 
-{{< img "create-template-2-targets-2.en.png" "Add FIS target" >}}
+{{< img "create-template-2-targets-2.en.png" "Edit FIS target" >}}
 
 ### Action definition
 
@@ -45,7 +45,7 @@ We will leave the "Start after" section blank since the instances we are termina
 
 Under "Target" select the `FisWorkshopAuroraCluster` target created above. Select "Save".
 
-{{< img "create-template-2-actions-2.en.png" "Add FIS actions" >}}
+{{< img "create-template-2-actions-2.en.png" "Edit FIS actions" >}}
 
 ### Creating template without stop conditions
 
@@ -95,7 +95,7 @@ Connect to one of the EC2 instances in your autoscaling group. In a new browser 
 
 On the next page select "Session Manager" and "Connect":
 
-{{< img "instance-connect-2.en.png" "Locate ASG instance" >}}
+{{< img "instance-connect-2.en.png" "Connect to ASG instance via Session Manager" >}}
 
 This will open a linux terminal session. In this session sudo to assume the `ec2-user` identity:
 
@@ -130,7 +130,7 @@ Now start the test script and leave it running:
 
 Navigate to the [RDS console](https://console.aws.amazon.com/rds/home), select "Databases" on the left menu, and search for "fisworkshop". Take a screenshot or write down the "Reader" and "Writer" AZ information, e.g.:
 
-{{< img "review-1-rds-1.en.png" "Review ASG" >}}
+{{< img "review-1-rds-1.en.png" "Explore aurora initial state" >}}
 
 ### Start the experiment
 
@@ -146,7 +146,7 @@ Verify that the experiment worked. If you are not already on the pane viewing yo
 
 Verify that the failover actually happened. Navigate to the RDS console again and about a minute after you started the experiment you'll see the "Reader" and "Writer" instances be flipped to the other AZ:
 
-{{< img "review-1-rds-2.en.png" "Update ASG" >}}
+{{< img "review-1-rds-2.en.png" "Explore aurora changed state" >}}
 
 If all went well, the "Reader" and "Writer" instances should have traded places. 
 
@@ -161,7 +161,7 @@ However, you may want to experiment further built-in Aurora [fault injection que
 
 To access your Aurora database, you can extract the connection information from the [AWS Secrets Manager console](https://console.aws.amazon.com/secretsmanager/home?#!/secret?name=FisAuroraSecret) by selecting the `FisAuroraSecret` and selecting "Retrieve secret value":
 
-{{< img "ssm-get-secret.en.png" >}}
+{{< img "ssm-get-secret.en.png" "Retrieve database credentials from Secrets Manager" >}}
 
 Using the information you can open another terminal, e.g. from the same instance you were using for testing, and connect to your Aurora database with the retrieved secret values:
 

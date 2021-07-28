@@ -33,11 +33,11 @@ We have a user trying to access a website running on AWS. We have designed for h
 
 Once you've started the template as described in **Getting Started** you can navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "FisStackAsg" stack and click on the "Outputs" tab which will show you the server URL:
 
-{{< img "cloudformation.en.png" "Image of architecture to be injected with chaos" >}}
+{{< img "cloudformation.en.png" "Autoscaling group URL" >}}
 
 To gain visibility into the user experience from the sysops side we've used the [cloudwatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) to export our web server logs to [cloudwatch logs](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log) and we created [CloudWatch Logs metrics filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) to track server response codes and speeds on a [dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:name=fis-dashboard-1). The dashboard also shows the number of instances in our Auto-Scaling Group (ASG).
 
-{{< img "fis-dashboard-1.png" "Image of architecture to be injected with chaos" >}}
+{{< img "fis-dashboard-1.png" "CloudWatch dashboard" >}}
 
 {{%expand "Accessing the dashboard from the console" %}}
 To access the dashboard, log into the AWS console as described in **Getting Started**. From the "Services" dropdown navigate to "CloudWatch" under "Management & Governance" or use the search bar. On the top left select "Dahsboards" and choose "fis-dashboard-1".

@@ -14,7 +14,7 @@ To run an experiment we need to first create a template _defining_ the [Actions]
 
 Navigate to the [FIS console](https://console.aws.amazon.com/fis/home?#Home) and select "Create experiment template".
 
-{{< img "create-template-1.en.png" "Create FIS experiment template" >}}
+{{< img "create-template-1.en.png" "FIS console" >}}
 
 {{% notice note %}}
 Note: if you've used FIS before you may not see the splash screen. In that case select "Experiment templates" in the menu on the left and access "Create experiment template" from there.
@@ -42,7 +42,7 @@ Now we need to define targets. For our first experiment we will start with the h
 
 On the "Add target" popup enter `FisWorkshopAsg-50Percent` for name and select `aws:ec2:instances`. For "Target method" we will dynamically select resources based on an associated tag. Select the `Resource tags and filters` checkbox. Pick `Percent` from "Selection mode" and enter `50`. Under "Resource tags" enter `Name` in the "Key" field and `FisStackAsg/ASG` for "Value". Under filters enter `State.Name` in the "Attribute path" field and `running` under "Values". We wil cover filters in more detail in the next section. Select "Save".
 
-{{< img "create-template-2-targets-2.en.png" "Add FIS target" >}}
+{{< img "create-template-2-targets-2.en.png" "Edit FIS target" >}}
 
 #### Action definition
 
@@ -56,17 +56,17 @@ We will leave the "Start after" section blank since the instances we are termina
 
 Under "Target" select the `FisWorkshopAsg-50Percent` target created above. Select "Save".
 
-{{< img "create-template-2-actions-2.en.png" "Add FIS actions" >}}
+{{< img "create-template-2-actions-2.en.png" "Edit FIS actions" >}}
 
 #### Creating template without stop conditions
 
 Scroll to the bottom of the template definition page. Optionally add a new tag `Name` with value `FisWorkshopTerminateAsg-1` and select "Create experiment template". 
 
-{{< img "create-template-3-create.en.png" "Add FIS actions" >}}
+{{< img "create-template-3-create.en.png" "Name and create experiment template" >}}
 
 Since we didn't specify a stop condition we receive a warning. This is ok, for this experiment we don't need a stop condition. Type `create` in the text box as indicated and select "Create experiment template".
 
-{{< img "create-template-3-confirm.en.png" "Save FIS template" >}}
+{{< img "create-template-3-confirm.en.png" "Confirm and save FIS template" >}}
 
 ## Validation procedure
 
