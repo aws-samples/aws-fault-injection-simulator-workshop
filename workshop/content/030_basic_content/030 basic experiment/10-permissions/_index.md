@@ -14,7 +14,7 @@ We need to create a [role for the FIS service](https://docs.aws.amazon.com/fis/l
 
 Navigate to the [IAM console](https://console.aws.amazon.com/iam/home?#/policies) and create a new policy called `FisWorkshopServicePolicy`. On the *Create Policy* page select the JSON tab
 
-{{< img "create-policy-1.en.png" "Create FIS service role" >}}
+{{< img "create-policy-1.en.png" "Create FIS service policy" >}}
 
 and paste the following policy - take the time to look at how broad these permissions are:
 
@@ -122,11 +122,11 @@ On the *Select type of trusted entity* page FIS does not exist as a trusted serv
 
 On the *Attach permissions* page search for the `FisWorkshopServicePolicy` we just created and check the box beside it to attach it to the role.
 
-{{< img "create-role-2.en.png" "Create FIS service role" >}}
+{{< img "create-role-2.en.png" "Attach role policy" >}}
 
 Back in the IAM roles console, find and edit the `FisWorkshopServiceRole`. Select *Trust relationsips* and the *Edit trust relationship* button.
 
-{{< img "create-role-3.en.png" "Create FIS service role" >}}
+{{< img "create-role-3.en.png" "Edit trust relationship" >}}
 
 Replace the policy document with the following:
 
