@@ -17,4 +17,10 @@ To ensure you don't incur any further costs after the workshop, please follow th
   * `FisStackAsg`
   * `FisStackVpc`
 
-FIS experiment results and custom cloudwatch metrics will be retained so you can refer back to your work.
+* Delete the CloudWatch log groups:
+  * Navigate to the [AWS CloudWatch console](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups$3FlogGroupNameFilter$3Dfis-workshop)
+  * Search for `fis-workshop`
+  * Select the checkboxes
+  * Under "Actions" select "Delete log group(s)"
+
+CloudWatch metrics and FIS experiments will be retained until the end of their respective expiration periods.
