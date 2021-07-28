@@ -88,6 +88,6 @@ Congrats for completing this lab! In this lab you walked through running an expe
 
 ## Learning and improving
 
-Since this instances wasn't doing anything there aren't any actions. To think about how to use this to test a hypothesis and make an improvement consider running the same experiment against the ASG instances from the **First Experiment** section. Maybe you could use this to tune the optimal CPU levels for scaling up or down?
+Since this instance wasn't doing anything there aren't any actions. To think about how to use this to test a hypothesis and make an improvement consider running the same experiment against the ASG instances from the **First Experiment** section. Maybe you could use this to tune the optimal CPU levels for scaling up or down?
 
 
