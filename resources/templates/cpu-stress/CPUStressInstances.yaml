@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Launch Windows and Linux Instance for CPU Stress Test during FIS Workshop.  
+Description: "AWS FIS workshop - EC2/static stack. Launch Windows and Linux Instance for CPU Stress Test during FIS Workshop."
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:

@@ -8,5 +8,7 @@ const fisRds = new FisStackRdsAurora(app, 'FisStackRdsAurora', {
   env: { 
       account: process.env.CDK_DEFAULT_ACCOUNT, 
       region: process.env.CDK_DEFAULT_REGION 
-  }});
+    },
+    description: "AWS FIS workshop - database stack. Creates RDS and Aurora resources for disruption"
+  });
 
