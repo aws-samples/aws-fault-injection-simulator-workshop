@@ -185,7 +185,7 @@ Resources:
           yum install -y amazon-cloudwatch-agent
           amazon-linux-extras install collectd 
           cat >/opt/aws/amazon-cloudwatch-agent/bin/config.json <<"EOT"
-          {"agent":{"metrics_collection_interval":10,"run_as_user":"root"},"logs":{"logs_collected":{"files":{"collect_list":[{"file_path":"/var/log/nginx/access.log","log_group_name":"/fis-workshop/nginx-access-log","log_stream_name":"{instance_id}"},{"file_path":"/var/log/nginx/error.log","log_group_name":"/fis-workshop/nginx-error-log","log_stream_name":"{instance_id}"}]}}},"metrics":{"append_dimensions":{"AutoScalingGroupName":"${aws:AutoScalingGroupName}","ImageId":"${aws:ImageId}","InstanceId":"${aws:InstanceId}","InstanceType":"${aws:InstanceType}"},"metrics_collected":{"collectd":{"metrics_aggregation_interval":60},"cpu":{"measurement":["cpu_usage_idle","cpu_usage_iowait","cpu_usage_user","cpu_usage_system"],"metrics_collection_interval":10,"resources":["*"],"totalcpu":false},"disk":{"measurement":["used_percent","inodes_free"],"metrics_collection_interval":10,"resources":["*"]},"diskio":{"measurement":["io_time","write_bytes","read_bytes","writes","reads"],"metrics_collection_interval":10,"resources":["*"]},"mem":{"measurement":["mem_used_percent"],"metrics_collection_interval":10},"netstat":{"measurement":["tcp_established","tcp_time_wait"],"metrics_collection_interval":10},"statsd":{"metrics_aggregation_interval":60,"metrics_collection_interval":10,"service_address":":8125"},"swap":{"measurement":["swap_used_percent"],"metrics_collection_interval":10}}}}
+          {"agent":{"metrics_collection_interval":10,"run_as_user":"root"},"logs":{"logs_collected":{"files":{"collect_list":[{"file_path":"/var/log/nginx/access.log","log_group_name":"/fis-workshop/asg-access-log","log_stream_name":"{instance_id}"},{"file_path":"/var/log/nginx/error.log","log_group_name":"/fis-workshop/asg-error-log","log_stream_name":"{instance_id}"}]}}},"metrics":{"append_dimensions":{"AutoScalingGroupName":"${aws:AutoScalingGroupName}","ImageId":"${aws:ImageId}","InstanceId":"${aws:InstanceId}","InstanceType":"${aws:InstanceType}"},"metrics_collected":{"collectd":{"metrics_aggregation_interval":60},"cpu":{"measurement":["cpu_usage_idle","cpu_usage_iowait","cpu_usage_user","cpu_usage_system"],"metrics_collection_interval":10,"resources":["*"],"totalcpu":false},"disk":{"measurement":["used_percent","inodes_free"],"metrics_collection_interval":10,"resources":["*"]},"diskio":{"measurement":["io_time","write_bytes","read_bytes","writes","reads"],"metrics_collection_interval":10,"resources":["*"]},"mem":{"measurement":["mem_used_percent"],"metrics_collection_interval":10},"netstat":{"measurement":["tcp_established","tcp_time_wait"],"metrics_collection_interval":10},"statsd":{"metrics_aggregation_interval":60,"metrics_collection_interval":10,"service_address":":8125"},"swap":{"measurement":["swap_used_percent"],"metrics_collection_interval":10}}}}
           EOT
           systemctl start collectd
           systemctl enable collectd
@@ -200,7 +200,7 @@ Resources:
     Properties: 
       FilterPattern: "{$.request_time >= 0}"
       # Fix this to be a ref
-      LogGroupName: /fis-workshop/nginx-access-log
+      LogGroupName: /fis-workshop/asg-access-log
       MetricTransformations: 
         - 
           MetricValue: "$.request_time"
@@ -213,7 +213,7 @@ Resources:
     Properties: 
       FilterPattern: "{$.status = 2*}"
       # Fix this to be a ref
-      LogGroupName: /fis-workshop/nginx-access-log
+      LogGroupName: /fis-workshop/asg-access-log
       MetricTransformations: 
         - 
           MetricValue: "1"
@@ -226,7 +226,7 @@ Resources:
     Properties: 
       FilterPattern: "{$.status = 5*}"
       # Fix this to be a ref
-      LogGroupName: /fis-workshop/nginx-access-log
+      LogGroupName: /fis-workshop/asg-access-log
       MetricTransformations: 
         - 
           MetricValue: "1"

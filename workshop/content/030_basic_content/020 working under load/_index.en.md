@@ -50,10 +50,10 @@ While our load is running let's explore the setup a little more.
 
 ### Webserver logs and metrics
 
-The first thing we want to look at is our webserver logs. Because we are using auto-scaling and virtual machines can disappear, we have installed the [Unified CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) on our webserver to write logs to a [CloudWatch Log Group](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fnginx-access-log). 
+The first thing we want to look at is our webserver logs. Because we are using auto-scaling and virtual machines can disappear, we have installed the [Unified CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) on our webserver to write logs to a [CloudWatch Log Group](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log). 
 
 {{%expand "Navigating to CloudWatch Log Groups" %}}
-Log into the AWS console as described in **Getting Started**. From the "Services" dropdown navigate to "CloudWatch" under "Management & Governance" or use the search bar. On the left hand side expand the burger menu if necessary, the select "Logs" and "Log Groups". If you have many log groups you can search for `/fis-workshop/nginx-access-log`
+Log into the AWS console as described in **Getting Started**. From the "Services" dropdown navigate to "CloudWatch" under "Management & Governance" or use the search bar. On the left hand side expand the burger menu if necessary, the select "Logs" and "Log Groups". If you have many log groups you can search for `/fis-workshop/asg-access-log`
 {{% /expand%}}
 
 {{< img "nginx-log-stream-1.en.png" "Nginx access log group" >}}
@@ -62,7 +62,7 @@ Click through on the topmost entry and expand any of the log lines. You may noti
 
 {{< img "nginx-log-stream-2.en.png" "Nginx access log" >}}
 
-While not necessary it makes it very easy to create [Metric Filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringPolicyExamples.html). Navigate back to the `/fis-workshop/nginx-access-log` log group and select the "Metric filters" tab. You will see that we have created filters to extract the count of responses with HTTP `status` codes in the `2xx` (good responses) and `5xx` (bad responses) ranges. We also created a filter to select all entries that have a `request_time` set. The resulting metrics can be found under  Metrics / All metrics / Custom Namespaces / fisworkshop. These are also the metrics for `nginx connection status` and `nginx response time` you saw on the dashboard in the previous section.
+While not necessary it makes it very easy to create [Metric Filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringPolicyExamples.html). Navigate back to the `/fis-workshop/asg-access-log` log group and select the "Metric filters" tab. You will see that we have created filters to extract the count of responses with HTTP `status` codes in the `2xx` (good responses) and `5xx` (bad responses) ranges. We also created a filter to select all entries that have a `request_time` set. The resulting metrics can be found under  Metrics / All metrics / Custom Namespaces / fisworkshop. These are also the metrics for `nginx connection status` and `nginx response time` you saw on the dashboard in the previous section.
 
 Let's look at our dashboard:
 

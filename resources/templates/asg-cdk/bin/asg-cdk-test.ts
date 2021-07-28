@@ -8,4 +8,6 @@ new AsgCdkTestStack(app, 'FisStackAsg', {
   env: { 
     account: process.env.CDK_DEFAULT_ACCOUNT, 
     region: process.env.CDK_DEFAULT_REGION 
-}});
+  },
+  description: "AWS FIS workshop - EC2/autoscaling group stack. Creates an EC2 autoscaling group and associated CloudWatch dashboards for disruption"
+});

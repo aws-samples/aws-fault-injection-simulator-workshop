@@ -299,35 +299,6 @@ export class AsgCdkTestStack extends cdk.Stack {
       logGroupName: nginxErrorLogGroup,
       retention: log.RetentionDays.ONE_WEEK,
     });
-
-
-    const asgDashboard = new cloudwatch.Dashboard(this,'FisAsgDashboard', {
-      dashboardName: 'FisAsgDashboard'
-    });
-
-    const raw2xx = new cloudwatch.Metric({
-      label: "2xx",
-      period: cdk.Duration.seconds(1),
-      unit: cloudwatch.Unit.PERCENT,
-      namespace: 'fisworkshop',
-      metricName: '2xx',  
-      color: cloudwatch.Color.GREEN,
-    });
-    const raw5xx = new cloudwatch.Metric({
-      label: "5xx",
-      period: cdk.Duration.seconds(1),
-      unit: cloudwatch.Unit.PERCENT,
-      namespace: 'fisworkshop',
-      metricName: '5xx',  
-      color: cloudwatch.Color.RED
-    });
-
-    asgDashboard.addWidgets(new cloudwatch.GraphWidget({
-      title: "First",
-      left: [raw2xx],
-
-    }));
-
     
     // Escape hatch does not replace ${} style variables, use Mustache instead
     const manualDashboard = new cdk.CfnResource(this, 'AsgDashboardEscapeHatch', {
