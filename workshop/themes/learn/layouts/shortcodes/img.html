@@ -1,4 +1,14 @@
-{{ $img := $.Page.Resources.GetMatch (.Get 0)}}
+{{ $path := .Get 0 }}
+{{ $img := $.Page.Resources.GetMatch ($path) }}
+
+{{ if not (fileExists (printf "static/%s" $path )) }}
+	{{ $img := $.Page.Resources.GetMatch ($path) }}
+	{{ with $img }}
+	{{ else }}
+		{{ errorf "Failed to render %q in %q. Could not find file %s" .Page.File .Page.File.Dir $path }}
+	{{ end }}
+{{ end }}
+
 <figure>
-	<img src="{{ with $img }}{{ .RelPermalink }}{{ else }}{{ .Site.BaseURL }}{{ .Get 0 }}{{ end }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
+	<img src="{{ with $img }}{{ .RelPermalink }}{{ else }}{{ .Site.BaseURL }}{{ $path }}{{ end }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
 </figure>
