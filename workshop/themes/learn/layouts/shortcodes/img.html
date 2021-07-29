@@ -5,7 +5,7 @@
 	{{ $img := $.Page.Resources.GetMatch ($path) }}
 	{{ with $img }}
 	{{ else }}
-		{{ errorf "Failed to render %q in %q. Could not find file %s" .Page.File .Page.File.Dir $path }}
+		{{ errorf "Failed to render %q. Could not find file %s" .Page.File $path }}
 	{{ end }}
 {{ end }}
 
