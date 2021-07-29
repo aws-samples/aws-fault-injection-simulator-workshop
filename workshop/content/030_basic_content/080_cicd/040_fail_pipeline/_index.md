@@ -15,10 +15,10 @@ Click on ```cfn_fis_demos.yaml``` and select edit in the upper right hand corner
 Edit the file to comment out line ```122``` and uncomment lines ```123``` -> ```127```.
 
 Before:
-![Source Before](sourcebefore.png)
+{{< img "sourcebefore.png" "Source Before" >}}
 
 After:
-![Source After](sourceafter.png)
+{{< img "sourceafter.png" "Source After" >}}
 
 Finally, enter your name and email at the bottom of the page and commit the change.
 This will trigger the pipeline to start immediately. 
@@ -37,12 +37,12 @@ By setting this CloudWatch alarm to an error state, this will stop the experimen
 Open the [FIS console](https://console.aws.amazon.com/fis/home?#Experiments).
 You should see that your latest experiment has failed do to the stop condition. 
 
-![Failed Experiment](fisfail.png)
+{{< img "fisfail.png" "Failed Experiment" >}}
 
 Finally navigate back to the [AWS Code Pipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
 You should see that your pipeline has also failed do to the experiment stopping.
 
-![Failed Pipeline](codepipelinefail.png)
+{{< img "codepipelinefail.png" "Failed Pipeline" >}}
 
 Congratulations! We have now tested that a failure to our experiment will stop our pipeline.
 In a production scenario, after the experiment step, we would continue on with our deployment to the next stage in our pipeline. 
