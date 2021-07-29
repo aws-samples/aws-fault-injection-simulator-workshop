@@ -49,7 +49,7 @@ Open the [AWS Code Pipeline Console](https://console.aws.amazon.com/codesuite/co
 You should now see the ```FIS_Workshop``` pipeline is in progress.
 Click on the pipeline name to view the step details.
 
-![CodePipeline in Progress](codepipelineinprogress.png)
+{{< img "codepipelineinprogress.png" "AWS CodePipeline in progress" >}}
 
 Wait for the infrastructure provisioning step to complete. 
 After this step, our Experiment will start.
@@ -58,17 +58,17 @@ You can monitor the progress of your experiment from both the CodePipeline detai
 Click on the running experiment.
 You should see the experiment in a running status. 
 
-![Running Experiment](fisrunning.png)
+{{< img "fisrunning.png" "Running Experiment" >}}
 
 After a few minutes refresh the page. 
 You should see the experiment is completed successfully.
 
-![Successful Experiment](fissuccessfully.png)
+{{< img "fissuccessfully.png" "Successful Experiment" >}}
 
 Finally navigate back to the [AWS Code Pipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
 You should also see that your pipeline has completed successfully.
 
-![Successful Pipeline](codepipelinesuccessfully.png)
+{{< img "codepipelinesuccessfully.png" "Successful Pipeline" >}}
 
 Congratulations! You have successfully integrated a Fault Injection Simulator Experiment into a CICD pipeline.
 In this scenario, we completed a happy path to ensure that our infrastructure and experiment completed without error. 
