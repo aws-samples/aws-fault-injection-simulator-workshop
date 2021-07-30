@@ -4,8 +4,7 @@ chapter: false
 weight: 70
 ---
 
-This is a placeholder section for ECS/EKS actions and is waiting for
+In addition to the ability to run containers on virtual machines, AWS provides managed services to run containers at scale. This section covers fault injection experiments on:
 
-* ECS #10
-* EKS #11
+{{< children >}}{{< /children >}}
 
