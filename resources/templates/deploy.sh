@@ -87,5 +87,12 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
     npm install
     npx cdk deploy EksStack --require-approval never --outputs-file outputs.json
 )
+# ECS stack uses CDK
+(
+    echo "Provisioning ECS resources..."
+    cd ecs
+    npm install
+    npx cdk deploy EcsStack --require-approval never --outputs-file outputs.json
+)
 
 echo Done.

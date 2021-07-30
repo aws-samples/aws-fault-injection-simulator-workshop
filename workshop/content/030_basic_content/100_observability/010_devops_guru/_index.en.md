@@ -57,7 +57,7 @@ In our case the anomalies arose from external load but frequently anomalies are 
 
 or in table format:
 
-{{< img "infra-table.en.png" ""Infrastructure changes table view"" >}}
+{{< img "infra-table.en.png" "Infrastructure changes table view" >}}
 
 From the table format we can see that about 2h before the anomaly some changes were made to the stack configuration and deployed code. We can also see that around the time of the event instances were added to the load balancer in response to the increased load, and subsequently removed from the load balancer due to the external event subsiding.
 

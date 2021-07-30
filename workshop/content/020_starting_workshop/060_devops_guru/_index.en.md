@@ -10,11 +10,11 @@ Only complete this section if you are planning to explore the DevOps Guru sectio
 
 Navigate to the [DevOps Guru console](https://console.aws.amazon.com/devops-guru/home?#/home) and click select the "Get Started" button:
 
-{{< img "getting-started.en.png" >}}
+{{< img "getting-started.en.png" "DevOps Guru console image" >}}
 
 For "Amazon DevOps Guru analysis coverage" select "Choose later" if you will only be exploring as part of this workshop. Otherwise you can choose "Analyze all AWS resources in the current AWS account in this Region" but it may take more time and incur more cost to get started.
 
-{{< img "coverage.en.png" >}}
+{{< img "coverage.en.png" "Select coverage range">}}
 
 During this workshop we will not be exploring SNS notifications and thus don't need to specify an SNS topic. 
 
@@ -22,15 +22,15 @@ Select "Enable"
 
 If you set coverage to "Choose later" you should now see an information banner notifying you that you have not yet selected resources:
 
-{{< img "no-resources-warning.en.png" >}}
+{{< img "no-resources-warning.en.png" "Warning banner no resources" >}}
 
 Select the "Manage analysis coverage" option in the banner or navigate to the [DevOps Guru console](https://console.aws.amazon.com/devops-guru/home?#/home), choose "Settings" and select "Manage" option under "DevOps Guru analysis coverage":
 
-{{< img "manage-coverate.en.png" >}}
+{{< img "manage-coverate.en.png" "Managing coverage on console" >}}
 
 Select all the Fis stacks:
 
-{{< img "select-stacks.en.png" >}}
+{{< img "select-stacks.en.png" "Select FIS stacks" >}}
 
 Select "Save".
 

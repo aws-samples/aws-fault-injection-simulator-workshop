@@ -6,4 +6,4 @@ weight = 1
 
 Please use the orange arrows or the side menu to navigate the workshop.
 
-{{< img "fis-white.png" >}}
+{{< img "fis-white.png" "FIS icon">}}
