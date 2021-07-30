@@ -61,6 +61,20 @@ echo "Cleanup in Region: ${REGION}"
     fi
 )
 
+# ECS using CDK
+(
+    echo "Deleting ECS..."
+    cd ecs
+    npx cdk destroy FisStackEcs --force
+)
+
+# EKS using CDK
+(
+    echo "Deleting EKS..."
+    cd ecs
+    npx cdk destroy FisStackEks --force
+)
+
 # ASG stack moved to CDK
 (
     echo "Deleting EC2 Autoscaling Group..."
