@@ -1,12 +1,18 @@
 import * as cdk from '@aws-cdk/core';
+import ec2 = require("@aws-cdk/aws-ec2");
 import eks = require('@aws-cdk/aws-eks');
 
 export class EksStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const vpc = ec2.Vpc.fromLookup(this, 'FisVpc', { 
+      vpcName: 'FisStackVpc/FisVpc'
+    });
+
     // The EKS cluster, without worker nodes as we'll add them later
     const eksCluster = new eks.Cluster(this, 'Cluster', {
+      vpc: vpc,
       version: eks.KubernetesVersion.V1_20,
       defaultCapacity: 0,
       clusterName: "FisWorkshop-EksCluster"

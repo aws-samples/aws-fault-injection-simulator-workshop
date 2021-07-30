@@ -8,11 +8,16 @@ export class EcsStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const vpc = ec2.Vpc.fromLookup(this, 'FisVpc', { 
+      vpcName: 'FisStackVpc/FisVpc'
+    });
+
     const cluster = new ecs.Cluster(this, "Cluster", {
+      vpc: vpc
     });
 
     const asg = new autoscaling.AutoScalingGroup(this, "EcsAsgProvider", {
-      vpc: cluster.vpc,
+      vpc: vpc,
       instanceType: new ec2.InstanceType("t3.medium"),
       machineImage: ecs.EcsOptimizedImage.amazonLinux2(),
       desiredCapacity: 1
