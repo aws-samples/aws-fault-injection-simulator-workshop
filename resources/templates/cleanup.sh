@@ -71,7 +71,7 @@ echo "Cleanup in Region: ${REGION}"
 # EKS using CDK
 (
     echo "Deleting EKS..."
-    cd ecs
+    cd eks
     npx cdk destroy FisStackEks --force
 )
 
@@ -108,9 +108,17 @@ echo "Cleanup in Region: ${REGION}"
 
 # Delete log groups because they break future deployments
 (
+    set +e
+    set +u
+    set +o pipefail
+
     echo "Deleting log groups ..."
-    aws logs delete-log-group --log-group-name /fis-workshop/asg-access-log || echo "Log group /fis-workshop/asg-access-log already deleted"
-    aws logs delete-log-group --log-group-name /fis-workshop/asg-error-log || echo "Log group /fis-workshop/asg-error-log already deleted"
+    aws logs delete-log-group \
+        --log-group-name /fis-workshop/asg-access-log \
+    || echo "Log group /fis-workshop/asg-access-log already deleted"
+    aws logs delete-log-group \
+        --log-group-name /fis-workshop/asg-error-log \
+    || echo "Log group /fis-workshop/asg-error-log already deleted"
 )
 
 # Remove cdk context files

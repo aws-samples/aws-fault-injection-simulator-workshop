@@ -71,14 +71,14 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
     echo "Provisioning EKS resources..."
     cd eks
     npm install
-    npx cdk deploy EksStack --require-approval never --outputs-file outputs.json
+    npx cdk deploy FisStackEks --require-approval never --outputs-file outputs.json
 )
 # ECS stack uses CDK
 (
     echo "Provisioning ECS resources..."
     cd ecs
     npm install
-    npx cdk deploy EcsStack --require-approval never --outputs-file outputs.json
+    npx cdk deploy FisStackEcs --require-approval never --outputs-file outputs.json
 )
 
 # Stress VM stack added as CFN

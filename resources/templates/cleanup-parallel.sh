@@ -71,7 +71,7 @@ echo "Deleting ECS..."
 # EKS using CDK
 echo "Deleting EKS..."
 (
-    cd ecs
+    cd eks
     npx cdk destroy FisStackEks --force
 ) > cleanup-output.eks.txt 2>&1 &
 
@@ -113,8 +113,16 @@ echo "Deleting VPC..."
 # Delete log groups because they break future deployments
 echo "Deleting log groups ..."
 (
-    aws logs delete-log-group --log-group-name /fis-workshop/asg-access-log || echo "Log group /fis-workshop/asg-access-log already deleted"
-    aws logs delete-log-group --log-group-name /fis-workshop/asg-error-log || echo "Log group /fis-workshop/asg-error-log already deleted"
+    set +e
+    set +u
+    set +o pipefail
+
+    aws logs delete-log-group \
+        --log-group-name /fis-workshop/asg-access-log \
+    || echo "Log group /fis-workshop/asg-access-log already deleted"
+    aws logs delete-log-group \
+        --log-group-name /fis-workshop/asg-error-log \
+    || echo "Log group /fis-workshop/asg-error-log already deleted"
 ) > cleanup-output.loggroups.txt 2>&1 &
 
 # Remove cdk context files
