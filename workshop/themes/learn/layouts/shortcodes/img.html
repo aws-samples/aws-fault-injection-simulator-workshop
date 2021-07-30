@@ -8,7 +8,7 @@
 {{ end }} 
 
 <figure>
-	<img src="{{ $img | relLangURL }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
+	<img src="{{ $img | urlize | relLangURL }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
 </figure>
 
 {{/* 
