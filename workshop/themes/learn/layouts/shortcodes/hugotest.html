@@ -1,0 +1,45 @@
+{{/* shortcode scoped variable for convenience - https://gohugo.io/functions/scratch/ */}}
+{{ $imgScratch := newScratch }}
+{{ $imgScratch.Set "img" "" }}
+
+{{/* try the original img shortcode method */}}
+{{ $img := $.Page.Resources.GetMatch (.Get 0)}}
+{{ if $img }}
+{{   $imgScratch.Set "img" $img.RelPermalink }}
+{{ end }}
+
+{{ $static := ( .Get 0 ) | printf "%s" }}
+IMG: {{ ( $static ) }} :GMI
+EX: {{ fileExists $static  }} :XE
+
+{{/*}}
+
+{{ if not (fileExists $img) }}
+{{   $imgScratch.Set "img" ( ( .Get 0 ) | printf "%s%s" .Page.File.Dir ) }}
+{{ end }}
+
+
+{{ $tmp := $.Page.Resources.GetMatch (.Get 0)  }}
+{{ $imgScratch.Set "img" $tmp }}
+{{ if $imgScratch.Get "img" }}Yes reassign from "{{ $imgScratch.Get "img" }}" {{ $imgScratch.Set "img"  ( ($imgScratch.Get "img").RelPermalink ) }} to {{$imgScratch.Get "img"}}{{ end }}
+outside scope {{$imgScratch.Get "img"}}
+
+	
+
+{{ $tmp := ( .Get 0 ) | printf "%s%s" .Page.File.Dir }}
+{{ if not fileExists $tmp }}
+{{ $tmp := ( .Get 0 ) | printf .Site.BaseURL }}{{ .Get 0}}
+{{ end }}
+<div>Hugotest: {{ fileExists $tmp }} / {{ $.Page.Resources.GetMatch "coverage.en.png" }}</div>
+{{ else }}
+{{ warnf "No such file %s" $tmp }}
+{{ end }}
+{{ $img := $.Page.Resources.GetMatch (.Get 0)}}
+*/}}
+
+{{ $tmp := ( .Get 0 ) | printf "%s%s" .Page.File.Dir }}
+<div>Hugotest: {{ $img }} // {{ $tmp }}</div>
+
+<figure>
+	<img src="{{ with $img }}{{ .RelPermalink }}{{ else }}{{ .Site.BaseURL }}{{ .Get 0 }}{{ end }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
+</figure>
