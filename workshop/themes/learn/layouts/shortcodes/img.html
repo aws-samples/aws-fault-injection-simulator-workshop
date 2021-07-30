@@ -1,4 +1,19 @@
+
+{{ $img := ( .Get 0 ) | printf "%s%s" .Page.File.Dir }}
+{{ if not (fileExists $img) }}
+{{   warnf "Image file not found:\n  %s in\n  %s\n" $img .Page.File }}
+{{ end }}
+{{ if not ( .Get 1 )  }}
+{{   warnf "Image without alt text:\n  %s in\n  %s\n" $img .Page.File}}
+{{ end }} 
+
+<figure>
+	<img src="{{ $img | relLangURL }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
+</figure>
+
+{{/* 
 {{ $img := $.Page.Resources.GetMatch (.Get 0)}}
 <figure>
 	<img src="{{ with $img }}{{ .RelPermalink }}{{ else }}{{ .Site.BaseURL }}{{ .Get 0 }}{{ end }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
 </figure>
+*/}}
