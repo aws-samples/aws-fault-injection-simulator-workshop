@@ -1,0 +1,6 @@
+{
+  "EksStack": {
+    "ClusterConfigCommand43AAE40F": "aws eks update-kubeconfig --name Cluster9EE0221C-e10a5297bde04d2ebb590d62d284a95a --region eu-west-2 --role-arn arn:aws:iam::353838458998:role/EksStack-ClusterMastersRole9AA35625-1M06LZB4Y0FSS",
+    "ClusterGetTokenCommand06AE992E": "aws eks get-token --cluster-name Cluster9EE0221C-e10a5297bde04d2ebb590d62d284a95a --region eu-west-2 --role-arn arn:aws:iam::353838458998:role/EksStack-ClusterMastersRole9AA35625-1M06LZB4Y0FSS"
+  }
+}

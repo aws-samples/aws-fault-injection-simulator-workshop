@@ -80,4 +80,12 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
     --capabilities CAPABILITY_IAM
 )
 
+# EKS stack uses CDK
+(
+    echo "Provisioning EKS resources..."
+    cd eks
+    npm install
+    npx cdk deploy EksStack --require-approval never --outputs-file outputs.json
+)
+
 echo Done.
