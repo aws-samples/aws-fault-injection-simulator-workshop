@@ -1,19 +1,33 @@
+{{/*
+	Image shortcode for images that exist side-by-side with
+	the markdown. For images in static folders use imgstatic
+*/}}
 
-{{ $img := ( .Get 0 ) | printf "%s%s" .Page.File.Dir }}
-{{ if not (fileExists $img) }}
-{{   warnf "Image file not found:\n  %s in\n  %s\n" $img .Page.File }}
-{{ end }}
 {{ if not ( .Get 1 )  }}
-{{   warnf "Image without alt text:\n  %s in\n  %s\n" $img .Page.File}}
+{{   warnf "Image without alt text: %s in %s" (.Get 0) .Page.File}}
 {{ end }} 
 
-<figure>
-	<img src="{{ $img | urlize | relLangURL }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
-</figure>
-
-{{/* 
 {{ $img := $.Page.Resources.GetMatch (.Get 0)}}
+{{ if ($img) }}
 <figure>
 	<img src="{{ with $img }}{{ .RelPermalink }}{{ else }}{{ .Site.BaseURL }}{{ .Get 0 }}{{ end }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
 </figure>
-*/}}
+{{ else }}
+{{   $img := ( .Get 0 ) | printf "%s%s" .Page.File.Dir }}
+{{   if (fileExists $img) }}
+<figure>
+	<img src="{{ $img | urlize | relLangURL }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
+</figure>
+{{   else }}
+{{     $path := (.Get 0) | printf "static/%s"}}
+{{     if (fileExists $path) }}
+{{       $img := (.Get 0) | printf "%s%s" .Site.BaseURL}}
+<figure>
+	<img src="{{ $img }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
+</figure>
+{{     else }}
+{{       errorf "Image file not found: %s in %s" $img .Page.File }}
+{{     end }}
+{{   end }}
+{{ end }}
+
