@@ -99,6 +99,7 @@ echo "Provisioning CPU stress instances"
     --capabilities CAPABILITY_IAM
 ) > deploy-output.stress.txt 2>&1 &
 
+# Wait for everything to finish
 wait
 
 echo Done.
