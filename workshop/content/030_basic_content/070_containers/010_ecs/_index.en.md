@@ -4,7 +4,7 @@ chapter = false
 weight = 10
 +++
 
-In this section we will cover working with containers running on Amazon Elastic Container Service (Amazon ECS). For this setup we'll be using the following test architecture:
+In this section we will cover working with containers running on [Amazon Elastic Container Service](https://aws.amazon.com/ecs/) (Amazon ECS). For this setup we'll be using the following test architecture:
 
 {{< img "ECSCluster-with-user.png" "Image of architecture to be injected with chaos" >}}
 

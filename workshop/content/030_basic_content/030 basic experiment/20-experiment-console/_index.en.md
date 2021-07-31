@@ -17,7 +17,7 @@ Navigate to the [FIS console](https://console.aws.amazon.com/fis/home?#Home) and
 {{< img "create-template-1.en.png" "FIS console" >}}
 
 {{% notice note %}}
-Note: if you've used FIS before you may not see the splash screen. In that case select "Experiment templates" in the menu on the left and access "Create experiment template" from there.
+**_Note:_** if you've used FIS before you may not see the splash screen. In that case select "Experiment templates" in the menu on the left and access "Create experiment template" from there.
 {{% /notice %}}
 
 For our first experiment we will jump around in the definition page so follow closely.

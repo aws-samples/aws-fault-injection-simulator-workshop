@@ -62,5 +62,13 @@ export class EksStack extends cdk.Stack {
     };
 
     eksCluster.addManifest('hello-kub', service, deployment);
+
+    const eksUrl = new cdk.CfnOutput(this, 'FisEksUrl', {
+      value: 'http://' + eksCluster.getServiceLoadBalancerAddress("hello-kubernetes")
+    });
+
+    const kubeCtlRole = new cdk.CfnOutput(this, 'FisEksKubectlRole', {
+      value: eksCluster.kubectlRole?.roleArn.toString() ? eksCluster.kubectlRole?.roleArn.toString() : "undefined"
+    });
   }
 }
