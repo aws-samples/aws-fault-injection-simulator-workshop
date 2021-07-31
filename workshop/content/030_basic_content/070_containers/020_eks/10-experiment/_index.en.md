@@ -8,7 +8,7 @@ weight = 10
 
 In this section we want to ensure that our containerized application running on Amazon EKS is designed in a fault tolerant way, so that even if an instance in the cluster fails our application is still available. Let's validate this:
 
-* **Given**: we have a containerized application running on Amazon EKS exposing a web page
+* **Given**: we have a containerized application running on Amazon EKS exposing a web page.
 * **Hypothesis**: failure of a single worker node instance will not adversely affect our application. The Web page will continue to be available.
 
 ## Experiment setup
