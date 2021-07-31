@@ -15,6 +15,8 @@ To ensure you don't incur any further costs after the workshop, please follow th
   {{< img "delete-cicd.en.png" "Delete stack visual">}}
 * If you created the `CpuStress` stack in the **AWS Systems Manager Integration** section, delete it follwing the same procedure.
 * Following the same procedure as above, delete the following stacks
+  * `FisStackRdsEKS`
+  * `FisStackRdsECS`
   * `FisStackRdsAurora`
   * `FisStackLoadGen`
   * `FisStackAsg`
