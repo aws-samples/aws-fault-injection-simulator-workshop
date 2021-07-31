@@ -45,3 +45,5 @@ In this workshop we used manual scaling of both worker nodes and pods. In a prod
 * a [Cluster Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html) that is aware of scaling needs based on pod configuration.
 * a [Horizontal Pod Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/horizontal-pod-autoscaler.html) to dynamically manage the number of pods 
 * a [Vertical Pod Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/vertical-pod-autoscaler.html) to dynamically manage CPU and memore allocation on your pods.
+
+For more on EKS configurations see the [EKS workshop](https://www.eksworkshop.com/). 

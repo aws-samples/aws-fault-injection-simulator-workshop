@@ -39,3 +39,7 @@ Scroll to the bottom of the *Configure service* screen and change the value of t
 Now that we have improved our configuration, let's re-run the experiment. Before starting review the ECS Cluster to ensure that the instance capacity has increased to `2` and that the number of running tasks is `2`.
 
 This time we should observe that, even when one of the container instances gets terminated, our application is still available and successfully serving requests. In the output of the Bash script there we should no longer see the [HTTP 503](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503) "Service Unavailable" return codes.
+
+# ECS further learning
+
+For more on ECS configurations see the [ECS workshop](https://ecsworkshop.com/).
