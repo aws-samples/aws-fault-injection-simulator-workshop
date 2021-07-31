@@ -4,7 +4,7 @@ chapter = false
 weight = 20
 +++
 
-### Review results
+## Review results
 
 Let's take a look at the output in the terminal window where your Bash script is running:
 
@@ -37,6 +37,8 @@ Code 200 Duration 0.082790
 
 You'll notice that as not all the requests were successful. As the FIS experiment starts you should see some [HTTP 502](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502) "Bad Gateway" and [HTTP 503](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503) "Service Unavailable" return codes. This means our application was not available for a period of time. This is not what we were expecting, so let's dive a bit deeper to find out why it happened.
 
+### Check number of containers
+
 In a new browser window navigate to the *Clusters* section in the [ECS console](https://console.aws.amazon.com/ecs/home?#/clusters) and search for the cluster named `FisStackEcs-Cluster...`, e.g. `FisStack-ClusterEB0386A7-xJ4yY19a5jLP`. Click on the cluster name and look at the ECS services running on this cluster:
 
 {{< img "ecs-cluster-services.en.png" "ECS Cluster Services overview" >}}
@@ -45,9 +47,13 @@ You'll notice that the service named `FisStackEcs-SampleAppService...`, e.g. `Fi
 
 {{< img "ecs-service-desired-capacity.en.png" "ECS Cluster Services showing single desired task" >}}
 
+### Check number of insrtances 
+
 Now click on the "ECS Instances" tab. You'll see here that there's only one instance registered with our cluster. 
 
 {{< img "ecs-cluster-instances.en.png" "ECS Cluster Services showing single running instance" >}}
+
+### Observations
 
 This configuration is not optimal:
 

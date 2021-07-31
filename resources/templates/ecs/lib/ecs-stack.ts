@@ -53,5 +53,7 @@ export class EcsStack extends cdk.Stack {
     });
 
     asg.attachToApplicationTargetGroup(sampleAppService.targetGroup);
+
+    const ecsUrl = new cdk.CfnOutput(this, 'FisEcsUrl', {value: 'http://' + sampleAppService.loadBalancer.loadBalancerDnsName});
   }
 }

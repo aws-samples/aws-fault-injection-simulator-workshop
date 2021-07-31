@@ -3,7 +3,7 @@ title = "Hypothesis & Experiment"
 chapter = false
 weight = 10
 +++
-
+ 
 ## Experiment idea
 
 In this section we want to ensure that our containerized application running on Amazon ECS is designed in a fault tolerant way, so that even if an instance in the cluster fails our application is still available. Let's validate this:
@@ -60,12 +60,11 @@ Confirm that you wish to create the template without stop condition.
 
 ## Validation procedure
 
-Before running the experiment we should consider how we will define success. Let's check the webpage we are hosting. To find the URL of the webpage navigate to the [CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=&viewNested=true&hideStacks=false), elect the `FisStackEcs` stack, Select "Outputs", and copy the value of "FisEcsUrl".
+Before running the experiment we should consider how we will define success. Let's check the webpage we are hosting. To find the URL of the webpage navigate to the [CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=FisStackEcs&viewNested=true&hideStacks=false), elect the `FisStackEcs` stack, Select "Outputs", and copy the value of "FisEcsUrl".
 
 Open the URL in a new tab to validate that our website is in fact up and running:
 
-{{< img "validate-webpage.en.png" "Simple PHP app webpage"  >}}
-
+{{< img "ecs-sample-app.en.png" "ECS Sample App" >}}
 
 How will we know that our instance failure was in fact non-impacting? For this workshop we'll be using a simple Bash script that continuosly polls our application.
 
