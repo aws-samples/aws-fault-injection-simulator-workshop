@@ -54,7 +54,7 @@ Make sure you have `kubectl` installed in your local environment. Follow [these 
 {{% /notice %}}
 
 
-We will follow [these steps](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html#create-kubeconfig-automatically) and [these steps](https://aws.amazon.com/premiumsupport/knowledge-center/eks-api-server-unauthorized-error/) to update the `kubectl` configuration to securely connect to the EKS cluster. The cluster is named `FisWorkshop-EksCluster`. To find the ARN of the kubectl access role, navigate to the [CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=FisStackEks&viewNested=true&hideStacks=false), select the `FisStackEks` stack, Select "Outputs", and copy the value of "FisEksKubectlRole".
+We will follow [these steps](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html#create-kubeconfig-automatically) to update the `kubectl` configuration to securely connect to the EKS cluster. The cluster is named `FisWorkshop-EksCluster`. To find the ARN of the kubectl access role, navigate to the [CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=FisStackEks&viewNested=true&hideStacks=false), select the `FisStackEks` stack, Select "Outputs", and copy the value of "FisEksKubectlRole".
 
 From a local terminal, run the following command to configure kubectl:
  
@@ -68,6 +68,10 @@ KUBECTL_ROLE=$( aws cloudformation describe-stacks --stack-name FisStackEks --qu
 # Configure kubectl with cluster name and ARN
 aws eks update-kubeconfig --name FisWorkshop-EksCluster --role-arn ${KUBECTL_ROLE}
 ```
+
+{{% notice note %}}
+If you get the message **"error: You must be logged in to the server (Unauthorized)"** when running `kubectl` command, please follow [these steps](https://aws.amazon.com/premiumsupport/knowledge-center/eks-api-server-unauthorized-error/) to troubleshoot the problem. 
+{{% /notice %}}
 
 ### Check number of containers
 
