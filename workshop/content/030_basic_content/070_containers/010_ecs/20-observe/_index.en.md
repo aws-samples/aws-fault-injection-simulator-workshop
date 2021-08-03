@@ -47,7 +47,7 @@ You'll notice that the service named `FisStackEcs-SampleAppService...`, e.g. `Fi
 
 {{< img "ecs-service-desired-capacity.en.png" "ECS Cluster Services showing single desired task" >}}
 
-### Check number of insrtances 
+### Check number of instances 
 
 Now click on the "ECS Instances" tab. You'll see here that there's only one instance registered with our cluster. 
 

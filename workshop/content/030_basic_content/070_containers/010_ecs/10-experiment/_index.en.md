@@ -60,7 +60,7 @@ Confirm that you wish to create the template without stop condition.
 
 ## Validation procedure
 
-Before running the experiment we should consider how we will define success. Let's check the webpage we are hosting. To find the URL of the webpage navigate to the [CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=FisStackEcs&viewNested=true&hideStacks=false), elect the `FisStackEcs` stack, Select "Outputs", and copy the value of "FisEcsUrl".
+Before running the experiment we should consider how we will define success. Let's check the webpage we are hosting. To find the URL of the webpage navigate to the [CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=FisStackEcs&viewNested=true&hideStacks=false), select the `FisStackEcs` stack, Select "Outputs", and copy the value of "FisEcsUrl".
 
 Open the URL in a new tab to validate that our website is in fact up and running:
 
