@@ -3,6 +3,7 @@ import ec2 = require("@aws-cdk/aws-ec2");
 import * as ecs from "@aws-cdk/aws-ecs";
 import * as ecs_patterns from "@aws-cdk/aws-ecs-patterns";
 import * as autoscaling from "@aws-cdk/aws-autoscaling";
+import * as iam from "@aws-cdk/aws-iam";
 
 export class EcsStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -30,6 +31,9 @@ export class EcsStack extends cdk.Stack {
         enableManagedTerminationProtection: false
       })
     );
+
+    // Add SSM access policy to nodegroup
+    asg.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMManagedInstanceCore"));
 
     const taskDefinition = new ecs.Ec2TaskDefinition(this, "SampleAppTaskDefinition", {
     });

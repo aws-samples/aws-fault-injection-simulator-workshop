@@ -1,6 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import ec2 = require("@aws-cdk/aws-ec2");
 import eks = require('@aws-cdk/aws-eks');
+import iam = require('@aws-cdk/aws-iam');
 
 export class EksStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -18,14 +19,17 @@ export class EksStack extends cdk.Stack {
       clusterName: "FisWorkshop-EksCluster"
     });
 
-    eksCluster.addNodegroupCapacity("ManagedNodeGroup", {
+    const eksNodeGroup = eksCluster.addNodegroupCapacity("ManagedNodeGroup", {
       desiredSize: 1,
       nodegroupName: "FisWorkshopNG",
       tags: {
         "Name": "FISTarget"
       }
-    })
+    });
 
+    // Add SSM access policy to nodegroup
+    eksNodeGroup.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMManagedInstanceCore"));
+    
     const appLabel = { app: "hello-kubernetes" };
 
     const deployment = {
