@@ -27,7 +27,8 @@ export class EcsStack extends cdk.Stack {
     cluster.addAsgCapacityProvider(
       new ecs.AsgCapacityProvider(this, "CapacityProvider", {
         autoScalingGroup: asg,
-        capacityProviderName: "fisWorkshopCapacityProvider"
+        capacityProviderName: "fisWorkshopCapacityProvider",
+        enableManagedTerminationProtection: false
       })
     );
 
