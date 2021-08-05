@@ -13,7 +13,7 @@ In the previous section we ensured that we have a resilient front end of servers
 ## Experiment setup
 
 {{% notice note %}}
-We are assuming that you know how to set up a basic FIS experiment and will focus on things specific to this experiment. If you need a refresher see the previous [**First Experiment**]({{< ref "030_basic_content/030 basic experiment/" >}}) section.
+We are assuming that you know how to set up a basic FIS experiment and will focus on things specific to this experiment. If you need a refresher see the previous [**First Experiment**]({{< ref "030_basic_content/030_basic_experiment/" >}}) section.
 {{% /notice %}}
 
 ### General template setup

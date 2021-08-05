@@ -1,7 +1,7 @@
 +++
 title = "Athena queries for FIS"
-date =  2021-04-14T17:25:17-06:00
 weight = 20
+draft = true
 +++
 
 Draft section. Idea: how would we figure out what FIS did and what events might be related to FIS. This section should show how to use Athena / CloudTrail to build some basic queries.

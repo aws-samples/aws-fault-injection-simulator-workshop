@@ -1,7 +1,7 @@
 +++
 title = "Background"
-date =  2021-04-14T17:24:41-06:00
 weight = 10
+draft = true
 +++
 
 Before attempting to simulate an AZ failure it's worth considering what we mean by "AZ failure". 

@@ -1,6 +1,6 @@
 ---
 title: "Region selection"
-chapter: true
+chapter: false
 weight: 30
 ---
 
