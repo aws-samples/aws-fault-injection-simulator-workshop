@@ -1,0 +1,98 @@
+---
+description: Terminate all instances of ASG in a particular AZ
+schemaVersion: '0.3'
+assumeRole: "{{ AutomationAssumeRole }}"
+parameters:
+  AvailabilityZone:
+    type: String
+    description: "(Required) The Availability Zone to impact"
+  AutoscalingGroupName:
+    type: String
+    description: "(Required) The names of the autoscaling group"
+  AutomationAssumeRole:
+    type: String
+    description: "The ARN of the role that allows Automation to perform
+      the actions on your behalf."
+  Duration:
+    type: String
+    description: (Optional) The duration of the attack in minutes (default=5)
+    default: '5'
+mainSteps:
+- name: DescribeAutoscaling
+  action: aws:executeAwsApi
+  onFailure: 'step:Rollback'
+  onCancel: 'step:Rollback'
+  timeoutSeconds: 60
+  inputs:
+    Service: autoscaling
+    Api: DescribeAutoScalingGroups
+    AutoScalingGroupNames:
+        - "{{ AutoscalingGroupName }}"
+  outputs:
+    - Name: InstanceIds
+      Selector: "$..InstanceId"
+      Type: StringList
+- name: DescribeInstances
+  action: aws:executeAwsApi
+  onFailure: 'step:Rollback'
+  onCancel: 'step:Rollback'
+  timeoutSeconds: 60
+  inputs:
+    Service: ec2
+    Api: DescribeInstances
+    Filters:
+    - Name: "availability-zone"
+      Values:
+        - "{{ AvailabilityZone }}"
+    - Name: "instance-id"
+      Values: "{{ DescribeAutoscaling.InstanceIds }}"
+  outputs:
+     - Name: InstanceIds
+       Selector: "$..InstanceId"
+       Type: StringList
+- name: SuspendAsgProcesses
+  action: aws:executeAwsApi
+  onFailure: 'step:Rollback'
+  onCancel: 'step:Rollback'
+  inputs:
+    Service: autoscaling
+    Api: SuspendProcesses
+    AutoScalingGroupName: "{{ AutoscalingGroupName }}"
+    ScalingProcesses: ['Launch','Terminate']
+- name: TerminateEc2Instances
+  action: aws:changeInstanceState
+  onFailure: 'step:Rollback'
+  onCancel: 'step:Rollback'
+  inputs:
+    InstanceIds: "{{ DescribeInstances.InstanceIds }}"
+    DesiredState:  terminated
+    Force: true
+- name: VerifyInstanceStateTerminated
+  action: aws:waitForAwsResourceProperty
+  onFailure: 'step:Rollback'
+  onCancel: 'step:Rollback'
+  timeoutSeconds: 90
+  inputs:
+    Service: ec2
+    Api: DescribeInstanceStatus
+    IncludeAllInstances: true
+    InstanceIds: "{{ DescribeInstances.InstanceIds }}"
+    PropertySelector: "$..InstanceState.Name"
+    DesiredValues:
+      - terminated
+- name: WaitForDuration
+  action: 'aws:sleep'
+  onFailure: 'step:Rollback'
+  onCancel: 'step:Rollback'
+  inputs:
+    Duration: 'PT{{Duration}}M'
+- name: Rollback
+  action: aws:executeAwsApi
+  inputs:
+    Service: autoscaling
+    Api: ResumeProcesses
+    AutoScalingGroupName: "{{ AutoscalingGroupName }}"
+    ScalingProcesses: ['Launch','Terminate']
+  isEnd: true
+outputs:
+- DescribeInstances.InstanceIds

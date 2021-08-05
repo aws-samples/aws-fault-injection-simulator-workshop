@@ -12,9 +12,9 @@ Many of our customers phrase their idea of an AZ failure as "the whole datacente
 
 ## Control plane vs. active infrastructure
 
-Another thing to consider is the difference between the AWS backplane and the provisioned customer infrastructure. A full datacenter outage would create awareness in the AWS control plane that resources are unavailable. In contrast a _simulated_ outage to just the provisioned customer resources has to ensure that only the resources for _a single_ customer are affected.
+An important thing to consider is the difference between the AWS backplane and the provisioned customer infrastructure. A full datacenter outage would create awareness in the AWS control plane that resources are unavailable. In contrast a _simulated_ outage to just the provisioned customer resources has to ensure that only the resources for _a single_ customer are affected.
 
-**PLACEHOLDER: image representing control plane vs. customer resources**
+{{< img "ASG-controlplane.en.png" "Control plane depiction" >}}
 
 
 For example in the autoscaling setup we built for the **First Experiment** section, we can target EC2 instances in a given AZ for termination by filtering on `Placement.AvailabilityZone`. We _expect_ that the "control plane", in this case the associated autoscaling group, will start new instances to replace those terminated. However, since there is no actual AZ failure and the autoscaling group thus has no awareness of our experiment, the new instances will most likely be re-created in the AZ for which we wanted to simulate a failure.
