@@ -14,13 +14,13 @@ In this section we want to ensure that our containerized application running on 
 ## Experiment setup
 
 {{% notice note %}}
-We are assuming that you know how to set up a basic FIS experiment and will focus on things specific to this experiment. If you need a refresher see the previous [**First Experiment**]({{< ref "030_basic_content/030 basic experiment/" >}}) section.
+We are assuming that you know how to set up a basic FIS experiment and will focus on things specific to this experiment. If you need a refresher see the previous [**First Experiment**]({{< ref "030_basic_content/030_basic_experiment/" >}}) section.
 {{% /notice %}}
 
 ### General template setup
 
 {{% notice note %}}
-We are assuming that you have already set up an IAM role for for this workshop. If you haven't, see the [**Create FIS Service Role**]({{< ref "030_basic_content/030 basic experiment/10-permissions" >}}) section.
+We are assuming that you have already set up an IAM role for for this workshop. If you haven't, see the [**Create FIS Service Role**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section.
 {{% /notice %}}
 
 Create a new experiment template:
