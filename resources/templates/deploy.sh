@@ -49,6 +49,7 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
 )
 
 # RDS/aurora stack uses CDK
+# ... depends on VPC
 (
     echo "Provisioning RDS..."
     cd rds
@@ -57,6 +58,7 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
 )
 
 # ASG stack moved to CDK
+# ... depends on VPC
 (
     echo "Provisioning EC2 Autoscaling Group..."
     cd asg-cdk
@@ -64,7 +66,23 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
     npx cdk deploy FisStackAsg --require-approval never --outputs-file outputs.json
 )
 
+# EKS stack uses CDK
+(
+    echo "Provisioning EKS resources..."
+    cd eks
+    npm install
+    npx cdk deploy FisStackEks --require-approval never --outputs-file outputs.json
+)
+# ECS stack uses CDK
+(
+    echo "Provisioning ECS resources..."
+    cd ecs
+    npm install
+    npx cdk deploy FisStackEcs --require-approval never --outputs-file outputs.json
+)
+
 # Stress VM stack added as CFN
+# ... depends on VPC
 (
     echo "Provisioning CPU stress instances"
     cd cpu-stress

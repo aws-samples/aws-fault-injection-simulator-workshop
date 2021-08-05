@@ -25,13 +25,13 @@ Navigate to the Cloud9 console: https://console.aws.amazon.com/cloud9
 When it comes up, customize the environment by:
 
 - Closing the **Welcome tab**
-![c9before](/images/020_starting_workshop/cloud9-1.png)
+{{< img "images/020_starting_workshop/cloud9-1.png" "Closing the welcome tab" >}}
 - Opening a new **terminal** tab in the main work area
-![c9newtab](/images/020_starting_workshop/cloud9-2.png)
+{{< img "images/020_starting_workshop/cloud9-2.png" "Opening new terminal tab" >}}
 - Closing the lower work area
-![c9newtab](/images/020_starting_workshop/cloud9-3.png)
+{{< img "images/020_starting_workshop/cloud9-3.png" "Closing lower work panel" >}}
 - Your workspace should now look like this
-![c9after](/images/020_starting_workshop/cloud9-4.png)
+{{< img "images/020_starting_workshop/cloud9-4.png" "Cloud9 workspace" >}}
 
 ### Increase the disk size on the Cloud9 instance
 

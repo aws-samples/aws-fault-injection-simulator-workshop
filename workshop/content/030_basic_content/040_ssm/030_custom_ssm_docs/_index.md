@@ -1,6 +1,5 @@
 +++
 title = "Working with SSM documents"
-date =  2021-07-07T17:25:37-06:00
 weight = 30
 +++
 

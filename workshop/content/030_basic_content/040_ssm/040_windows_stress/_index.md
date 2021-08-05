@@ -1,6 +1,5 @@
 +++
 title = "Windows CPU Stress Experiment"
-date =  2021-07-07T17:25:37-06:00
 weight = 40
 +++
 
@@ -21,29 +20,31 @@ In this section we will run a CPU Stress test using AWS Fault Injection Simulato
 
 First, lets create our stress experiment. We can do this programmaticaly but we will walk through this on the console. 
 
-1. Open the [AWS Fault Injection Simulator Console](https://console.aws.amazon.com/fis/home?#Home).Once in the Fault Injection Simulator console, lets click on **Experiment templates** on the left side pane. 
+1. Open the [AWS Fault Injection Simulator Console](https://console.aws.amazon.com/fis/home?#Home). Once in the Fault Injection Simulator console, lets click on "Experiment templates" on the left side pane. 
 
-2. Click on **Create Experiment** on  the upper right hand side of the console to start creating our experiment template. 
+2. Click on "Create Experiment" on  the upper right hand side of the console to start creating our experiment template. 
 
-3. Next we will enter the description of the experiment and choose the IAM Role. Let's put **WindowsBurnCPUviaSSM** for the description. The IAM role allows the FIS service permissions to execute the actions on your behalf. As part of the CloudFormation stack a role was created for this experiment that starts with **CpuStress-FISRole**, select that role. Please Examine the CloudFormation template or IAM Role for the policies in this role. 
+3. Next we will enter the description of the experiment and choose the IAM Role. Let's put `WindowsBurnCPUviaSSM` for the description. The IAM role allows the FIS service permissions to execute the actions on your behalf. As part of the CloudFormation stack a role was created for this experiment that starts with `CpuStress-FISRole`, select that role. Please examine the CloudFormation template or IAM Role for the policies in this role. 
 
 {{< img "Winexperimentdescription.png" "Win Experiment Description and Role" >}}
 
-4. After we have entered a description and a role, we need to setup our actions. Click the **Add Action** Button in the Actions Section. 
+4. After we have entered a description and a role, we need to setup our actions. Click the "Add Action" Button in the Actions Section. 
 
-Name the Action, and under Action Type select the **aws:ssm:send-command** action. Currently there is not an out of box Action for Windows CPU Stress Testing, so we are using the send-command action along with a command document that was deployed by our CloudFormation template. To view this document please reference the WinStressDocument resource in the CloudFormation Template.  
+Enter a "Name" of `StressCPUViaSSM`, and under "Action Type" select the `aws:ssm:send-command` action. Currently there is not an out of box Action for Windows CPU Stress Testing, so we are using the send-command action along with a command document that was deployed by our CloudFormation template. To view this document please reference the `WinStressDocument` resource in the [CloudFormation template](https://github.com/aws-samples/aws-fault-injection-simulator-workshop/blob/main/resources/templates/cpu-stress/CPUStressInstances.yaml). 
 
-Match the rest of the settings as seen in the next screenshot and then click **Save**. This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the CpuStress-WinStressDocument document against our targets for two minutes. To get the document ARN look out that output section of the CloudFormation Stack we deployed for this lab. 
+To find the ARN of the document that was created by the template, open a new tab and browse to the [CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=FisCpuStress&viewNested=true&hideStacks=false), select "Stacks", click on the stack named "FisCpuStress", then select "Outputs". Copy the value of the `WinStressDocumentArn` entry as you will need it in the next step.
+
+Return to the FIS console and enter the ARN you copied into the "documentArn" field. Then set the "documentParameters" field to `{"durationSeconds":120}` which is passed to the script and the "duration" field to `2` which tells FIS how long to wait for a result. Finally click "Save". This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the `CpuStress-WinStressDocument` document against our targets for two minutes. To get the document ARN look out that output section of the CloudFormation Stack we deployed for this lab. 
 
 {{< img "WinStressActionSettings.png" "Action Settings" >}}
 
-5. Once we have saved the action, let's edit our targets. Click on **Edit targets**. We are going to target our Instances by tag. Match the settings in the next screenshot and click **Save**. 
+5. Once we have saved the action, let's edit our targets. Click on "Edit targets". To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisWindowsCPUStress`. Finally click "Save". 
 
 {{< img "WinEditTarget.png" "Target Settings" >}}
 
-6. Once we have actions and targets specified we can click on the **Create Experiment** button toward the bottom of the console to create our template. 
+6. Once we have actions and targets specified we can click on the "Create Experiment" button toward the bottom of the console to create our template. 
 
-**_Note:_** For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiemnts so they dont go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in *create* and then hit the **Create Experiment** button again to confirm. 
+**_Note:_** For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiemnts so they dont go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in `create` and then hit the "Create Experiment" button again to confirm. 
 
 {{< img "ConfirmCreate.png" "Confirm Creation" >}}
 
@@ -55,7 +56,7 @@ We will use the Windows task manager to observe increased CPU load. To do this w
 
 ### Use AWS Systems Manager Run Command to reset Password
 
-When we deployed the instance we didnt use SSH Keys, and we dont know the password. However, with the SSM Agent along with the right IAM privileges we have a break glass scenario where we can reset the password. Please use the command below, replacing the **instanceid** with the `FisWindowsCPUStress` instance ID and **password** with your password of choice. 
+When we deployed the instance we didnt use SSH Keys, and we dont know the password. However, with the SSM Agent along with the right IAM privileges we have a break glass scenario where we can reset the password. Please adjust the value of `TMP_PASSWORD` and use the commands below to find the InstanceId of the `FisWindowsCPUStress` instance and help you reset the admin password to the password of choice. 
 
 ```bash
 # For readbility - passing passwords this way is not secure
@@ -78,7 +79,7 @@ aws ssm send-command \
   --cloud-watch-output-config '{"CloudWatchOutputEnabled":false}'
 ```
 
-### Use AWS Systems Session Manager to connect to Target Instance
+### Use AWS Systems Manager Session Manager to connect to Target Instance
 
 We now need to connect to our EC2 Instance so we can observe the CPU being stressed. We are going to do this be using the port forwarding capability of AWS Systems Manager Session Manager and using RDP.
 
@@ -122,9 +123,10 @@ Let's head back to the [AWS Fault Injection Simulator Console](https://console.a
 
 1. Once in the Fault Injection Simulator console, lets click on Experiment templates again on the left side pane. 
 
-2. Select the experiment with the WindowsBurnCPUviaSSM description, then click on the **Actions** button and select **Start Experiment**. Now click on the **Start Experiment** button. 
+2. Select the experiment with the `WindowsBurnCPUviaSSM` description, then click on the "Actions" button and select "Start". This will allow us to enter additional tags before starting our experiment. Then click on the "Start Experiment" button. 
 
-3. Next type in start and click on **Start Experiment** again to confirm you want to start the experiment. 
+3. Next type in `start` and click on "Start Experiment" again to confirm you want to start the experiment. 
+
 {{< img "confirmstart.png" "Confirm Start" >}}
 
 This will take you to the running experiment, in the detail section of the experiment under state you should see the experiment is initializing. Once the experiment is running, lets go back to the RDP session and observe the task manager graph. 
@@ -141,5 +143,5 @@ Since this instance wasn't doing anything there aren't any actions. To think abo
 
 ## Cleanup
 
-If you created an additional `CpuStress` CloudFormation stack in the **FIS SSM Setup** section, make sure to delete that stack.
+If you created an additional `CpuStress` CloudFormation stack in the **FIS SSM Setup** section, make sure to delete that stack to avoid incurring additional costs.
 

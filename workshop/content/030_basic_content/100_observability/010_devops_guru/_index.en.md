@@ -12,23 +12,23 @@ This section requires that you followed the [setup instructions]({{< ref "/020_s
 
 Navigate to the [DevOps Guru console](https://console.aws.amazon.com/devops-guru/home?#/dashboard). Once enough time has passed for DevOps Guru to generate insigths you should see a dashboard similar to this:
 
-{{< img "dashboard.en.png" >}}
+{{< img "dashboard.en.png" "DevOps Guru dashboard" >}}
 
 ## Reactive insights
 
 Select "Insights" on the left and explore the reactive insights generated from our fault injection activities. You should see an event relating to "Application ELB" (depending on the exact order of events your dashboard may vary slightly):
 
-{{< img "reactive-insights-1.en.png" >}}
+{{< img "reactive-insights-1.en.png" "Reactive insights" >}}
 
 ## Visualizing anomalies 
 
 Selecting the event exposes more detailed information. The "Aggregated metrics" view will show timelines of different anomalous events that happened during the overall anomaly window: 
 
-{{< img "metrics-aggregate-1.en.png" >}}
+{{< img "metrics-aggregate-1.en.png" "Anomalies aggregate metrics view part 1" >}}
 
 Note that there may be multiple additional pages for additional events:
 
-{{< img "metrics-aggregate-2.en.png" >}}
+{{< img "metrics-aggregate-2.en.png" "Anomalies aggregate metrics view part 2" >}}
 
 Examining the example above we see that during the event 
 
@@ -45,7 +45,7 @@ In addition to the expected direct impact of more connections, we also see unusu
 
 Switching to the "Graphed Anomalies" view shows the more detailed time data for each anomalous metric:
 
-{{< img "metrics-graphed-1.en.png" >}}
+{{< img "metrics-graphed-1.en.png" "Anomalies graphed metrics view" >}}
 
 Note that in this view data outside the anomaly window are set to zero to allow focusing on the relevant details during the outage.
 
@@ -53,11 +53,11 @@ Note that in this view data outside the anomaly window are set to zero to allow 
 
 In our case the anomalies arose from external load but frequently anomalies are caused by changes to code or infrastructure configuration. To help you diagnose this, DevOps Guru provides visibility into deployment and infrastructure changes associated with the anomaly. These events can be visualized in a timeline view (you can get details by clicking on the dots):
 
-{{< img "infra-timeline.en.png" >}}
+{{< img "infra-timeline.en.png" "Infrastructure changes timeline view" >}}
 
 or in table format:
 
-{{< img "infra-table.en.png" >}}
+{{< img "infra-table.en.png" "Infrastructure changes table view" >}}
 
 From the table format we can see that about 2h before the anomaly some changes were made to the stack configuration and deployed code. We can also see that around the time of the event instances were added to the load balancer in response to the increased load, and subsequently removed from the load balancer due to the external event subsiding.
 
@@ -65,7 +65,7 @@ From the table format we can see that about 2h before the anomaly some changes w
 
 Finally DevOps Guru provides "Recommendations", links to relevant articles to help troubleshoot issues and improve overall system performance:
 
-{{< img "recommendations.en.png" >}}
+{{< img "recommendations.en.png" "Improvement recommendations" >}}
 
 ## Further reading
 

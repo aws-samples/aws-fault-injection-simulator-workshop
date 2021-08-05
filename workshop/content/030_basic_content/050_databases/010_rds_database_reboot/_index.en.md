@@ -13,7 +13,7 @@ In the previous section we ensured that we have a resilient front end of servers
 ## Experiment setup
 
 {{% notice note %}}
-We are assuming that you know how to set up a basic FIS experiment and will focus on things specific to this experiment. If you need a refresher see the previous [**First Experiment**]({{< ref "030_basic_content/030 basic experiment/" >}}) section.
+We are assuming that you know how to set up a basic FIS experiment and will focus on things specific to this experiment. If you need a refresher see the previous [**First Experiment**]({{< ref "030_basic_content/030_basic_experiment/" >}}) section.
 {{% /notice %}}
 
 ### General template setup
@@ -31,7 +31,7 @@ Now we need to define targets. Scroll to the "Targets" section and select "Add T
 
 On the "Add target" popup enter `FisWorkshopRDSDB` for name and select `aws:rds:db`. For "Target method" we will select resources based on the ID. Select the `Resource IDs` checkbox. Pick the target cluster then Pick `All` from "Selection mode". Select "Save".
 
-{{< img "create-template-2-targets-2.en.png" "Add FIS target" >}}
+{{< img "create-template-2-targets-2.en.png" "Edit FIS target" >}}
 
 ### Action definition
 
@@ -47,7 +47,7 @@ We will leave the "Start after" section blank since the instances we are termina
 
 Under "Target" select the `FisWorkshopRDSDB` target created above. Select "Save".
 
-{{< img "create-template-2-actions-2.en.png" "Add FIS actions" >}}
+{{< img "create-template-2-actions-2.en.png" "Edit FIS actions" >}}
 
 ### Creating template without stop conditions
 
@@ -95,7 +95,7 @@ Connect to one of the EC2 instances in your autoscaling group. In a new browser 
 
 On the next page select "Session Manager" and "Connect":
 
-{{< img "instance-connect-2.en.png" "Locate ASG instance" >}}
+{{< img "instance-connect-2.en.png" "Connect to ASG instance via Session Manager" >}}
 
 This will open a linux terminal session. In this session sudo to assume the `ec2-user` identity:
 
@@ -128,7 +128,7 @@ Now start the test script and leave it running:
 
 Navigate to the [RDS console](https://console.aws.amazon.com/rds/home?#databases:), select "Databases" on the left menu, and select the "MySQL Community" instance. Note that the current instance state is "Available":
 
-{{< img "rds-state-1.en.png" >}}
+{{< img "rds-state-1.en.png" "Explore RDS initial state" >}}
 
 ### Start the experiment
 

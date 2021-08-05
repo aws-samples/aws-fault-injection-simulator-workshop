@@ -1,3 +1,4 @@
+Description: "AWS FIS workshop - EC2/pipeline stack. This stack was created from the CI/CD pipeline in the FIS workshop"
 Resources:
   ssminstancerole0E7D791C:
     Type: AWS::IAM::Role

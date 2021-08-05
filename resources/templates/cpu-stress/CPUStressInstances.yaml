@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Launch Windows and Linux Instance for CPU Stress Test during FIS Workshop.  
+Description: "AWS FIS workshop - EC2/static stack. Launch Windows and Linux Instance for CPU Stress Test during FIS Workshop."
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -102,7 +102,7 @@ Resources:
               - Effect: Allow
                 Action: ssm:SendCommand
                 Resource:
-                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:*:document/AWSFIS-Run-Cpu-Stress
+                  - !Sub arn:${AWS::Partition}:ssm:*:*:document/AWSFIS-Run-Cpu-Stress
                   - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${WinStressDocument}
                   - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:instance/*
           PolicyName: SSMPolicy
