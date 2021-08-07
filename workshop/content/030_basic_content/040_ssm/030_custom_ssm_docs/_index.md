@@ -19,7 +19,7 @@ The document is a YAML file defining two `aws:runShellScript` actions, `InstallD
 
 ## Custom SSM documents
 
-Currently AWS does not provide a CPU stress document but we can create our own. For more information on writing SSM documents please see these resources
+Currently AWS does not provide a CPU stress document for Windows, but we can create our own. For more information on writing SSM documents please see these resources
 
 * [AWS Systems Manager documentation](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-ssm-docs.html)
 * [Writing your own SSM documents blog](https://aws.amazon.com/blogs/mt/writing-your-own-aws-systems-manager-documents/)
