@@ -53,7 +53,7 @@ While our load is running let's explore the setup a little more.
 The first thing we want to look at is our webserver logs. Because we are using auto-scaling and virtual machines can disappear, we have installed the [Unified CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) on our webserver to write logs to a [CloudWatch Log Group](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log). 
 
 {{%expand "Navigating to CloudWatch Log Groups" %}}
-Log into the AWS console as described in **Getting Started**. From the "Services" dropdown navigate to "CloudWatch" under "Management & Governance" or use the search bar. On the left hand side expand the burger menu if necessary, the select "Logs" and "Log Groups". If you have many log groups you can search for `/fis-workshop/asg-access-log`
+Log into the AWS console as described in **Getting Started**. From the "**Services**" dropdown navigate to "**CloudWatch**" under "**Management & Governance**" or use the search bar. On the left hand side expand the burger menu if necessary, then select "**Logs**" and "**Log Groups**". If you have many log groups you can search for `/fis-workshop/asg-access-log`
 {{% /expand%}}
 
 {{< img "nginx-log-stream-1.en.png" "Nginx access log group" >}}
