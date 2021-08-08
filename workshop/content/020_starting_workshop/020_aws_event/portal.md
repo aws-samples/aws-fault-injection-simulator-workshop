@@ -22,4 +22,4 @@ Click on **AWS Console** on dashboard.
 
 Take the defaults and click on **Open AWS Console**. This will open AWS Console in a new browser tab.
 
-Once you have completed the steps above, you can head straight to the [**Region Selection**](../030_region_selection.html).
+Once you have completed the steps above, you can head straight to the [**Region Selection**]({{< ref "030_region_selection" >}}).

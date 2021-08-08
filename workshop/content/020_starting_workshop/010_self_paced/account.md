@@ -32,4 +32,4 @@ as an IAM user with administrator access to the AWS account:
 
 1. Sign in to a new AWS Console session by using the sign-in URL saved and the newly created user credentials.
 
-1. Once you have completed the steps above, you can head straight to the [**Region Selection**](../030_region_selection.html).
+1. Once you have completed the steps above, you can head straight to the [**Region Selection**]({{< ref "030_region_selection" >}}).
