@@ -9,7 +9,7 @@ I this section we will cover how to create experiment templates using the AWS Co
 
 ### Create FIS experiment template
 
-To run an experiment we need to first create a template _defining_ the [Actions](https://docs.aws.amazon.com/fis/latest/userguide/actions.html), [Targets](https://docs.aws.amazon.com/fis/latest/userguide/targets.html), and optionally [Stop Conditions](https://docs.aws.amazon.com/fis/latest/userguide/stop-conditions.html).  
+To run an experiment we need to first create a template defining the [Actions](https://docs.aws.amazon.com/fis/latest/userguide/actions.html), [Targets](https://docs.aws.amazon.com/fis/latest/userguide/targets.html), and optionally [Stop Conditions](https://docs.aws.amazon.com/fis/latest/userguide/stop-conditions.html).  
 
 Navigate to the [FIS console](https://console.aws.amazon.com/fis/home?#Home) and select "Create experiment template".
 
@@ -59,9 +59,9 @@ Under "Target" select the `FisWorkshopAsg-50Percent` target created above. Selec
 
 #### Creating template without stop conditions
 
-Scroll to the bottom of the template definition page. Optionally add a new tag `Name` with value `FisWorkshopTerminateAsg-1` and select "Create experiment template". 
+Scroll to the bottom of the template definition page and select "Create experiment template". 
 
-{{< img "create-template-3-create.en.png" "Name and create experiment template" >}}
+{{< img "create-template-3-create.en.png" "Create experiment template" >}}
 
 Since we didn't specify a stop condition we receive a warning. This is ok, for this experiment we don't need a stop condition. Type `create` in the text box as indicated and select "Create experiment template".
 
@@ -69,7 +69,7 @@ Since we didn't specify a stop condition we receive a warning. This is ok, for t
 
 ## Validation procedure
 
-We will be using the CloudWatch dashboard from the previous sections for validaton, no additional setup required.
+We will be using the CloudWatch dashboard from the previous sections for validation, no additional setup required.
 
 ## Run FIS experiment
 
