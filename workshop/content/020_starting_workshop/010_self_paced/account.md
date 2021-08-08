@@ -24,5 +24,10 @@ as an IAM user with administrator access to the AWS account:
 1. Click to create the new user:
 {{< img "images/020_starting_workshop/iam-3-create-user.png" "Confirm user creation" >}}
 
-1. Take note of the login URL and save:
+1. Take note of the sign-in URL and save:
 {{< img "images/020_starting_workshop/iam-4-save-url.png" "Login url for new account" >}}
+
+1. Sign out of your current AWS Console session: on the top menu, click on your login and select "Sign out"
+{{< img "images/020_starting_workshop/iam-5-sign-out.png" "Login url for new account" >}}
+
+3. Sign in to a new AWS Console session by using the sign-in URL saved and the newly created user credentials.
