@@ -102,7 +102,7 @@ While this is running we encourage you to explore CloudWatch logs and create som
 
 {{< img "dashboard-extended-phpinfo.en.png" "Load against phpinfo page" >}}
 
-We finally generated enough load to force a scaling event. We also see how different the user experience is from what nginx reports. The user user times out after 2s and as such experiences substantial site unavailability. Nginx in contrast doesn't report this as error because the connection was terminated before being served. We will leave it as an exercise to the reader to figure out more details and will move on to actually running fault injection experiments.
+We finally generated enough load to force a scaling event. We also see how different the user experience is from what nginx reports. The user times out after 2s and as such experiences substantial site unavailability. Nginx in contrast doesn't report this as error because the connection was terminated before being served. We will leave it as an exercise to the reader to figure out more details and will move on to actually running fault injection experiments.
 
 
 
