@@ -123,7 +123,7 @@ On the **Attach permissions** page search for the `FisWorkshopServicePolicy` we 
 
 {{< img "create-role-2.en.png" "Attach role policy" >}}
 
-Back in the **IAM Roles** page, find and edit the `FisWorkshopServiceRole`. Select *Trust relationsips* and the *Edit trust relationship* button.
+Back in the **IAM Roles** page, find and edit the `FisWorkshopServiceRole`. Select *Trust relationships* and the *Edit trust relationship* button.
 
 {{< img "create-role-3.en.png" "Edit trust relationship" >}}
 
