@@ -16,7 +16,7 @@ Additionally, chaos engineering revolves around building hypotheses of how a par
 
 When run in a prepared AWS account the core sections (EC2, RDS, SSM) of the workshop will take about 1-2h and the whole workshop about 2-4h. Using the Amazon DevOps Guru section will require an additional 2-24h of wait time after the infrastructure has been configured.
 
-When run in a customer account, infrastructure initialization for the core workshop will require and additional 45min. 
+When run in a customer account, infrastructure initialization for the core workshop will require an additional 45min. 
 
 ## Cost
 
