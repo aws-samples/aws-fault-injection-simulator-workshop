@@ -13,7 +13,7 @@ In the previous section you navigated to the basic website for our web server se
 export URL_HOME=[PASTE URL HERE]
 ```
 
-Next we need to generate load. There are many [load testing tools](https://en.wikipedia.org/wiki/Category:Load_testing_tools) available to generate a variety of load patterns. However, for the purpose of this workshop we have included a lambda function that will make HTTP GET calls to our site and log performance data to CloudWatch. To find the lambda function  navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "FisStackLoadGen" stack and click on the “Outputs” tab which will show you the lambda functon ARN:
+Next we need to generate load. There are many [load testing tools](https://en.wikipedia.org/wiki/Category:Load_testing_tools) available to generate a variety of load patterns. However, for the purpose of this workshop we have included a lambda function that will make HTTP GET calls to our site and log performance data to CloudWatch. To find the lambda function  navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "FisStackLoadGen" stack and click on the “Outputs” tab which will show you the lambda function ARN:
 
 {{< img "cloudformation.en.png" "Cloudformation Lambda Function ARN" >}}
 
@@ -68,7 +68,7 @@ Let's look at our dashboard:
 
 {{< img "dashboard-basic-home.en.png" "Load against home page" >}}
 
-That's odd, did anything happen? According to nginx we would think nothing happend. Maybe we should look at what the server CPU and the load runner have to say. For this we have added a more detailed dashboard:
+That's odd, did anything happen? According to nginx we would think nothing happened. Maybe we should look at what the server CPU and the load runner have to say. For this we have added a more detailed dashboard:
 
 {{< img "dashboard-extended-home.en.png" "Load against home page" >}}
 
