@@ -30,4 +30,6 @@ as an IAM user with administrator access to the AWS account:
 1. Sign out of your current AWS Console session: on the top menu, click on your login and select "Sign out"
 {{< img "images/020_starting_workshop/iam-5-sign-out.png" "Login url for new account" >}}
 
-3. Sign in to a new AWS Console session by using the sign-in URL saved and the newly created user credentials.
+1. Sign in to a new AWS Console session by using the sign-in URL saved and the newly created user credentials.
+
+1. Once you have completed the steps above, you can head straight to the [**Region Selection**](../030_region_selection.html).
