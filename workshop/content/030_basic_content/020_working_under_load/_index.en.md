@@ -42,7 +42,7 @@ aws lambda invoke \
 ```
 
 
-Now let's add some load. The invocation above will generate 1000 connections per second for 3 minutes. That seems like a lot so we would expect our site performance to degrade and auto-scaling to kick in. 
+Now let's add some load. The invocation above will generate 1000 connections per second for 3 minutes. That seems like a lot so we would expect our site performance to degrade and auto scaling to kick in. 
 
 ## Explore impact of load
 
@@ -50,7 +50,7 @@ While our load is running let's explore the setup a little more.
 
 ### Webserver logs and metrics
 
-The first thing we want to look at is our webserver logs. Because we are using auto-scaling and virtual machines can disappear, we have installed the [Unified CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) on our webserver to write logs to a [CloudWatch Log Group](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log). 
+The first thing we want to look at is our webserver logs. Because we are using auto scaling and virtual machines can disappear, we have installed the [Unified CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) on our webserver to write logs to a [CloudWatch Log Group](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log). 
 
 {{%expand "Navigating to CloudWatch Log Groups" %}}
 Log into the AWS console as described in **Getting Started**. From the "**Services**" dropdown navigate to "**CloudWatch**" under "**Management & Governance**" or use the search bar. On the left hand side expand the burger menu if necessary, then select "**Logs**" and "**Log Groups**". If you have many log groups you can search for `/fis-workshop/asg-access-log`

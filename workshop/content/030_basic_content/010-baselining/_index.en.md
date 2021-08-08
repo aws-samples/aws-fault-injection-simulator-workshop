@@ -29,13 +29,13 @@ Before starting our first fault injection experiment, let's have a look at our m
 
 {{< img "BasicASG-with-user.png" "Image of architecture to be injected with chaos" >}}
 
-We have a user trying to access a website running on AWS. We have designed for high availability by using EC2 instances with an auto-scaling group and a load balancer to ensure that the the user will always be able to reach our website even under heavy load or if an instance fails.
+We have a user trying to access a website running on AWS. We have designed for high availability by using EC2 instances with an auto scaling group and a load balancer to ensure that the the user will always be able to reach our website even under heavy load or if an instance fails.
 
 Once you've started the template as described in **Getting Started** you can navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "FisStackAsg" stack and click on the "Outputs" tab which will show you the server URL:
 
 {{< img "cloudformation.en.png" "Autoscaling group URL" >}}
 
-To gain visibility into the user experience from the sysops side we've used the [cloudwatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) to export our web server logs to [cloudwatch logs](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log) and we created [CloudWatch Logs metrics filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) to track server response codes and speeds on a [dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:name=FisDashboard-us-west-2). Note that the dashboard's name is based on the region, so if you chose another region the dashboard's name will be different. The dashboard also shows the number of instances in our Auto-Scaling Group (ASG).
+To gain visibility into the user experience from the sysops side we've used the [cloudwatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) to export our web server logs to [cloudwatch logs](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log) and we created [CloudWatch Logs metrics filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) to track server response codes and speeds on a [dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:name=FisDashboard-us-west-2). Note that the dashboard's name is based on the region, so if you chose another region the dashboard's name will be different. The dashboard also shows the number of instances in our Auto Scaling Group (ASG).
 
 {{< img "fis-dashboard-1.png" "CloudWatch dashboard" >}}
 

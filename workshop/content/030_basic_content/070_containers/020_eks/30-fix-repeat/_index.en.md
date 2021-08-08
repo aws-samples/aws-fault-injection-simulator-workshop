@@ -16,7 +16,7 @@ In a browser window navigate to the *Clusters* section in the [EKS console](http
 
 On the *Edit node group* page
 
-- Change the current settings for "minimum" to `2` to ensure we always have at least 2 instances available for redundancy. Note: if you only increase "desired" and "maximum" then the scaling policy for the auto-scaling group could decrease the "desired" value back to `1` during low load periods.
+- Change the current settings for "minimum" to `2` to ensure we always have at least 2 instances available for redundancy. Note: if you only increase "desired" and "maximum" then the scaling policy for the auto scaling group could decrease the "desired" value back to `1` during low load periods.
 
 - Set "desired" and "maximum" to `2` or more. Note: setting the desired value to more than the number of tasks (see below) will leave you with idle instances.
 

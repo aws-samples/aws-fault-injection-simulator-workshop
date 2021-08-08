@@ -35,7 +35,7 @@ Next let's set description and role for the first run of the experiment. Scroll 
 
 #### Target selection
 
-Now we need to define targets. For our first experiment we will start with the hypothesis that due to our auto-scaling setup we can safely impact half the instances in our autoscaling group. Scroll to the "Targets" section and select "Add Target"
+Now we need to define targets. For our first experiment we will start with the hypothesis that due to our auto scaling setup we can safely impact half the instances in our autoscaling group. Scroll to the "Targets" section and select "Add Target"
 
 {{< img "create-template-2-targets-1.en.png" "Add FIS target" >}}
 
