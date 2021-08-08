@@ -9,7 +9,7 @@ Your account must have the ability to create new IAM roles and scope other IAM p
 {{% /notice %}}
 
 1. If you don't already have an AWS account with Administrator access: [create
-one now by clicking here](https://aws.amazon.com/getting-started/)
+one now by clicking here](https://portal.aws.amazon.com/billing/signup)
 
 1. Once you have an AWS account, ensure you are following the remaining workshop steps
 as an IAM user with administrator access to the AWS account:
