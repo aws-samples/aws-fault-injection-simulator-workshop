@@ -38,7 +38,7 @@ Now that we have improved our configuration, let's re-run the experiment. Before
 
 This time we should observe that, even when one of the container instances gets terminated, our application is still available and successfully serving requests. In the output of the Bash script there should be no `curl: (52) Empty reply from server` messages.
 
-## EKS/k8s cluster autoscaling
+## EKS/k8s cluster auto scaling
 
 In this workshop we used manual scaling of both worker nodes and pods. In a production setup you would likely configure kubernetes / EKS to use 
 

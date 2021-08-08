@@ -46,7 +46,7 @@ With targets defined we define the action to take. Scroll to the "Actions" secti
 
 For "Name" enter `ECSInstanceTerminate` and you can skip the Description. For "Action type" select `aws:ec2:terminate-instances`.
 
-We will leave the "Start after" section blank since the instances we are terminating are part of an autoscaling group and we can let the autoscaling group create new instances to replace the terminated ones.
+We will leave the "Start after" section blank since the instances we are terminating are part of an auto scaling group and we can let the auto scaling group create new instances to replace the terminated ones.
 
 Under "Target" select the `FisWorkshopECSInstance` target created above. Select "Save".
 

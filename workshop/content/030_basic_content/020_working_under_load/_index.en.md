@@ -76,7 +76,7 @@ Now it's more clear what happened: we were requesting a small static page and ng
 
 ## Increasing the load
 
-Clearly hitting a static page wasn't a good test to validate that our autoscaling setup works as intended. Fortunately the server also exposes a `phpinfo.php` page. Let's try hitting that instead. Define another environment variable and run the load test against the new URL. And because we really want to see scaling, let's run more than one copy:
+Clearly hitting a static page wasn't a good test to validate that our auto scaling setup works as intended. Fortunately the server also exposes a `phpinfo.php` page. Let's try hitting that instead. Define another environment variable and run the load test against the new URL. And because we really want to see scaling, let's run more than one copy:
 
 ```bash
 export URL_PHP=${URL_HOME}/phpinfo.php

@@ -29,13 +29,13 @@ First, let's give our template a short name to be used on the list page. To do t
 
 #### Template description and permissions
 
-Next let's set description and role for the first run of the experiment. Scroll back to the "Description and permission" section at the top. For "Description" enter `Terminate half of the instances in the autoscaling group` and for "Role" select the `FisWorkshopServiceRole` role you created above.
+Next let's set description and role for the first run of the experiment. Scroll back to the "Description and permission" section at the top. For "Description" enter `Terminate half of the instances in the auto scaling group` and for "Role" select the `FisWorkshopServiceRole` role you created above.
 
 {{< img "create-template-2-description.en.png" "Set FIS description and role" >}}
 
 #### Target selection
 
-Now we need to define targets. For our first experiment we will start with the hypothesis that due to our auto scaling setup we can safely impact half the instances in our autoscaling group. Scroll to the "Targets" section and select "Add Target"
+Now we need to define targets. For our first experiment we will start with the hypothesis that due to our auto scaling setup we can safely impact half the instances in our auto scaling group. Scroll to the "Targets" section and select "Add Target"
 
 {{< img "create-template-2-targets-1.en.png" "Add FIS target" >}}
 
@@ -45,13 +45,13 @@ On the "Add target" popup enter `FisWorkshopAsg-50Percent` for name and select `
 
 #### Action definition
 
-With targets defined we define the action to take. To test the hypothesis that we can safely impact half the instances in our autoscaling group we will terminate those instances. Scroll to the "Actions" section" and select "Add Action"
+With targets defined we define the action to take. To test the hypothesis that we can safely impact half the instances in our auto scaling group we will terminate those instances. Scroll to the "Actions" section" and select "Add Action"
 
 {{< img "create-template-2-actions-1.en.png" "Add FIS actions" >}}
 
 For "Name" enter `FisWorkshopAsg-TerminateInstances` and add a "Description" like `Terminate instances`. For "Action type" select `aws:ec2:terminate-instances`.
 
-We will leave the "Start after" section blank since the instances we are terminating are part of an autoscaling group and we can let the autoscaling group create new instances to replace the terminated ones.
+We will leave the "Start after" section blank since the instances we are terminating are part of an auto scaling group and we can let the auto scaling group create new instances to replace the terminated ones.
 
 Under "Target" select the `FisWorkshopAsg-50Percent` target created above. Select "Save".
 
@@ -114,7 +114,7 @@ Look at the "State" entry. If this still shows pending, feel free to select the 
 
 {{< img "run-experiment-1-fail.en.png" "Start experiment confirmation" >}}
 
-Click on the failed result to get more information about why it failed. The message should say "Target resolution returned empty set". To see why this would happen, have a look at the autoscaling group from which we tried to select instances. Navigate to the [EC2 console](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select "Auto Scaling Groups" on the bottom of the left menu, and search for "FisStackAsg-WebServerGroup":
+Click on the failed result to get more information about why it failed. The message should say "Target resolution returned empty set". To see why this would happen, have a look at the auto scaling group from which we tried to select instances. Navigate to the [EC2 console](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select "Auto Scaling Groups" on the bottom of the left menu, and search for "FisStackAsg-WebServerGroup":
 
 {{< img "review-1-asg-1.en.png" "Review ASG" >}}
 
@@ -124,7 +124,7 @@ It looks like our ASG was configured to scale down to just one instance while id
 
 **Great! While this wasn't really what we expected, we just found a flaw in our configuration that would severely affect resilience! Let's fix it and try again!**
 
-Click on the autoscaling group name and "Edit" the "Group Details" to raise both the "Desired capacity" and "Minimum capacity" to `2`.
+Click on the auto scaling group name and "Edit" the "Group Details" to raise both the "Desired capacity" and "Minimum capacity" to `2`.
 
 {{< img "review-1-asg-2.en.png" "Update ASG" >}}
 
