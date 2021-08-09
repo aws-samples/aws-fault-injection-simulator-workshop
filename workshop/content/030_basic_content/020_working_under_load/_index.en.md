@@ -41,6 +41,10 @@ aws lambda invoke \
   invoke.txt 
 ```
 
+{{% notice warning %}}
+If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-format raw-in-base64-out` or you'll get the error "Invalid base64" when sending the payload.
+{{% /notice %}}
+
 
 Now let's add some load. The invocation above will generate 1000 connections per second for 3 minutes. That seems like a lot so we would expect our site performance to degrade and auto scaling to kick in. 
 

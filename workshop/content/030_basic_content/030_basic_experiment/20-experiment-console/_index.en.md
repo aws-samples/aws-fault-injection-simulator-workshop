@@ -94,6 +94,10 @@ aws lambda invoke \
   invoke.txt
 ```
 
+{{% notice warning %}}
+If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-format raw-in-base64-out` or you'll get the error "Invalid base64" when sending the payload.
+{{% /notice %}}
+
 To start the experiment navigate to the [FIS console](https://console.aws.amazon.com/fis/home?#ExperimentTemplates), select the `FisWorkshopExp1` template we just created.  Under "Actions" select "Start experiment".
 
 {{< img "start-experiment-1.en.png" "Start experiment add tags" >}}
