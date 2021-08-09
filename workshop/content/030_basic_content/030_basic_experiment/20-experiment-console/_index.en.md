@@ -98,7 +98,7 @@ To start the experiment navigate to the [FIS console](https://console.aws.amazon
 
 {{< img "start-experiment-1.en.png" "Start experiment add tags" >}}
 
-Let's give the experiment run a friendly name for finding it later on the list page. Under "Experiment tags" enter `Name` for "Key and `FisWorkshopExp1Run1`then select "Start experiment".
+Let's give the experiment run a friendly name for finding it later on the list page. Under "Experiment tags" enter `Name` for "Key and `FisWorkshopExp1Run1` then select "Start experiment".
 
 {{< img "start-experiment-2.en.png" "Start experiment confirmation" >}}
 
@@ -114,7 +114,7 @@ Look at the "State" entry. If this still shows pending, feel free to select the 
 
 {{< img "run-experiment-1-fail.en.png" "Start experiment confirmation" >}}
 
-Click on the failed result to get more information about why it failed. The message should say "Target resolution returned empty set". To see why this would happen, have a look at the auto scaling group from which we tried to select instances. Navigate to the [EC2 console](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select "Auto Scaling Groups" on the bottom of the left menu, and search for "FisStackAsg-WebServerGroup":
+Click on the failed result to get more information about why it failed. The message should say "Target resolution returned empty set". To see why this would happen, have a look at the auto scaling group from which we tried to select instances. Navigate to the [EC2 console](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select "Auto Scaling Groups" on the bottom of the left menu, and search for "FisStackAsg-":
 
 {{< img "review-1-asg-1.en.png" "Review ASG" >}}
 
