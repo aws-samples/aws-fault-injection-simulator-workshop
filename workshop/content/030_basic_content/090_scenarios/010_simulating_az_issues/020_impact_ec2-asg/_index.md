@@ -167,4 +167,4 @@ This SSM document requires an SSM role with the following permissions:
 
 ### Avoid: NACLs and SGs
 
-For EC2 instances in ASGs do not modify Network Access Control Lists (NACLs) or security groups (SGs) as this will lead to churn when the ASG tries to spin up new instances and they fail to register as healthy.
+For EC2 instances in ASGs avoid using Network Access Control Lists (NACLs) or security groups (SGs) as this will lead to churn when the ASG tries to spin up new instances and they fail to register as healthy. If other aspects of your simulation require using NACLs or SGs ensure you prevent autoscaling actions as described in the first workaround section above.
