@@ -3,7 +3,7 @@ title = "Experiment (CloudFormation)"
 weight = 40
 +++
 
-I this section we will cover how to define and update experiment templates using [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-fis-experimenttemplate.html).
+In this section we will cover how to define and update experiment templates using [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-fis-experimenttemplate.html).
 
 ## CFN template format
 
@@ -106,7 +106,7 @@ We can wrap this into the `Resources` section of a [CloudFormation template](htt
 
 ## Using the CFN template
 
-A deep dive into [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) is beyond the scope of this workshop so we will only conver how to create and update stacks via the CLI.
+A deep dive into [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) is beyond the scope of this workshop so we will only cover how to create and update stacks via the CLI.
 
 ### Create a new template / experiment
 
@@ -116,7 +116,7 @@ To create a stack, and thus the contained FIS experiment template, copy the abov
 aws cloudformation create-stack --stack-name FisWorkshopExperimentTemplate --template-body file://cfn-fis-experiment.json
 ```
 
-If you navigate to to the [CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=FisWorkshopExperiment&viewNested=true&hideStacks=false) you should now see a new stack named `FisWorkshopExperimentTemplate` and navigating to the [FIS console](https://console.aws.amazon.com/fis/home?#ExperimentTemplates) should show an experiment named `FisWorkshop-Exp1-CFN-v1.0.0`
+If you navigate to the [CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=FisWorkshopExperiment&viewNested=true&hideStacks=false) you should now see a new stack named `FisWorkshopExperimentTemplate` and navigating to the [FIS console](https://console.aws.amazon.com/fis/home?#ExperimentTemplates) should show an experiment named `FisWorkshop-Exp1-CFN-v1.0.0`
 
 ### Update template / experiment
 
@@ -128,7 +128,7 @@ Then run the AWS CLI command:
 aws cloudformation update-stack --stack-name FisWorkshopExperimentTemplate --template-body file://cfn-fis-experiment.json
 ```
 
-This should update the name of your experiment template in the FIS console. Obviously this is most useful if you make actual changes to the template itself, too.
+This should update the name of your experiment template in the FIS console. Obviously this is most useful if you make actual changes to the template itself too.
 
 ## Findings and next steps
 

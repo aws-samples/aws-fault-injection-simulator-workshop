@@ -3,7 +3,7 @@ title = "Experiment (CLI)"
 weight = 30
 +++
 
-I this section we will show you how to create an experiment using FIS templates. For clarity we will replicate the same experiment as we set up via the console in the previous section.
+In this section we will show you how to create an experiment using FIS templates. For clarity we will replicate the same experiment as we set up via the console in the previous section.
 
 ## Template overview
 
@@ -37,7 +37,7 @@ I this section we will show you how to create an experiment using FIS templates.
 
 ### Targets
 
-[Targets](https://docs.aws.amazon.com/fis/latest/userguide/targets.html) specifing a name, a `resourceType` from which to select by `resourceArn`, `resourceTags` or `filters`, and `selectionMode` for sampling from the eligible resources by `COUNT()` or `PERCENT()`. 
+[Targets](https://docs.aws.amazon.com/fis/latest/userguide/targets.html) specify a name, a `resourceType` from which to select by `resourceArn`, `resourceTags` or `filters`, and `selectionMode` for sampling from the eligible resources by `COUNT()` or `PERCENT()`. 
 
 ```json
 "TargetGroupName": {
@@ -60,7 +60,7 @@ I this section we will show you how to create an experiment using FIS templates.
 }
 ```
 
-A note on finding the `path` and `values` for `filters`. As described under ["Resource filters"](https://docs.aws.amazon.com/fis/latest/userguide/targets.html#target-identification) filter paths are based on API output. E.g if we want to only target running EC2 instances we could use the AWS CLI to list instances:
+A note on finding the `path` and `values` for `filters`: as described under ["Resource filters"](https://docs.aws.amazon.com/fis/latest/userguide/targets.html#target-identification), filter paths are based on API output. E.g.: if we want to only target running EC2 instances we could use the AWS CLI to list instances:
 
 ```bash
 aws ec2 describe-instances
@@ -104,7 +104,7 @@ To find the relevant `path` and `values` start in the `Instances` block of the A
 }
 ```
 
-E.g. to select an instance that is `running` in `us-east-2a` we would add the following filters:
+E.g.: to select an instance that is `running` in `us-east-2a` we would add the following filters:
 
 ```json
 "filters": [
@@ -186,11 +186,11 @@ Before using this template, please ensure that you replace the ARN for the FIS e
 
 ## Working with templates
 
-The rest of this section uses the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html). If you are using [ASWS Cloud9](https://console.aws.amazon.com/cloud9/home/product) this should work out of the box. Otherwise please ensure you have configured AWS credentials for the CLI.
+The rest of this section uses the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html). If you are using [AWS Cloud9](https://console.aws.amazon.com/cloud9/home/product) this should work out of the box. Otherwise please ensure you have configured AWS credentials for the CLI.
 
 ### Creating template
 
-To create an experiment template, copy the above JSON into a file named `fis.json` and esure you have changed the `roleArn` entry to be the ARN of the role you created earlier. Then use the CLI to create the template in AWS:
+To create an experiment template, copy the above JSON into a file named `fis.json` and ensure you have changed the `roleArn` entry to be the ARN of the role you created earlier. Then use the CLI to create the template in AWS:
 
 ```bash
 aws fis create-experiment-template --cli-input-json file://fis.json
@@ -215,13 +215,14 @@ While it is possible to update an existing experiment template via the `update-e
 Once you have established the `id` of an experiment template you can dump the template. This can be a good way of learning how to write templates as well:
 
 ```bash
-aws fis get-experiment-template --id EXPERIMENT_TEMPLATE_ID_HERE
+export EXPERIMENT_TEMPLATE_ID=<YOUR_EXPERIMENT_TEMPLATE_ID_HERE>
+aws fis get-experiment-template --id $EXPERIMENT_TEMPLATE_ID
 ```
 
 You will note that the result is wrapped into an `experimentTemplate: {}` block. You may also notice that there are some additional fields that are not used during experiment template creation. You can generate reusable JSON like so:
 
 ```bash
-aws fis get-experiment-template --id EXPERIMENT_ID_HERE | jq '.experimentTemplate | del( .id) | del(.creationTime) | del(.lastUpdateTime)' 
+aws fis get-experiment-template --id $EXPERIMENT_TEMPLATE_ID | jq '.experimentTemplate | del( .id) | del(.creationTime) | del(.lastUpdateTime)' 
 ```
 
 ### Running the experiment
@@ -229,13 +230,13 @@ aws fis get-experiment-template --id EXPERIMENT_ID_HERE | jq '.experimentTemplat
 Finally we want to run the experiment:
 
 ```bash
-aws fis start-experiment --experiment-template-id EXPERIMENT_TEMPLATE_ID_HERE --tags Name=FisWorkshopTerminateAsg-1-CLI
+aws fis start-experiment --experiment-template-id $EXPERIMENT_TEMPLATE_ID --tags Name=FisWorkshopTerminateAsg-1-CLI | jq '.experiment.id'
 ```
 
 Using the returned `id` field you can check on the outcome of the experiment:
 
 ```bash
-aws fis get-experiment --id EXPERIMENT_ID_HERE
+aws fis get-experiment --id YOUR_EXPERIMENT_ID_HERE
 ```
 
 

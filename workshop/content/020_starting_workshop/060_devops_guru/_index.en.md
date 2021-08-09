@@ -26,7 +26,7 @@ If you set coverage to "Choose later" you should now see an information banner n
 
 Select the "Manage analysis coverage" option in the banner or navigate to the [DevOps Guru console](https://console.aws.amazon.com/devops-guru/home?#/home), choose "Settings" and select "Manage" option under "DevOps Guru analysis coverage":
 
-{{< img "manage-coverate.en.png" "Managing coverage on console" >}}
+{{< img "manage-coverage.en.png" "Managing coverage on console" >}}
 
 Select all the Fis stacks:
 

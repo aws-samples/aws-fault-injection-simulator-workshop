@@ -9,7 +9,7 @@ I this section we will cover how to create experiment templates using the AWS Co
 
 ### Create FIS experiment template
 
-To run an experiment we need to first create a template _defining_ the [Actions](https://docs.aws.amazon.com/fis/latest/userguide/actions.html), [Targets](https://docs.aws.amazon.com/fis/latest/userguide/targets.html), and optionally [Stop Conditions](https://docs.aws.amazon.com/fis/latest/userguide/stop-conditions.html).  
+To run an experiment we need to first create a template defining the [Actions](https://docs.aws.amazon.com/fis/latest/userguide/actions.html), [Targets](https://docs.aws.amazon.com/fis/latest/userguide/targets.html), and optionally [Stop Conditions](https://docs.aws.amazon.com/fis/latest/userguide/stop-conditions.html).  
 
 Navigate to the [FIS console](https://console.aws.amazon.com/fis/home?#Home) and select "Create experiment template".
 
@@ -29,13 +29,13 @@ First, let's give our template a short name to be used on the list page. To do t
 
 #### Template description and permissions
 
-Next let's set description and role for the first run of the experiment. Scroll back to the "Description and permission" section at the top. For "Description" enter `Terminate half of the instances in the autoscaling group` and for "Role" select the `FisWorkshopServiceRole` role you created above.
+Next let's set description and role for the first run of the experiment. Scroll back to the "Description and permission" section at the top. For "Description" enter `Terminate half of the instances in the auto scaling group` and for "Role" select the `FisWorkshopServiceRole` role you created above.
 
 {{< img "create-template-2-description.en.png" "Set FIS description and role" >}}
 
 #### Target selection
 
-Now we need to define targets. For our first experiment we will start with the hypothesis that due to our auto-scaling setup we can safely impact half the instances in our autoscaling group. Scroll to the "Targets" section and select "Add Target"
+Now we need to define targets. For our first experiment we will start with the hypothesis that due to our auto scaling setup we can safely impact half the instances in our auto scaling group. Scroll to the "Targets" section and select "Add Target"
 
 {{< img "create-template-2-targets-1.en.png" "Add FIS target" >}}
 
@@ -45,13 +45,13 @@ On the "Add target" popup enter `FisWorkshopAsg-50Percent` for name and select `
 
 #### Action definition
 
-With targets defined we define the action to take. To test the hypothesis that we can safely impact half the instances in our autoscaling group we will terminate those instances. Scroll to the "Actions" section" and select "Add Action"
+With targets defined we define the action to take. To test the hypothesis that we can safely impact half the instances in our auto scaling group we will terminate those instances. Scroll to the "Actions" section" and select "Add Action"
 
 {{< img "create-template-2-actions-1.en.png" "Add FIS actions" >}}
 
 For "Name" enter `FisWorkshopAsg-TerminateInstances` and add a "Description" like `Terminate instances`. For "Action type" select `aws:ec2:terminate-instances`.
 
-We will leave the "Start after" section blank since the instances we are terminating are part of an autoscaling group and we can let the autoscaling group create new instances to replace the terminated ones.
+We will leave the "Start after" section blank since the instances we are terminating are part of an auto scaling group and we can let the auto scaling group create new instances to replace the terminated ones.
 
 Under "Target" select the `FisWorkshopAsg-50Percent` target created above. Select "Save".
 
@@ -59,9 +59,9 @@ Under "Target" select the `FisWorkshopAsg-50Percent` target created above. Selec
 
 #### Creating template without stop conditions
 
-Scroll to the bottom of the template definition page. Optionally add a new tag `Name` with value `FisWorkshopTerminateAsg-1` and select "Create experiment template". 
+Scroll to the bottom of the template definition page and select "Create experiment template". 
 
-{{< img "create-template-3-create.en.png" "Name and create experiment template" >}}
+{{< img "create-template-3-create.en.png" "Create experiment template" >}}
 
 Since we didn't specify a stop condition we receive a warning. This is ok, for this experiment we don't need a stop condition. Type `create` in the text box as indicated and select "Create experiment template".
 
@@ -69,7 +69,7 @@ Since we didn't specify a stop condition we receive a warning. This is ok, for t
 
 ## Validation procedure
 
-We will be using the CloudWatch dashboard from the previous sections for validaton, no additional setup required.
+We will be using the CloudWatch dashboard from the previous sections for validation, no additional setup required.
 
 ## Run FIS experiment
 
@@ -98,7 +98,7 @@ To start the experiment navigate to the [FIS console](https://console.aws.amazon
 
 {{< img "start-experiment-1.en.png" "Start experiment add tags" >}}
 
-Let's give the experiment run a friendly name for finding it later on the list page. Under "Experiment tags" enter `Name` for "Key and `FisWorkshopExp1Run1`then select "Start experiment".
+Let's give the experiment run a friendly name for finding it later on the list page. Under "Experiment tags" enter `Name` for "Key and `FisWorkshopExp1Run1` then select "Start experiment".
 
 {{< img "start-experiment-2.en.png" "Start experiment confirmation" >}}
 
@@ -114,7 +114,7 @@ Look at the "State" entry. If this still shows pending, feel free to select the 
 
 {{< img "run-experiment-1-fail.en.png" "Start experiment confirmation" >}}
 
-Click on the failed result to get more information about why it failed. The message should say "Target resolution returned empty set". To see why this would happen, have a look at the autoscaling group from which we tried to select instances. Navigate to the [EC2 console](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select "Auto Scaling Groups" on the bottom of the left menu, and search for "FisStackAsg-WebServerGroup":
+Click on the failed result to get more information about why it failed. The message should say "Target resolution returned empty set". To see why this would happen, have a look at the auto scaling group from which we tried to select instances. Navigate to the [EC2 console](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select "Auto Scaling Groups" on the bottom of the left menu, and search for "FisStackAsg-":
 
 {{< img "review-1-asg-1.en.png" "Review ASG" >}}
 
@@ -124,7 +124,7 @@ It looks like our ASG was configured to scale down to just one instance while id
 
 **Great! While this wasn't really what we expected, we just found a flaw in our configuration that would severely affect resilience! Let's fix it and try again!**
 
-Click on the autoscaling group name and "Edit" the "Group Details" to raise both the "Desired capacity" and "Minimum capacity" to `2`.
+Click on the auto scaling group name and "Edit" the "Group Details" to raise both the "Desired capacity" and "Minimum capacity" to `2`.
 
 {{< img "review-1-asg-2.en.png" "Update ASG" >}}
 
@@ -143,6 +143,6 @@ Finally navigate to the [CloudWatch Dashboard](https://console.aws.amazon.com/cl
 From this experiment we learned:
 
 * Carefully choose the resource to affect and how to select them. If we had originally chosen to terminate a single instance (COUNT) rather than a fraction (PERCENT) we would have severely affected our service.
-* Spinning up instances takes time. To achieve resilience ASGs should be set to have at least two instances running at all times
+* Spinning up instances takes time. To achieve resilience, Auto Scaling groups should be set to have at least two instances running at all times
 
 In the next section we will explore larger experiments.

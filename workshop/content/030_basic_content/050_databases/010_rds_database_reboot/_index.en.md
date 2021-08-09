@@ -5,7 +5,7 @@ weight = 10
 
 ## Experiment idea
 
-In the previous section we ensured that we have a resilient front end of servers in an Autoscaling group. Typically these servers would depend on a resilient database configuration. Let's validate this:
+In the previous section we ensured that we have a resilient front end of servers in an Auto Scaling group. Typically these servers would depend on a resilient database configuration. Let's validate this:
 
 * **Given**: we have a managed database with a replica and automatic failover enabled
 * **Hypothesis**: failure of a single database instance / replica may slow down a few requests but will not adversely affect our application
@@ -43,7 +43,7 @@ For "Name" enter `RDSInstanceReboot` and you can skip the Description. For "Acti
 
 For this experiment we are using a Multi-AZ database and we want to force a failover to the standby instance to minimize outage time. To do this, set the `forceFailover` parameter to `true`.
 
-We will leave the "Start after" section blank since the instances we are terminating are part of an autoscaling group and we can let the autoscaling group create new instances to replace the terminated ones.
+We will leave the "Start after" section blank since the instances we are terminating are part of an auto scaling group and we can let the auto scaling group create new instances to replace the terminated ones.
 
 Under "Target" select the `FisWorkshopRDSDB` target created above. Select "Save".
 
@@ -89,7 +89,7 @@ AURORA                         RDS
 
 ### Starting the validation procedure
 
-Connect to one of the EC2 instances in your autoscaling group. In a new browser window - we need to be able to see this side-by-side with the FIS experiment later - navigate to your [EC2 console](https://console.aws.amazon.com/ec2/v2/home?#Instances:instanceState=running;search=FisStackAsg/ASG) and search for instances named `FisStackAsg/ASG`. Select one of the instances and click the connect button:
+Connect to one of the EC2 instances in your auto scaling group. In a new browser window - we need to be able to see this side-by-side with the FIS experiment later - navigate to your [EC2 console](https://console.aws.amazon.com/ec2/v2/home?#Instances:instanceState=running;search=FisStackAsg/ASG) and search for instances named `FisStackAsg/ASG`. Select one of the instances and click the connect button:
 
 {{< img "instance-connect-1.en.png" "Locate ASG instance" >}}
 
