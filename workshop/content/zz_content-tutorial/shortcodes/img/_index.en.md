@@ -1,4 +1,5 @@
 +++
+draft = true
 title = "Image"
 description = "Displays a preformatted image on your page"
 weight = 35
