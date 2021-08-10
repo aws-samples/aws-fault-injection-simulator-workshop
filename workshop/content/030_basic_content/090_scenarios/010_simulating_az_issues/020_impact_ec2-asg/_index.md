@@ -1,7 +1,6 @@
 +++
 title = "Impact EC2/ASG"
 weight = 20
-draft = true
 +++
 
 
