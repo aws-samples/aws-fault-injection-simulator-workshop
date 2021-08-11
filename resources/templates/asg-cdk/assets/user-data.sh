@@ -3,6 +3,7 @@
 yum update -y
 yum update -y aws-cfn-bootstrap
 yum update -y aws-cli
+yum install -y jq
 /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource LaunchConfig --region ${AWS::Region}
 
 # Install NGINX 1.12

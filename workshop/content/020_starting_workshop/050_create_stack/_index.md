@@ -22,5 +22,5 @@ Deploy the resources
 ```
 cd aws-fault-injection-simulator-workshop
 cd resources/templates
-./deploy.sh
+./deploy-parallel.sh
 ```
