@@ -16,7 +16,7 @@ In our ECS configuration we have chosen to use EC2 with an auto scaling group as
 
 In the lower pane, in the **Details** tab, click the **Edit** button.
 
-- Change the current settings for "minimum" to `2` to ensure we always have at least 2 instances available for redundancy. Note: if you only increase "desired" and "maximum" then the scaling policy for the auto-scaling group could decrease the "desired" value back to `1` during low load periods.
+- Change the current settings for "minimum" to `2` to ensure we always have at least 2 instances available for redundancy. Note: if you only increase "desired" and "maximum" then the scaling policy for the auto scaling group could decrease the "desired" value back to `1` during low load periods.
 
 - Set "desired" and "maximum" to `2` or more. Note: setting the desired value to more than the number of tasks (see below) will leave you with idle instances.
 

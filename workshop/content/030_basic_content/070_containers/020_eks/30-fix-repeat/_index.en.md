@@ -16,7 +16,7 @@ In a browser window navigate to the *Clusters* section in the [EKS console](http
 
 On the *Edit node group* page
 
-- Change the current settings for "minimum" to `2` to ensure we always have at least 2 instances available for redundancy. Note: if you only increase "desired" and "maximum" then the scaling policy for the auto-scaling group could decrease the "desired" value back to `1` during low load periods.
+- Change the current settings for "minimum" to `2` to ensure we always have at least 2 instances available for redundancy. Note: if you only increase "desired" and "maximum" then the scaling policy for the auto scaling group could decrease the "desired" value back to `1` during low load periods.
 
 - Set "desired" and "maximum" to `2` or more. Note: setting the desired value to more than the number of tasks (see below) will leave you with idle instances.
 
@@ -38,7 +38,7 @@ Now that we have improved our configuration, let's re-run the experiment. Before
 
 This time we should observe that, even when one of the container instances gets terminated, our application is still available and successfully serving requests. In the output of the Bash script there should be no `curl: (52) Empty reply from server` messages.
 
-## EKS/k8s cluster autoscaling
+## EKS/k8s cluster auto scaling
 
 In this workshop we used manual scaling of both worker nodes and pods. In a production setup you would likely configure kubernetes / EKS to use 
 

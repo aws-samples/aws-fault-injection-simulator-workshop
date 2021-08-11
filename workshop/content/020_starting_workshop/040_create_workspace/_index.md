@@ -14,9 +14,9 @@ the cloud9 domain, or connecting to the workspace might be impacted.
 Cloud9 requires third-party-cookies. You can whitelist the [specific domains]( https://docs.aws.amazon.com/cloud9/latest/user-guide/troubleshooting.html#troubleshooting-env-loading).
 {{% /notice %}}
 
-### Launch Cloud9 in the region selected previously:
+### Launch Cloud9 in the region selected previously
 
-Navigate to the Cloud9 console: https://console.aws.amazon.com/cloud9
+Using the region selected in [**Region Selection**]({{< ref "030_region_selection" >}}), navigate to the [Cloud9 console](https://console.aws.amazon.com/cloud9).
 
 - Select **Create environment**
 - Name it **fisworkshop**, click Next.
@@ -35,8 +35,8 @@ When it comes up, customize the environment by:
 
 ### Increase the disk size on the Cloud9 instance
 
-{{% notice note %}}
-The following command adds more disk space to the root volume of the EC2 instance that Cloud9 runs on. Once the command completes, we reboot the instance and it could take a minute or two for the IDE to come back online.
+{{% notice info %}}
+Some commands we will run require more thatn the default disk allocation on a cloud9 workspace. The following command adds more disk space to the root volume of the EC2 instance that Cloud9 runs on. Once the command completes, we reboot the instance and it could take a minute or two for the IDE to come back online.
 {{% /notice %}}
 
 ```bash
@@ -75,20 +75,19 @@ fi
 ### Update tools and dependencies
 
 {{% notice info %}}
-At the time of this workshop creation, Cloud9 workspaces come with the following tools:<br />- cdk: 1.113.0<br />- npm: 6.14.12<br />- node: v10.24.1<br /><br />We want to update these to their latest version
+The instructions in this workshop assume you are using a bash shell in a linux-like environment. They also rely on a number of tools. Follow these instructions to install the required tools in a cloud9 workspace:
 {{% /notice %}}
 
-Update to the latest stable release of npm and nodejs.
 ```bash
+# Update to the latest stable release of npm and nodejs.
 nvm install stable 
-```
 
-Install typescript
-```bash
+# Install typescript
 npm install -g typescript
-```
 
-Install CDK
-```bash
+# Install CDK
 npm install -g aws-cdk
+
+# Install the jq tool
+sudo yum install jq -y
 ```

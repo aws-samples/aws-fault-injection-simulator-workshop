@@ -1,4 +1,5 @@
 +++
+draft = true
 title = "Metadata"
 description = "Use metadata to catalogue and describe your workshop"
 weight = 51

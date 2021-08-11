@@ -4,17 +4,20 @@ weight = 20
 +++
 
 
+
 This section covers approaches to simulating AZ issues for EC2 instances and autoscaling groups. 
 
 {{% notice warning %}}
 This section relies on the use of SSM Automation documents. Please review the [FIS SSM Start Automation Setup]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}) when you need additional details.
 {{% /notice %}}
 
+
 ## Standalone EC2
 
 Standalone EC2 instances can be directly targeted based on avaliability zone placement using the target filter and set `Placement.AvailabilityZone` to the desired availability zone.
 
-## EC2 with autoscaling
+## EC2 with Auto Scaling
+
 
 We can use `Placement.AvailabilityZone` to target instances that are part of an autoscaling grouop as well. However, as mentioned in the [background]({{< ref "010_background" >}}) section, autoscaling groups (ASGs) will try to rebalance instances and will likely create new instances in the "affected" AZ. 
 

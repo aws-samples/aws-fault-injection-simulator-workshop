@@ -1,4 +1,5 @@
 +++
+draft = true
 title = "Notice"
 description = "Disclaimers to help you structure your page"
 weight = 36

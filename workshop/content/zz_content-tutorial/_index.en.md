@@ -1,4 +1,5 @@
 +++
+draft = true
 title = "AWS Workshop Template"
 chapter = true
 weight = 100

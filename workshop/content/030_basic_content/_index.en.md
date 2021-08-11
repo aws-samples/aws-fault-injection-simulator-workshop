@@ -12,7 +12,7 @@ This workshop is broken into multiple chapters. The chapters are designed to be 
 
 ## Architecture Diagrams
 
-This workshop is focused on how to inject fault into an existing infrastructure. For this purpose the template in the **GettingStarted** section sets up a variety of components. Throughout this workshop we will be showing you architecture diagrams focusing on only the components relevant to the section, e.g.:
+This workshop is focused on how to inject fault into an existing infrastructure. For this purpose the template in the **Getting Started** section sets up a variety of components. Throughout this workshop we will be showing you architecture diagrams focusing on only the components relevant to the section, e.g.:
 
 {{< img "BasicASG.png" "Image of architecture to be injected with chaos" >}}
 
@@ -32,7 +32,7 @@ echo $URL_HOME
 echo $URL_PHP
 ```
 
-For convenience here the light load snippet expanded for 900s runs:
+For convenience here is the light load snippet expanded for 900s runs:
 
 ```bash
 # Run light load for 15min (max single lambda execution time)
@@ -51,7 +51,12 @@ aws lambda invoke \
   invoke.txt 
 ```
 
-For convenience here the heavy load snippet:
+{{% notice warning %}}
+If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-format raw-in-base64-out` or you'll get the error "Invalid base64" when sending the payload.
+{{% /notice %}}
+
+
+For convenience is here the heavy load snippet:
 
 ```bash
 for ii in 1 2 3; do
