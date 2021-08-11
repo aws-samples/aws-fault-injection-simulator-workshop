@@ -35,7 +35,7 @@ Name the Action, and under Action Type select the `aws:ssm:send-command/AWSFIS-R
 
 6. Once we have actions and targets specified we can click on the "Create Experiment" button toward the bottom of the console to create our template. 
 
-**_Note:_** For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiemnts so they dont go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in `create` and then hit the "Create Experiment" button again to confirm. 
+**_Note:_** For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiments so they don't go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in `create` and then hit the "Create Experiment" button again to confirm. 
 
 {{< img "ConfirmCreate.png" "Confirm Creation" >}}
 
@@ -83,7 +83,7 @@ Watch the CPU percentage, it should hit 100% for a few minutes and then return b
 
 {{< img "linuxStressed.png" "Linux Stressed" >}}
 
-Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Linux EC2 Instance using AWS Systems Manager.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other choas engineering tools and frameworks. 
+Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Linux EC2 Instance using AWS Systems Manager.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other chaos engineering tools and frameworks. 
 
 ## Learning and improving
 
