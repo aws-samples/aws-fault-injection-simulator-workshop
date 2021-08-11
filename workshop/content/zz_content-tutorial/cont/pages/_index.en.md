@@ -1,4 +1,5 @@
 +++
+draft = true
 title = "Pages Organization"
 weight = 21
 +++

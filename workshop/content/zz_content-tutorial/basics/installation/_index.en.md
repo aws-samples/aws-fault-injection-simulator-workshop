@@ -1,4 +1,5 @@
 +++
+draft = true
 title = "Installation"
 weight = 12
 +++

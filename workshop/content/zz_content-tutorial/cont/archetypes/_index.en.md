@@ -1,4 +1,5 @@
 +++
+draft = true
 title = "Archetypes"
 chapter = false
 weight = 22
