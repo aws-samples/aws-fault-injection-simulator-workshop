@@ -1,0 +1,24 @@
+{
+    "description": "Terminate All ASG Instances in AZ",
+    "stopConditions": [
+        {
+            "source": "none"
+        }
+    ],
+    "targets": {
+    },
+    "actions": {
+        "terminateInstances": {
+            "actionId": "aws:ssm:start-automation-execution",
+            "description": "Terminate Instances in AZ",
+            "parameters": {
+                "documentArn": "arn:aws:ssm:us-west-2:238810465798:document/TerminateAsgInstancesWithSsm",
+                "documentParameters": "{\"AvailabilityZone\": \"us-west-2a\", \"AutoscalingGroupName\": \"FisStackAsg-ASG46ED3070-1RAQ30VBKLWE1\", \"AutomationAssumeRole\": \"arn:aws:iam::238810465798:role/FisWorkshopSsmEc2DemoRole\"}",
+                "duration": "PT3M"
+            },
+            "targets": {
+            }
+        }
+    },
+    "roleArn": "arn:aws:iam::238810465798:role/FisWorkshopServiceRole"
+}

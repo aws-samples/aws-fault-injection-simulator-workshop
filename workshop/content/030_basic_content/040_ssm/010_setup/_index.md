@@ -1,5 +1,5 @@
 +++
-title = "FIS SSM Setup"
+title = "FIS SSM Send Command Setup"
 weight = 10
 +++
 

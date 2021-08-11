@@ -1,6 +1,6 @@
 +++
 title = "AWS Systems Manager Integration"
-weight = 40
+weight = 50
 +++
 
 In this section, we will demonstrate how you can use AWS Systems Manager (SSM) along with AWS Fault Injection Simulator (FIS) to emulate faults within an EC2 Instance.
