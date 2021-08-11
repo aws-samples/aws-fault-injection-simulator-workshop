@@ -76,7 +76,7 @@ That's odd, did anything happen? According to nginx we would think nothing happe
 
 {{< img "dashboard-extended-home.en.png" "Load against home page" >}}
 
-Now it's more clear what happened: we were requesting a small static page and nginx is incredibly efficient. In the `server cpu` graph we can see minimal CPU utilization at the same time as the load data in the `goad` graphs. 
+Now it's more clear what happened: we were requesting a small static page and nginx is incredibly efficient. In the `Server CPU` graph we can see minimal CPU utilization at the same time as the load data in the `Customer (load test)` graphs. 
 
 ## Increasing the load
 
