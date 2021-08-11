@@ -19,7 +19,7 @@ First, lets create our stress experiment. We can do this programmaticaly but we 
 
 2. Click on "Create Experiment Template" on  the upper right hand side of the console to start creating our experiment template. 
 
-3. Next we will enter the description of the experiment and choose the IAM Role. Let's put `LinuxBurnCPUviaSSM` for the description. The IAM role allows the FIS service permissions to execute actions on your behalf. As part of the CloudFormation stack a role was created for this experiment that starts with `CpuStress-FISRole`, select that role. Please examine the CloudFormation template or IAM Role for the policies in this role. 
+3. Next we will enter the description of the experiment and choose the IAM Role. Let's put `LinuxBurnCPUviaSSM` for the description. The IAM role allows the FIS service permissions to execute actions on your behalf. As part of the CloudFormation stack a role was created for this experiment that starts with `FisCpuStress-FISRole`, select that role. Please examine the CloudFormation template or IAM Role for the policies in this role. 
 
 {{< img "experimentdescription.png" "Linux Experiment Description and Role" >}}
 
