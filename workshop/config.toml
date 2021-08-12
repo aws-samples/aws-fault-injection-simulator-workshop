@@ -52,3 +52,9 @@ languageName = "English"
 title = "Mon atelier AWS"
 weight = 2
 languageName = "Français"
+
+[[menu.shortcuts]] 
+name = "<i class='fab fa-github'></i> Github repo"
+identifier = "ds"
+url = "https://github.com/aws-samples/aws-fault-injection-simulator-workshop"
+weight = 10
