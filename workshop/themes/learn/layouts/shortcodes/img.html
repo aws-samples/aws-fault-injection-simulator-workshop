@@ -10,20 +10,27 @@
 {{ $img := $.Page.Resources.GetMatch (.Get 0)}}
 {{ if ($img) }}
 <figure>
-	<img src="{{ with $img }}{{ .RelPermalink }}{{ else }}{{ .Site.BaseURL }}{{ .Get 0 }}{{ end }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
+	<img src="{{ $img.RelPermalink }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" note="p1" />
 </figure>
 {{ else }}
 {{   $img := ( .Get 0 ) | printf "%s%s" .Page.File.Dir }}
 {{   if (fileExists $img) }}
 <figure>
-	<img src="{{ $img | urlize | relLangURL }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
+	<img src="{{ $img | urlize | relLangURL }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" note="p2" />
 </figure>
 {{   else }}
 {{     $path := (.Get 0) | printf "static/%s"}}
 {{     if (fileExists $path) }}
-{{       $img := (.Get 0) | printf "%s%s" .Site.BaseURL}}
+{{       if eq (substr .Site.BaseURL -1) "/" }}
+{{         .Scratch.Set "myBaseUrl" (substr .Site.BaseURL 0 -1) }}
+{{         warnf "INFO: baseURL %s stripped to %s" .Site.BaseURL ( .Scratch.Get "myBaseUrl" ) }}
+{{       else }}
+{{         .Scratch.Set "myBaseUrl" .Site.BaseURL }}
+{{         warnf "INFO: baseURL %s kept as %s" .Site.BaseURL ( .Scratch.Get "myBaseUrl" ) }}
+{{       end }}
+{{       $img := (.Get 0) | printf "%s/%s" ( .Scratch.Get "myBaseUrl" ) }}
 <figure>
-	<img src="{{ $img }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" />
+	<img src="{{ $img }}?classes=shadow&width=60pc" alt="{{ .Get 1 }}" note="p3" />
 </figure>
 {{     else }}
 {{       errorf "Image file not found: %s in %s" $img .Page.File }}
