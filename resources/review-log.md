@@ -56,7 +56,8 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @rudpot - 2021-08-12 - Yes - description exists and it is is now possible to run the workshop in EE but creating an EE blueprint is still on the backlog
 
 ### If the workshop can only use Event Engine, does the front page clearly state that the workshop can only be used at AWS-run events?
-                                                                   * @rudpot - 2021-07-28 - N/A
+                                                                
+* @rudpot - 2021-07-28 - N/A
 
 ### Does the workshop include steps to set up local prerequisites? For example, an attendee may need to install things like node, python, an SSH client, or a Cloud9 environment, etc.
 
