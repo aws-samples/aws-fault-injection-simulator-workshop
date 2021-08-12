@@ -23,13 +23,13 @@ First, lets create our stress experiment. We can do this programmaticaly but we 
 
 {{< img "experimentdescription.png" "Linux Experiment Description and Role" >}}
 
-4. After we have entered a description and a role, we need to setup our actions. Click the "Add Action" Button in the Actions Section. 
+4. After we have entered a description and a role, we need to setup our actions. Click on the "Add Action" button in the Actions section. 
 
-Name the Action, and under Action Type select the `aws:ssm:send-command/AWSFIS-Run-Cpu-Stress` action. This is an out of the box action to run stress test on Linux Instances using the stress-ng tool. Enter a "Name" of `StressCPUViaSSM`, set the "documentParameters" field to `{"DurationSeconds":120}` which is passed to the script and the "duration" field to `2` which tells FIS how long to wait for a result. Finally click "Save". This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes.
+Name the Action as `StressCPUViaSSM` and under *Action Type* select `aws:ssm:send-command/AWSFIS-Run-Cpu-Stress`. This is an out of the box action to run stress test on Linux Instances using the stress-ng tool. Set the "documentParameters" field to `{"DurationSeconds":120}` which is passed to the script and the "duration" field to `2` which tells FIS how long to wait for a result. Finally click "Save". This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes.
 
 {{< img "StressActionSettings.png" "Action Settings" >}}
 
-5. Once we have saved the action, let's edit our targets. Click on "Edit targets". To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisLinuxCPUStress`. Finally click "Save". 
+5. Once we have saved the action, let's edit our targets. Click on "Edit" button under the Targets section. To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisLinuxCPUStress`. Finally click "Save". 
 
 {{< img "EditTarget.png" "Edit Targets" >}}
 
@@ -75,11 +75,11 @@ Let's head back to the [AWS Fault Injection Simulator Console](https://console.a
 
 {{< img "confirmstart.png" "Confirm Start" >}}
 
-This will take you to the running experiment that is started from the template, in the detail section of the experiment under state you should see the experiment is initializing. Once the experiment is running, lets head back to the open session on the EC2 Instance. 
+This will take you to the running experiment that is started from the template. In the detail section of the experiment check `State` and you should see the experiment is initializing. Once the experiment is running, lets head back to the open session on the EC2 Instance. 
 
 {{< img "RunningState.png" "Experiment State" >}}
 
-Watch the CPU percentage, it should hit 100% for a few minutes and then return back to 0%. Once we have observed the action we can click the terminate button to terminate our Session Manager session. 
+Watch the CPU percentage, it should hit 100% for a few minutes and then return back to 0%. Once we have observed the action we can click the `Terminate` button to terminate our Session Manager session. 
 
 {{< img "linuxStressed.png" "Linux Stressed" >}}
 
