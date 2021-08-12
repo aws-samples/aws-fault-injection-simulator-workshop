@@ -11,7 +11,7 @@ To find the script, navigate to the [AWS Systems Manager console](https://consol
 
 {{< img "find-ssm.en.png" "Locate FIS SSM documents" >}}
 
-To inspect the script, select the script name, i.e. `AWSFIS-Run-CPU-Stress`, then select the "Content" tab. 
+To inspect the script, click on the script name, i.e. `AWSFIS-Run-CPU-Stress`, then select the "Content" tab. 
 
 {{< img "look-at-ssm.en.png" "Examine SSM documents" >}}
 
