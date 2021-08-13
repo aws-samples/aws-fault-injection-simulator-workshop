@@ -18,7 +18,7 @@ In this section we will run a CPU Stress test using AWS Fault Injection Simulato
 
 ### Create CPU Stress Experiment
 
-First, lets create our stress experiment. We can do this programmaticaly but we will walk through this on the console. 
+First, lets create our stress experiment. We can do this programmatically but we will walk through this on the console. 
 
 1. Open the [AWS Fault Injection Simulator Console](https://console.aws.amazon.com/fis/home?#Home). Once in the Fault Injection Simulator console, lets click on "Experiment templates" on the left side pane. 
 
@@ -44,7 +44,7 @@ Return to the FIS console and enter the ARN you copied into the "documentArn" fi
 
 6. Once we have actions and targets specified we can click on the "Create Experiment" button toward the bottom of the console to create our template. 
 
-**_Note:_** For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiemnts so they dont go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in `create` and then hit the "Create Experiment" button again to confirm. 
+**_Note:_** For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiments so they don't go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in `create` and then hit the "Create Experiment" button again to confirm. 
 
 {{< img "ConfirmCreate.png" "Confirm Creation" >}}
 
@@ -56,10 +56,10 @@ We will use the Windows task manager to observe increased CPU load. To do this w
 
 ### Use AWS Systems Manager Run Command to reset Password
 
-When we deployed the instance we didnt use SSH Keys, and we dont know the password. However, with the SSM Agent along with the right IAM privileges we have a break glass scenario where we can reset the password. Please adjust the value of `TMP_PASSWORD` and use the commands below to find the InstanceId of the `FisWindowsCPUStress` instance and help you reset the admin password to the password of choice. 
+When we deployed the instance we didn't use SSH Keys, and we don't know the password. However, with the SSM Agent along with the right IAM privileges we have a break glass scenario where we can reset the password. Please adjust the value of `TMP_PASSWORD` and use the commands below to find the InstanceId of the `FisWindowsCPUStress` instance and help you reset the admin password to the password of choice. 
 
 ```bash
-# For readbility - passing passwords this way is not secure
+# For readability - passing passwords this way is not secure
 TMP_PASSWORD=ENTER_NEW_PASSWORD_HERE
 ```
 
@@ -112,7 +112,7 @@ Then examine the Error output:
 
 
 
-3. Once you have RDP'ed into the Windows Instance, launch task manager so you can see the CPU graph as shown below. 
+3. Once you have RDP'ed into the Windows instance, launch task manager so you can see the CPU graph as shown below. 
 
 {{< img "WinNoStress.png" "Task Manager" >}}
 
@@ -137,9 +137,9 @@ Watch the CPU percentage, it should hit 100% for a few minutes and then return b
 
 ## Learning and improving
 
-Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Windows EC2 Instance using AWS Systems Manager and a custom run command.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other choas engineering tools and frameworks. 
+Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Windows EC2 Instance using AWS Systems Manager and a custom run command.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other chaos engineering tools and frameworks. 
 
-Since this instance wasn't doing anything there aren't any actions. To think about how to use this to test a hypothesis and make an improvement consider building custom SSM scripts to run custom scenarios. We will conver some of these in the **Common Scenarios** section.
+Since this instance wasn't doing anything there aren't any actions. To think about how to use this to test a hypothesis and make an improvement consider building custom SSM scripts to run custom scenarios. We will cover some of these in the **Common Scenarios** section.
 
 ## Cleanup
 

@@ -13,7 +13,7 @@ In this section we will run a CPU Stress test using AWS Fault Injection Simulato
 
 ### Create CPU Stress Experiment Template
 
-First, lets create our stress experiment. We can do this programmaticaly but we will walk through this on the console. 
+First, lets create our stress experiment. We can do this programmatically but we will walk through this on the console. 
 
 1. Open the [AWS Fault Injection Simulator Console](https://console.aws.amazon.com/fis/home?#Home). Once in the Fault Injection Simulator console, lets click on "Experiment templates" on the left side pane. 
 
