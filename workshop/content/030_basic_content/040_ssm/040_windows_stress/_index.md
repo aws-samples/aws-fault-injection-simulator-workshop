@@ -81,7 +81,7 @@ aws ssm send-command \
 
 ### Use AWS Systems Manager Session Manager to connect to Target Instance
 
-We now need to connect to our EC2 Instance so we can observe the CPU being stressed. We are going to do this be using the port forwarding capability of AWS Systems Manager Session Manager and using RDP.
+We now need to connect to our EC2 Instance so we can observe the CPU being stressed. We are going to do this by using the port forwarding capability of AWS Systems Manager Session Manager and using RDP.
 
 1. Run the following command first, this will forward local port 56788 to port 3389 on the Windows EC2 Instance. Replace the **<instanceid>** with the instance ID of the Windows Instance.
 
@@ -93,13 +93,13 @@ We now need to connect to our EC2 Instance so we can observe the CPU being stres
 2. Once the command says waiting for connections you can launch the RDP client and enter `localhost:56788` for the server name and login as `administrator` with the password you set in the previous section. 
 
     {{% expand "Troubleshooting connectivity" %}}
-When running the `start-session` command above, you may get a message about a missing session manager plugin. If you do follow the [link in the message](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) and install the plugin.
+When running the `start-session` command above, you may get a message about a missing session manager plugin. If you do, follow the [link in the message](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) and install the plugin.
 
-The second likely issue you are going to run into is a failed password reset, e.g. because your password did not meet the complexity criteria. To verify that password reset succeeded, navigate to the [AWS Systems Manager Run Command console](https://console.aws.amazon.com/systems-manager/run-command/executing-commands), select "Command history", and locate the `AWS-RunPowerShellScript` that you executed above. If in doubt compare the `CommandId` value from the CLI invocation with the "Command ID" value on the console.
+The second likely issue you are going to run into is a failed password reset, e.g. because your password did not meet the complexity criteria. To verify that the password reset succeeded, navigate to the [AWS Systems Manager Run Command console](https://console.aws.amazon.com/systems-manager/run-command/executing-commands), select "Command history", and locate the `AWS-RunPowerShellScript` that you executed above. If in doubt compare the `CommandId` value from the CLI invocation with the "Command ID" value on the console.
 
 {{< img "run-command-history-1.en.png" "Run command history" >}}
 
-Click on the command ID link, then on the 
+Click on the command ID link, then on the instance id:
 
 {{< img "run-command-history-2.en.png" "Instance for history" >}}
 
@@ -112,7 +112,7 @@ Then examine the Error output:
 
 
 
-3. Once you have RDP'ed into the Windows Instance, launch task manager so you can see the CPU graph as shown below. 
+3. Once you have RDP'ed into the Windows Instance, launch task manager by right clicking on the menu bar and selecting "Task Manager". Click on "More details" button and then on the "Performance" tab so you can see the CPU graph as shown below. 
 
 {{< img "WinNoStress.png" "Task Manager" >}}
 
@@ -121,15 +121,15 @@ Then examine the Error output:
 
 Let's head back to the [AWS Fault Injection Simulator Console](https://console.aws.amazon.com/fis/home?#Home).
 
-1. Once in the Fault Injection Simulator console, lets click on Experiment templates again on the left side pane. 
+1. Once in the Fault Injection Simulator console, lets click on "Experiment templates" again on the left side pane. 
 
-2. Select the experiment with the `WindowsBurnCPUviaSSM` description, then click on the "Actions" button and select "Start". This will allow us to enter additional tags before starting our experiment. Then click on the "Start Experiment" button. 
+2. Select the experiment with the `WindowsBurnCPUviaSSM` description, then click on the "Actions" button and select "Start". This will allow us to enter additional tags before starting our experiment. Then click on the "Start experiment" button. 
 
 3. Next type in `start` and click on "Start Experiment" again to confirm you want to start the experiment. 
 
 {{< img "confirmstart.png" "Confirm Start" >}}
 
-This will take you to the running experiment, in the detail section of the experiment under state you should see the experiment is initializing. Once the experiment is running, lets go back to the RDP session and observe the task manager graph. 
+This will take you to the running experiment that is started from the template. In the detail section of the experiment check `State` and you should see the experiment is initializing. Once the experiment is running, lets go back to the RDP session and observe the task manager graph. 
 
 Watch the CPU percentage, it should hit 100% for a few minutes and then return back to 0%. Once we have observed the action we can logout of the Windows Instance and hit CTRL + C on the window you ran the port forwarding command to close the session. 
  
