@@ -19,7 +19,8 @@ Cloud9 requires third-party-cookies. You can whitelist the [specific domains]( h
 Using the region selected in [**Region Selection**]({{< ref "030_region_selection" >}}), navigate to the [Cloud9 console](https://console.aws.amazon.com/cloud9).
 
 - Select **Create environment**
-- Name it **fisworkshop**, click Next.
+- Name it **fisworkshop**, click **Next step**.
+- Since we only need to access our Cloud9 environment via web browser, please select the **Create a new no-ingress EC2 instance for environment (access via Systems Manager)** under the Environment Type.
 - Choose **t3.small** for instance type, go through the wizard with the default values and click **Create environment**
 
 When it comes up, customize the environment by:
@@ -36,7 +37,7 @@ When it comes up, customize the environment by:
 ### Increase the disk size on the Cloud9 instance
 
 {{% notice info %}}
-Some commands we will run require more thatn the default disk allocation on a cloud9 workspace. The following command adds more disk space to the root volume of the EC2 instance that Cloud9 runs on. Once the command completes, we reboot the instance and it could take a minute or two for the IDE to come back online.
+Some commands we will run require more than the default disk allocation on a cloud9 workspace. The following command adds more disk space to the root volume of the EC2 instance that Cloud9 runs on. Once the command completes, we reboot the instance and it could take a minute or two for the IDE to come back online.
 {{% /notice %}}
 
 ```bash
