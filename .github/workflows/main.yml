@@ -21,6 +21,12 @@ jobs:
       - name: wget and check
         run: |
           wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
-          echo List of broken links (empty is good):
-          grep -B1 'broken link!' run1.log
+          echo "List of broken links:"
+          if grep -B1 'broken link!' run1.log; then
+            echo "Found broken links, exit with error"
+            exit 1
+          else
+            echo "Found no broken links"
+            exit 0
+          fi
           
