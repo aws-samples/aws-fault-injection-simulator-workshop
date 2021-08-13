@@ -160,4 +160,4 @@ Fortunately there is another common library that has very similar configuration 
 ./test_pymysql_curses.py
 ```
 
-This time you should see almost no interruption in your code's ability to interact with the database/
+This time you should see almost no interruption in your code's ability to interact with the database.
