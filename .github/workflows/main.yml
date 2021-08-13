@@ -1,0 +1,26 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CheckLinks
+
+# Controls when the workflow will run
+on:
+  schedule:
+    # Run daily at ~8am MT
+    - cron '0 14 * * *'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # Run linck checker
+  checklinks:
+    runs-on: ubuntu-latest
+    
+    steps: 
+      - name: wget and check
+        run: |
+          wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
+          echo List of broken links (empty is good):
+          grep -B1 'broken link!' run1.log
+          
