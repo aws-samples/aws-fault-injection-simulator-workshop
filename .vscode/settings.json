@@ -1,8 +1,10 @@
 {
     "cSpell.words": [
+        "Runbooks",
         "awsfis",
         "fisworkshop",
-        "phpinfo"
+        "phpinfo",
+        "runbook"
     ],
     "yaml.customTags": [
         "!Equals sequence",
