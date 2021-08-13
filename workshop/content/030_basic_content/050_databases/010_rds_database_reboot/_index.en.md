@@ -43,8 +43,6 @@ For "Name" enter `RDSInstanceReboot` and you can skip the Description. For "Acti
 
 For this experiment we are using a Multi-AZ database and we want to force a failover to the standby instance to minimize outage time. To do this, set the `forceFailover` parameter to `true`.
 
-We will leave the "Start after" section blank since the instances we are terminating are part of an auto scaling group and we can let the auto scaling group create new instances to replace the terminated ones.
-
 Under "Target" select the `FisWorkshopRDSDB` target created above. Select "Save".
 
 {{< img "create-template-2-actions-2.en.png" "Edit FIS actions" >}}
