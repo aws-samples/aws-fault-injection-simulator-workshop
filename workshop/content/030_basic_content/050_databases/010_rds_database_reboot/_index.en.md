@@ -87,7 +87,7 @@ AURORA                         RDS
 
 ### Starting the validation procedure
 
-Connect to one of the EC2 instances in your auto scaling group. In a new browser window - we need to be able to see this side-by-side with the FIS experiment later - navigate to your [EC2 console](https://console.aws.amazon.com/ec2/v2/home?#Instances:instanceState=running;search=FisStackAsg/ASG) and search for instances named `FisStackAsg/ASG`. Select one of the instances and click the connect button:
+Connect to one of the EC2 instances in your auto scaling group. In a new browser window - we need to be able to see this side-by-side with the FIS experiment later - navigate to your [EC2 console](https://console.aws.amazon.com/ec2/v2/home?#Instances:instanceState=running;search=FisStackAsg/ASG) and search for instances named `FisStackAsg/ASG`. Select one of the instances and click the "Connect" button:
 
 {{< img "instance-connect-1.en.png" "Locate ASG instance" >}}
 
@@ -141,11 +141,11 @@ Navigate to the [RDS console](https://console.aws.amazon.com/rds/home?#databases
 
 If all went "well" the status of the database in the RDS console should have changed from "Available" to "Rebooting" 
 
-{{< img "review-1-rds-1.en.png" "Review ASG" >}}
+{{< img "review-1-rds-2.en.png" "Review ASG" >}}
 
 and back to "Available".
 
-{{< img "review-1-rds-2.en.png" "Update ASG" >}}
+{{< img "review-1-rds-1.en.png" "Update ASG" >}}
 
 However, even though your database failed over successfully, your script should have locked up during the failover - no more updates to your data and it didn't recover even after the DB successfully failed over. Discoveries like this are exactly why we are using Fault Injection Simulator!
 
