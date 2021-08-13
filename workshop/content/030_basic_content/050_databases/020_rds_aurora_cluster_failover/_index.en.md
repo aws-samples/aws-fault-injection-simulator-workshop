@@ -35,7 +35,7 @@ On the "Add target" popup enter `FisWorkshopAuroraCluster` for name and select `
 
 ### Action definition
 
-With targets defined we define the action to take. Scroll to the "Actions" section" and select "Add Action"
+With targets defined we define the action to take. Scroll to the "Actions" section and select "Add Action"
 
 {{< img "create-template-2-actions-1.en.png" "Add FIS actions" >}}
 
