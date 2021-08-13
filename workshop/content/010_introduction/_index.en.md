@@ -20,4 +20,4 @@ When run in a customer account, infrastructure initialization for the core works
 
 ## Cost
 
-If running in a customer account this workshop will incur costs on the order of USD1/h for the infrastructure created. Please ensure that you clean up all infrastructure after finishing the workshop to prevent generating continuing expenses. You can find instructions in the **Cleanup** section. 
+If running in a customer account this workshop will incur costs on the order of USD1/h for the infrastructure created. Please ensure that you clean up all infrastructure after finishing the workshop to prevent generating continuing expenses. You can find instructions in the [**Cleanup**]({{< ref "030_basic_content/990_cleanup" >}}) section. 
