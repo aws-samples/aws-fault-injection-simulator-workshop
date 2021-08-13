@@ -68,7 +68,7 @@ while True:
         cursor.append("%-30s" % str(line))
 ```
 
-We would expect that this would keep writing output while the DB is availble, stop while it's failing over and restart when the DB has successfully failed over.
+We would expect that this would keep writing output while the DB is available, stop while it's failing over and restart when the DB has successfully failed over.
 
 Additionally because the DB connection does a DNS lookup our script will also print the IP address of the database it's currently connected to ... healthy output should look like this:
 
@@ -149,7 +149,7 @@ and back to "Available".
 
 {{< img "review-1-rds-2.en.png" "Update ASG" >}}
 
-However, even though your database failed over successfully, your script should have locked up during the failover - no more updates to your data and it didn't recover even after the DB successfully failed over. Discoveries like this are exactly why we are using Fault Injectio Simulator!
+However, even though your database failed over successfully, your script should have locked up during the failover - no more updates to your data and it didn't recover even after the DB successfully failed over. Discoveries like this are exactly why we are using Fault Injection Simulator!
 
 ## Learning and Improving
 
