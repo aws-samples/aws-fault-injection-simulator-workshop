@@ -41,8 +41,6 @@ With targets defined we define the action to take. Scroll to the "Actions" secti
 
 For "Name" enter `FisWorkshopFailoverAuroraCluster` and add a "Description" like `Failover Aurora Cluster`. For "Action type" select `aws:rds:failover-db-cluster`.
 
-We will leave the "Start after" section blank since the instances we are terminating are part of an auto scaling group and we can let the auto scaling group create new instances to replace the terminated ones.
-
 Under "Target" select the `FisWorkshopAuroraCluster` target created above. Select "Save".
 
 {{< img "create-template-2-actions-2.en.png" "Edit FIS actions" >}}
