@@ -68,7 +68,7 @@ while True:
 
 We would expect that this would keep writing output while the DB is available, stop while it's failing over and restart when the DB has successfully failed over.
 
-Additionally because the DB connection does a DNS lookup our script will also print the IP address of the database it's currently connected to ... healthy output should look like this:
+Additionally because the DB connection does a DNS lookup our script will also print the IP address of the database it's currently connected to. A healthy output should look like this:
 
 ```text
 AURORA                         RDS
