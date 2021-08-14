@@ -6,7 +6,7 @@ weight = 20
 In this section we will run a CPU Stress test using AWS Fault Injection Simulator against an Amazon Linux EC2 Instance. The Linux [CPU stress](https://docs.aws.amazon.com/fis/latest/userguide/actions-ssm-agent.html#fis-ssm-docs) test is an out of the box FIS action. We will do the following: 
 
 1. Create experiment template to stress CPU.
-2. Connect to a Linux EC2 Instance and run the Top Command.
+2. Connect to a Linux EC2 Instance and run the `top` command.
 3. Start experiment and observe results.
 
 ## Experiment Setup
@@ -17,7 +17,7 @@ First, lets create our stress experiment. We can do this programmaticaly but we 
 
 1. Open the [AWS Fault Injection Simulator Console](https://console.aws.amazon.com/fis/home?#Home). Once in the Fault Injection Simulator console, lets click on "Experiment templates" on the left side pane. 
 
-2. Click on "Create Experiment Template" on  the upper right hand side of the console to start creating our experiment template. 
+2. Click on "Create experiment template" on  the upper right hand side of the console to start creating our experiment template. 
 
 3. Next we will enter the description of the experiment and choose the IAM Role. Let's put `LinuxBurnCPUviaSSM` for the description. The IAM role allows the FIS service permissions to execute actions on your behalf. As part of the CloudFormation stack a role was created for this experiment that starts with `FisCpuStress-FISRole`, select that role. Please examine the CloudFormation template or IAM Role for the policies in this role. 
 
@@ -25,17 +25,17 @@ First, lets create our stress experiment. We can do this programmaticaly but we 
 
 4. After we have entered a description and a role, we need to setup our actions. Click the "Add Action" Button in the Actions Section. 
 
-Name the Action, and under Action Type select the `aws:ssm:send-command/AWSFIS-Run-Cpu-Stress` action. This is an out of the box action to run stress test on Linux Instances using the stress-ng tool. Enter a "Name" of `StressCPUViaSSM`, set the "documentParameters" field to `{"DurationSeconds":120}` which is passed to the script and the "duration" field to `2` which tells FIS how long to wait for a result. Finally click "Save". This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes.
+Name the Action, and under Action Type select the `aws:ssm:send-command/AWSFIS-Run-Cpu-Stress` action. This is an out of the box action to run stress test on Linux Instances using the [stress-ng](https://kernel.ubuntu.com/git/cking/stress-ng.git/) tool. Enter a "Name" of `StressCPUViaSSM`, set the "documentParameters" field to `{"DurationSeconds":120}` which is passed to the script and the "duration" field to `2` which tells FIS how long to wait for a result. Finally click "Save". This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes.
 
 {{< img "StressActionSettings.png" "Action Settings" >}}
 
-5. Once we have saved the action, let's edit our targets. Click on "Edit targets". To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisLinuxCPUStress`. Finally click "Save". 
+5. Once we have saved the action, let's edit our targets. Click on "Edit" in "Instaces-Target-1" card inside "Targets" card. To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisLinuxCPUStress`. Finally click "Save". 
 
-{{< img "EditTarget.png" "Edit Targets" >}}
+{{< img "EditTarget-rev1.png" "Edit Targets" >}}
 
 6. Once we have actions and targets specified we can click on the "Create Experiment" button toward the bottom of the console to create our template. 
 
-**_Note:_** For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiemnts so they dont go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in `create` and then hit the "Create Experiment" button again to confirm. 
+**_Note:_** For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiments so they don't go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in `create` and then hit the "Create Experiment" button again to confirm. 
 
 {{< img "ConfirmCreate.png" "Confirm Creation" >}}
 
@@ -47,7 +47,7 @@ We will use the linux `top` system command to observe the increased CPU load. To
 
 1. Once at the EC2 Console lets select our instance named `FisLinuxCpuStress` and click on the "Connect" button. 
 
-{{< img "SelectConnect.png" "Select Instance" >}}
+{{< img "SelectConnect-rev1.png" "Select Instance" >}}
 
 2. Select "Session Manager" and click on "Connect".
 
@@ -83,10 +83,10 @@ Watch the CPU percentage, it should hit 100% for a few minutes and then return b
 
 {{< img "linuxStressed.png" "Linux Stressed" >}}
 
-Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Linux EC2 Instance using AWS Systems Manager.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other choas engineering tools and frameworks. 
+Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Linux EC2 Instance using AWS Systems Manager.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other chaos engineering tools and frameworks. 
 
 ## Learning and improving
 
-Since this instance wasn't doing anything there aren't any actions. To think about how to use this to test a hypothesis and make an improvement consider running the same experiment against the ASG instances from the **First Experiment** section. Maybe you could use this to tune the optimal CPU levels for scaling up or down?
+Since this instance wasn't doing anything, there aren't any actions. To think about how to use this to test a hypothesis and make an improvement, consider running the same experiment against the ASG instances from the **First Experiment** section. Maybe you could use this to tune the optimal CPU levels for scaling up or down?
 
 
