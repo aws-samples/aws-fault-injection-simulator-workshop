@@ -22,7 +22,7 @@ First, lets create our stress experiment. We can do this programmaticaly but we 
 
 1. Open the [AWS Fault Injection Simulator Console](https://console.aws.amazon.com/fis/home?#Home). Once in the Fault Injection Simulator console, lets click on "Experiment templates" on the left side pane. 
 
-2. Click on "Create Experiment" on  the upper right hand side of the console to start creating our experiment template. 
+2. Click on "Create experiment template" on  the upper right hand side of the console to start creating our experiment template. 
 
 3. Next we will enter the description of the experiment and choose the IAM Role. Let's put `WindowsBurnCPUviaSSM` for the description. The IAM role allows the FIS service permissions to execute the actions on your behalf. As part of the CloudFormation stack a role was created for this experiment that starts with `FisCpuStress-FISRole`, select that role. Please examine the CloudFormation template or IAM Role for the policies in this role. 
 
@@ -38,9 +38,9 @@ Return to the FIS console and enter the ARN you copied into the "documentArn" fi
 
 {{< img "WinStressActionSettings.png" "Action Settings" >}}
 
-5. Once we have saved the action, let's edit our targets. Click on "Edit targets". To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisWindowsCPUStress`. Finally click "Save". 
+5. Once we have saved the action, let's edit our targets. Click on "Edit" in "Instaces-Target-1" card inside "Targets" card. To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisWindowsCPUStress`. Finally click "Save". 
 
-{{< img "WinEditTarget.png" "Target Settings" >}}
+{{< img "WinEditTarget-rev1.png" "Target Settings" >}}
 
 6. Once we have actions and targets specified we can click on the "Create Experiment" button toward the bottom of the console to create our template. 
 
@@ -137,7 +137,7 @@ Watch the CPU percentage, it should hit 100% for a few minutes and then return b
 
 ## Learning and improving
 
-Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Windows EC2 Instance using AWS Systems Manager and a custom run command.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other choas engineering tools and frameworks. 
+Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Windows EC2 Instance using AWS Systems Manager and a custom run command.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other chaos engineering tools and frameworks. 
 
 Since this instance wasn't doing anything there aren't any actions. To think about how to use this to test a hypothesis and make an improvement consider building custom SSM scripts to run custom scenarios. We will conver some of these in the **Common Scenarios** section.
 
