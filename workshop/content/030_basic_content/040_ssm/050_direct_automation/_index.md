@@ -300,6 +300,11 @@ aws fis start-experiment \
   --experiment-template-id TEMPLATE_ID
 ```
 
+Let's get back to EC2 console and check what's happening to our EC2 instances in particular AZ.
+If the experiment runs successfully, all of our instances in particular AZ will be terminated, and spin back up after some time.
+
+{{< img "experiment-az-down.en.png" "Update ASG" >}}
+
 ## Troubleshooting
 
 If you run into issues with your FIS experiment failing check the following:
