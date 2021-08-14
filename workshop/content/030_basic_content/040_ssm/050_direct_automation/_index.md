@@ -72,6 +72,18 @@ aws iam put-role-policy \
 
 Note the ARN of the created role as we will need it below.
 
+{{% expand "Troubleshooting Security Token Invalid when Creating IAM Role" %}}
+If you get this error when running `aws iam create-role` and `aws-iam put-role-policy`:
+
+`An error occurred (InvalidClientTokenId) when calling the CreateRole operation: The security token included in the request is invalid.`
+
+Set AWS CLI credentials and configuration options via these environment variables: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `AWS_DEFAULT_REGION`.
+
+Get the value from your Event Engine dashboard.
+{{< img "set-aws-creds-and-config.en.png" "Get AWS Credentials and Config" >}}
+{{% /expand %}}
+
+
 ### Update FIS service role
 
 The `FisWorkshopServiceRole` we defined in the [Configuring Permissions]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) only grants limited access to SSM so we need to add the the following two policy statements.
