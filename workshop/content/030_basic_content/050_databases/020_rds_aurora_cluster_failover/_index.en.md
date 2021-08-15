@@ -35,13 +35,11 @@ On the "Add target" popup enter `FisWorkshopAuroraCluster` for name and select `
 
 ### Action definition
 
-With targets defined we define the action to take. Scroll to the "Actions" section" and select "Add Action"
+With targets defined we define the action to take. Scroll to the "Actions" section and select "Add Action"
 
 {{< img "create-template-2-actions-1.en.png" "Add FIS actions" >}}
 
 For "Name" enter `FisWorkshopFailoverAuroraCluster` and add a "Description" like `Failover Aurora Cluster`. For "Action type" select `aws:rds:failover-db-cluster`.
-
-We will leave the "Start after" section blank since the instances we are terminating are part of an auto scaling group and we can let the auto scaling group create new instances to replace the terminated ones.
 
 Under "Target" select the `FisWorkshopAuroraCluster` target created above. Select "Save".
 
@@ -89,7 +87,7 @@ AURORA                         RDS
 
 ### Starting the validation procedure
 
-Connect to one of the EC2 instances in your auto scaling group. In a new browser window - we need to be able to see this side-by-side with the FIS experiment later - navigate to your [EC2 console](https://console.aws.amazon.com/ec2/v2/home?#Instances:instanceState=running;search=FisStackAsg/ASG) and search for instances named `FisStackAsg/ASG`. Select one of the instances and click the connect button:
+Connect to one of the EC2 instances in your auto scaling group. In a new browser window - we need to be able to see this side-by-side with the FIS experiment later - navigate to your [EC2 console](https://console.aws.amazon.com/ec2/v2/home?#Instances:instanceState=running;search=FisStackAsg/ASG) and search for instances named `FisStackAsg/ASG`. Select one of the instances and click on the "Connect" button:
 
 {{< img "instance-connect-1.en.png" "Locate ASG instance" >}}
 
@@ -103,7 +101,7 @@ This will open a linux terminal session. In this session sudo to assume the `ec2
 sudo su - ec2-user
 ```
 
-If this is the first time you are doing this run the create_db.py script to ensure we can connect to the DB and we have created the required tables:
+If this is the first time you are doing this, run the create_db.py script to ensure we can connect to the DB and we have created the required tables:
 
 ```bash
 ./create_db.py
@@ -144,7 +142,7 @@ Navigate to the [RDS console](https://console.aws.amazon.com/rds/home), select "
 
 Verify that the experiment worked. If you are not already on the pane viewing your experiment, navigate to the [FIS console](https://console.aws.amazon.com/fis/home?#Experiments), select "Experiments", and select the experiment ID for the experiment you just started. This should show success.
 
-Verify that the failover actually happened. Navigate to the RDS console again and about a minute after you started the experiment you'll see the "Reader" and "Writer" instances be flipped to the other AZ:
+Verify that the failover actually happened. Navigate to the RDS console again and about a minute after you started the experiment you'll see the "Reader" and "Writer" instances flipped to the other AZ:
 
 {{< img "review-1-rds-2.en.png" "Explore aurora changed state" >}}
 

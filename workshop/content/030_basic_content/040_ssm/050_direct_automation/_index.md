@@ -5,7 +5,7 @@ weight = 50
 
 In the previous sections we used FIS actions to directly interact with AWS APIs to terminate EC2 instances, and the [SSM SendCommand](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_SendCommand.html) option to execute code directly on our virtual machines. 
 
-In this section we will cover how to execute additional actions against AWS APIs that are not yet supported by by FIS by using [SSM Runbooks](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-documents.html).
+In this section we will cover how to execute additional actions against AWS APIs that are not yet supported by FIS by using [SSM Runbooks](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-documents.html).
 
 
 {{< img "StressTest-with-runbook.png" "Stress test architecture" >}}
@@ -86,7 +86,7 @@ Get the value from your Event Engine dashboard.
 
 ### Update FIS service role
 
-The `FisWorkshopServiceRole` we defined in the [Configuring Permissions]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) only grants limited access to SSM so we need to add the the following two policy statements.
+The `FisWorkshopServiceRole` we defined in the [Configuring Permissions]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) only grants limited access to SSM so we need to add the following two policy statements.
 
 ```json
         {
@@ -117,7 +117,7 @@ To update the `FisWorkshopServiceRole`, navigate to the [IAM console](https://co
 
 Expand the `FisWorkshopServicePolicy` and select "Edit Policy". Then select the JSON tab and copy the above JSON block just above the first statement `AllowFISExperimentRoleReadOnly`:
 
-{{< img "edit-role-policy.en.png" "Edit fole policy" >}}
+{{< img "edit-role-policy.en.png" "Edit role policy" >}}
 
 Then select "Review policy" and "Save Changes".
 
@@ -250,7 +250,7 @@ Finally we have to create the FIS experiment template to call the SSM document. 
 
 * DOCUMENT_ARN - use the ARN from the previous step
 * AZ_NAME - use the name of your target AZ, e.g. `us-east-1a` if you are working in `us-east-1`
-* ASG_NAME - navigate to the [EC2 console](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select the ASG starting with `FisStackAsg`, the copy the full name of the ASG, e.g. `FisStackAsg-ASG46ED3070-1RAQ30VBKLWE1`
+* ASG_NAME - navigate to the [EC2 console](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select the ASG starting with `FisStackAsg`, then copy the full name of the ASG, e.g. `FisStackAsg-ASG46ED3070-1RAQ30VBKLWE1`
 * SSM_ROLE_ARN - use the role ARN from the first step of this section. You can also find this by navigating to the [IAM console](https://console.aws.amazon.com/iamv2/home#/roles), searching for `FisWorkshopSsmEc2DemoRole`, clicking on the role and copying the "Role ARN"
 * FIS_WORKSHOP_ROLE_ARN - use the role ARN from the second step of this section. You can also find this by navigating to the [IAM console](https://console.aws.amazon.com/iamv2/home#/roles), searching for `FisWorkshopServiceRole`, clicking on the role and copying the "Role ARN"
 
