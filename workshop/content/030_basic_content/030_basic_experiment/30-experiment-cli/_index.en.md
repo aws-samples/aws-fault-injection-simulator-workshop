@@ -244,7 +244,7 @@ aws fis get-experiment --id YOUR_EXPERIMENT_ID_HERE
 
 The learnings here should be the same as for the console section:
 
-* Carefully choose the resource to affect and how to select them. If we had originally chosen to terminate a single instance (COUNT) rather than a fraction (PERCENT) we would have severely affected our service.
-* Spinning up instances takes time. To achieve resilience ASGs should be set to have at least two instances running at all times
+* Carefully choose the resource to affect and how to select them. If we had originally chosen to terminate a single instance (COUNT) rather than a fraction (PERCENT), we would have severely affected our service.
+* Spinning up instances takes time. To achieve resilience, ASGs should be set to have at least two instances running at all times
 
 In the next section we will explore larger experiments.

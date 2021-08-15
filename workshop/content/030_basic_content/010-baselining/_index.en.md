@@ -17,7 +17,7 @@ Think about this for a second. There is a distinct difference between those two 
 
 ### What the users see
 
-What the users see is immediate, e.g. the website not loading or loading slowly. What the users see is also an end-to-end test of all system components and not all components of the system are in your purview. E.g. you cannot see the speed of the users' network connection or the state of their DNS caches. Finally an individual user can have an experience entirely different from all other users. For this workshop this is particularly important for a particular edge case: developers and ops typically have better system configurations and better experiences than the average user but tend to rely on the anecdotal evidence of "it worked for me".
+What the users see is immediate, e.g. the website not loading or loading slowly. What the users see is also an end-to-end test of all system components and not all components of the system are in your purview, e.g. you cannot see the speed of the users' network connection or the state of their DNS caches. Finally an individual user can have an experience entirely different from all other users. For this workshop this is particularly important for a particular edge case: developers and ops typically have better system configurations and better experiences than the average user but tend to rely on the anecdotal evidence of "it worked for me".
 
 ### What sysops sees
 
@@ -31,7 +31,7 @@ Before starting our first fault injection experiment, let's have a look at our m
 
 We have a user trying to access a website running on AWS. We have designed for high availability by using EC2 instances with an auto scaling group and a load balancer to ensure that the the user will always be able to reach our website even under heavy load or if an instance fails.
 
-Once you've started the template as described in **Getting Started** you can navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "FisStackAsg" stack and click on the "Outputs" tab which will show you the server URL:
+Once you've started the template as described in [**Getting Started**]({{< ref "020_starting_workshop/050_create_stack" >}}) you can navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "FisStackAsg" stack and click on the "Outputs" tab which will show you the server URL:
 
 {{< img "cloudformation.en.png" "Autoscaling group URL" >}}
 

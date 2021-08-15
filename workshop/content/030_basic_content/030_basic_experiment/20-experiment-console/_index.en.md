@@ -1,5 +1,5 @@
 +++
-title = "Experiment (console)"
+title = "Experiment (Console)"
 weight = 20
 +++
 
@@ -142,11 +142,13 @@ To repeat the experiment, repeat the steps above:
 
 Finally navigate to the [CloudWatch Dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:) from the previous section. Review the number of instances in the ASG going down and then up again and review the error responses reported by the load test.
 
+{{< img "cwdashboard-asg-1.en.png" "Number of Instances in ASG" >}}
+
 ## Findings and next steps
 
 From this experiment we learned:
 
-* Carefully choose the resource to affect and how to select them. If we had originally chosen to terminate a single instance (COUNT) rather than a fraction (PERCENT) we would have severely affected our service.
+* Carefully choose the resource to affect and how to select them. If we had originally chosen to terminate a single instance (COUNT) rather than a fraction (PERCENT), we would have severely affected our service.
 * Spinning up instances takes time. To achieve resilience, Auto Scaling groups should be set to have at least two instances running at all times
 
 In the next section we will explore larger experiments.

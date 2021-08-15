@@ -6,7 +6,7 @@ weight = 20
 In this section we will run a CPU Stress test using AWS Fault Injection Simulator against an Amazon Linux EC2 Instance. The Linux [CPU stress](https://docs.aws.amazon.com/fis/latest/userguide/actions-ssm-agent.html#fis-ssm-docs) test is an out of the box FIS action. We will do the following: 
 
 1. Create experiment template to stress CPU.
-2. Connect to a Linux EC2 Instance and run the Top Command.
+2. Connect to a Linux EC2 Instance and run the `top` command.
 3. Start experiment and observe results.
 
 ## Experiment Setup
@@ -17,7 +17,7 @@ First, lets create our stress experiment. We can do this programmatically but we
 
 1. Open the [AWS Fault Injection Simulator Console](https://console.aws.amazon.com/fis/home?#Home). Once in the Fault Injection Simulator console, lets click on "Experiment templates" on the left side pane. 
 
-2. Click on "Create Experiment Template" on  the upper right hand side of the console to start creating our experiment template. 
+2. Click on "Create experiment template" on  the upper right hand side of the console to start creating our experiment template. 
 
 3. Next we will enter the description of the experiment and choose the IAM Role. Let's put `LinuxBurnCPUviaSSM` for the description. The IAM role allows the FIS service permissions to execute actions on your behalf. As part of the CloudFormation stack a role was created for this experiment that starts with `FisCpuStress-FISRole`, select that role. Please examine the CloudFormation template or IAM Role for the policies in this role. 
 
@@ -25,13 +25,13 @@ First, lets create our stress experiment. We can do this programmatically but we
 
 4. After we have entered a description and a role, we need to setup our actions. Click on the "Add Action" button in the Actions section. 
 
-Name the Action as `StressCPUViaSSM` and under *Action Type* select `aws:ssm:send-command/AWSFIS-Run-Cpu-Stress`. This is an out of the box action to run stress test on Linux Instances using the stress-ng tool. Set the "documentParameters" field to `{"DurationSeconds":120}` which is passed to the script and the "duration" field to `2` which tells FIS how long to wait for a result. Finally click "Save". This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes.
+Name the Action as `StressCPUViaSSM`, and under "Action Type" select `aws:ssm:send-command/AWSFIS-Run-Cpu-Stress`. This is an out of the box action to run stress test on Linux Instances using the [stress-ng](https://kernel.ubuntu.com/git/cking/stress-ng.git/) tool. Enter a "Name" of `StressCPUViaSSM`, and set the "documentParameters" field to `{"DurationSeconds":120}` which is passed to the script and the "duration" field to `2` which tells FIS how long to wait for a result. Finally click "Save". This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes.
 
 {{< img "StressActionSettings.png" "Action Settings" >}}
 
-5. Once we have saved the action, let's edit our targets. Click on "Edit" button under the Targets section. To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisLinuxCPUStress`. Finally click "Save". 
+5. Once we have saved the action, let's edit our targets. Click on "Edit" in "Instaces-Target-1" card inside the "Targets" card. To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisLinuxCPUStress`. Finally click "Save". 
 
-{{< img "EditTarget.png" "Edit Targets" >}}
+{{< img "EditTarget-rev1.png" "Edit Targets" >}}
 
 6. Once we have actions and targets specified we can click on the "Create Experiment" button toward the bottom of the console to create our template. 
 
@@ -47,7 +47,7 @@ We will use the linux `top` system command to observe the increased CPU load. To
 
 1. Once at the EC2 Console lets select our instance named `FisLinuxCpuStress` and click on the "Connect" button. 
 
-{{< img "SelectConnect.png" "Select Instance" >}}
+{{< img "SelectConnect-rev1.png" "Select Instance" >}}
 
 2. Select "Session Manager" and click on "Connect".
 
@@ -87,6 +87,6 @@ Congrats for completing this lab! In this lab you walked through running an expe
 
 ## Learning and improving
 
-Since this instance wasn't doing anything there aren't any actions. To think about how to use this to test a hypothesis and make an improvement consider running the same experiment against the ASG instances from the **First Experiment** section. Maybe you could use this to tune the optimal CPU levels for scaling up or down?
+Since this instance wasn't doing anything, there aren't any actions. To think about how to use this to test a hypothesis and make an improvement, consider running the same experiment against the ASG instances from the **First Experiment** section. Maybe you could use this to tune the optimal CPU levels for scaling up or down?
 
 
