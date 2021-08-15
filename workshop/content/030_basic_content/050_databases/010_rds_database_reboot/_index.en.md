@@ -35,15 +35,13 @@ On the "Add target" popup enter `FisWorkshopRDSDB` for name and select `aws:rds:
 
 ### Action definition
 
-With targets defined we define the action to take. Scroll to the "Actions" section" and select "Add Action"
+With targets defined we define the action to take. Scroll to the "Actions" section and select "Add Action"
 
 {{< img "create-template-2-actions-1.en.png" "Add FIS actions" >}}
 
 For "Name" enter `RDSInstanceReboot` and you can skip the Description. For "Action type" select `aws:rds:reboot-db-instances`.
 
 For this experiment we are using a Multi-AZ database and we want to force a failover to the standby instance to minimize outage time. To do this, set the `forceFailover` parameter to `true`.
-
-We will leave the "Start after" section blank since the instances we are terminating are part of an auto scaling group and we can let the auto scaling group create new instances to replace the terminated ones.
 
 Under "Target" select the `FisWorkshopRDSDB` target created above. Select "Save".
 
@@ -68,9 +66,9 @@ while True:
         cursor.append("%-30s" % str(line))
 ```
 
-We would expect that this would keep writing output while the DB is availble, stop while it's failing over and restart when the DB has successfully failed over.
+We would expect that this would keep writing output while the DB is available, stop while it's failing over and restart when the DB has successfully failed over.
 
-Additionally because the DB connection does a DNS lookup our script will also print the IP address of the database it's currently connected to ... healthy output should look like this:
+Additionally because the DB connection does a DNS lookup our script will also print the IP address of the database it's currently connected to. A healthy output should look like this:
 
 ```text
 AURORA                         RDS
@@ -89,7 +87,7 @@ AURORA                         RDS
 
 ### Starting the validation procedure
 
-Connect to one of the EC2 instances in your auto scaling group. In a new browser window - we need to be able to see this side-by-side with the FIS experiment later - navigate to your [EC2 console](https://console.aws.amazon.com/ec2/v2/home?#Instances:instanceState=running;search=FisStackAsg/ASG) and search for instances named `FisStackAsg/ASG`. Select one of the instances and click the connect button:
+Connect to one of the EC2 instances in your auto scaling group. In a new browser window - we need to be able to see this side-by-side with the FIS experiment later - navigate to your [EC2 console](https://console.aws.amazon.com/ec2/v2/home?#Instances:instanceState=running;search=FisStackAsg/ASG) and search for instances named `FisStackAsg/ASG`. Select one of the instances and click the "Connect" button:
 
 {{< img "instance-connect-1.en.png" "Locate ASG instance" >}}
 
@@ -143,13 +141,13 @@ Navigate to the [RDS console](https://console.aws.amazon.com/rds/home?#databases
 
 If all went "well" the status of the database in the RDS console should have changed from "Available" to "Rebooting" 
 
-{{< img "review-1-rds-1.en.png" "Review ASG" >}}
+{{< img "review-1-rds-2.en.png" "Review ASG" >}}
 
 and back to "Available".
 
-{{< img "review-1-rds-2.en.png" "Update ASG" >}}
+{{< img "review-1-rds-1.en.png" "Update ASG" >}}
 
-However, even though your database failed over successfully, your script should have locked up during the failover - no more updates to your data and it didn't recover even after the DB successfully failed over. Discoveries like this are exactly why we are using Fault Injectio Simulator!
+However, even though your database failed over successfully, your script should have locked up during the failover - no more updates to your data and it didn't recover even after the DB successfully failed over. Discoveries like this are exactly why we are using Fault Injection Simulator!
 
 ## Learning and Improving
 
@@ -162,4 +160,4 @@ Fortunately there is another common library that has very similar configuration 
 ./test_pymysql_curses.py
 ```
 
-This time you should see almost no interruption in your code's ability to interact with the database/
+This time you should see almost no interruption in your code's ability to interact with the database.

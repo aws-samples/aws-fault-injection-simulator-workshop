@@ -13,7 +13,7 @@ In this section we will run a CPU Stress test using AWS Fault Injection Simulato
 
 ### Create CPU Stress Experiment Template
 
-First, lets create our stress experiment. We can do this programmaticaly but we will walk through this on the console. 
+First, lets create our stress experiment. We can do this programmatically but we will walk through this on the console. 
 
 1. Open the [AWS Fault Injection Simulator Console](https://console.aws.amazon.com/fis/home?#Home). Once in the Fault Injection Simulator console, lets click on "Experiment templates" on the left side pane. 
 
@@ -23,19 +23,19 @@ First, lets create our stress experiment. We can do this programmaticaly but we 
 
 {{< img "experimentdescription.png" "Linux Experiment Description and Role" >}}
 
-4. After we have entered a description and a role, we need to setup our actions. Click the "Add Action" Button in the Actions Section. 
+4. After we have entered a description and a role, we need to setup our actions. Click on the "Add Action" button in the Actions section. 
 
-Name the Action, and under Action Type select the `aws:ssm:send-command/AWSFIS-Run-Cpu-Stress` action. This is an out of the box action to run stress test on Linux Instances using the stress-ng tool. Enter a "Name" of `StressCPUViaSSM`, set the "documentParameters" field to `{"DurationSeconds":120}` which is passed to the script and the "duration" field to `2` which tells FIS how long to wait for a result. Finally click "Save". This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes.
+Name the Action as `StressCPUViaSSM` and under *Action Type* select `aws:ssm:send-command/AWSFIS-Run-Cpu-Stress`. This is an out of the box action to run stress test on Linux Instances using the stress-ng tool. Set the "documentParameters" field to `{"DurationSeconds":120}` which is passed to the script and the "duration" field to `2` which tells FIS how long to wait for a result. Finally click "Save". This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes.
 
 {{< img "StressActionSettings.png" "Action Settings" >}}
 
-5. Once we have saved the action, let's edit our targets. Click on "Edit targets". To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisLinuxCPUStress`. Finally click "Save". 
+5. Once we have saved the action, let's edit our targets. Click on "Edit" button under the Targets section. To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisLinuxCPUStress`. Finally click "Save". 
 
 {{< img "EditTarget.png" "Edit Targets" >}}
 
 6. Once we have actions and targets specified we can click on the "Create Experiment" button toward the bottom of the console to create our template. 
 
-**_Note:_** For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiemnts so they dont go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in `create` and then hit the "Create Experiment" button again to confirm. 
+**_Note:_** For this experiment we did not assign a stop condition, for a workshop or lab this is acceptable. However, it would be considered best practice to have stop conditions on your experiments so they don't go out of bounds. Because we do not have a stop condition we are being asked to confirm creation of this experiment. Type in `create` and then hit the "Create Experiment" button again to confirm. 
 
 {{< img "ConfirmCreate.png" "Confirm Creation" >}}
 
@@ -75,15 +75,15 @@ Let's head back to the [AWS Fault Injection Simulator Console](https://console.a
 
 {{< img "confirmstart.png" "Confirm Start" >}}
 
-This will take you to the running experiment that is started from the template, in the detail section of the experiment under state you should see the experiment is initializing. Once the experiment is running, lets head back to the open session on the EC2 Instance. 
+This will take you to the running experiment that is started from the template. In the detail section of the experiment check `State` and you should see the experiment is initializing. Once the experiment is running, lets head back to the open session on the EC2 Instance. 
 
 {{< img "RunningState.png" "Experiment State" >}}
 
-Watch the CPU percentage, it should hit 100% for a few minutes and then return back to 0%. Once we have observed the action we can click the terminate button to terminate our Session Manager session. 
+Watch the CPU percentage, it should hit 100% for a few minutes and then return back to 0%. Once we have observed the action we can click the `Terminate` button to terminate our Session Manager session. 
 
 {{< img "linuxStressed.png" "Linux Stressed" >}}
 
-Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Linux EC2 Instance using AWS Systems Manager.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other choas engineering tools and frameworks. 
+Congrats for completing this lab! In this lab you walked through running an experiment that took action within a Linux EC2 Instance using AWS Systems Manager.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other chaos engineering tools and frameworks. 
 
 ## Learning and improving
 

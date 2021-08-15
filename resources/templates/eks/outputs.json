@@ -1,6 +1,0 @@
-{
-  "FisStackEks": {
-    "ClusterConfigCommand43AAE40F": "aws eks update-kubeconfig --name FisWorkshop-EksCluster --region us-west-2 --role-arn arn:aws:iam::238810465798:role/FisStackEks-ClusterMastersRole9AA35625-GTTNBA5CUJ89",
-    "ClusterGetTokenCommand06AE992E": "aws eks get-token --cluster-name FisWorkshop-EksCluster --region us-west-2 --role-arn arn:aws:iam::238810465798:role/FisStackEks-ClusterMastersRole9AA35625-GTTNBA5CUJ89"
-  }
-}
