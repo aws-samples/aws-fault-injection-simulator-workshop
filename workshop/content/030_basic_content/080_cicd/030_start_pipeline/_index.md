@@ -52,7 +52,7 @@ Click on the pipeline name to view the step details.
 
 Wait for the infrastructure provisioning step to complete. 
 After this step, our Experiment will start.
-You can monitor the progress of your experiment from both the CodePipeline details page of the [FIS console](https://console.aws.amazon.com/fis/home?#Experiments). 
+You can monitor the progress of your experiment from both the CodePipeline details page or from the [FIS console](https://console.aws.amazon.com/fis/home?#Experiments). 
 
 Click on the running experiment.
 You should see the experiment in a running status. 
