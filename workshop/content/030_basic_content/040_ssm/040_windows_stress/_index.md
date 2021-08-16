@@ -83,14 +83,15 @@ aws ssm send-command \
 
 We now need to connect to our EC2 Instance so we can observe the CPU being stressed. We are going to do this by using the port forwarding capability of AWS Systems Manager Session Manager and using RDP.
 
-1. Run the following command first, this will forward local port 56788 to port 3389 on the Windows EC2 Instance. Replace the **<instanceid>** with the instance ID of the Windows Instance.
+1. First make sure that the [Session Manager plugin for the AWS CLI](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) is installed on your local machine.
+2. Run the following command first, this will forward local port 56788 to port 3389 on the Windows EC2 Instance. Replace the **<instanceid>** with the instance ID of the Windows Instance.
 
     ```bash
     # This presumes you set TMP_INSTANCE (see above)
     aws ssm start-session --target ${TMP_INSTANCE} --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["3389"],"localPortNumber":["56788"]}'
     ```
 
-2. Once the command says waiting for connections you can launch the RDP client and enter `localhost:56788` for the server name and login as `administrator` with the password you set in the previous section. 
+3. Once the command says waiting for connections you can launch the RDP client and enter `localhost:56788` for the server name and login as `administrator` with the password you set in the previous section. 
 
     {{% expand "Troubleshooting connectivity" %}}
 When running the `start-session` command above, you may get a message about a missing session manager plugin. If you do, follow the [link in the message](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) and install the plugin.
@@ -112,7 +113,7 @@ Then examine the Error output:
 
 
 
-3. Once you have RDP'ed into the Windows Instance, launch task manager by right clicking on the menu bar and selecting "Task Manager". Click on "More details" button and then on the "Performance" tab so you can see the CPU graph as shown below. 
+4. Once you have RDP'ed into the Windows Instance, launch task manager by right clicking on the menu bar and selecting "Task Manager". Click on "More details" button and then on the "Performance" tab so you can see the CPU graph as shown below. 
 
 {{< img "WinNoStress.png" "Task Manager" >}}
 
