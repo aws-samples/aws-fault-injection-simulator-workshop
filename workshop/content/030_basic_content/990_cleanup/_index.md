@@ -8,10 +8,11 @@ To ensure you don't incur any further costs after the workshop, please follow th
 
 ## Manually
 
-* Delete the CI/CD pipeline resources created: 
-  * Navigate to the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=CicdStack&viewNested=true&hideStacks=false) and find the stack named `CicdStack` 
+* If you created the CI/CD stack and ran the pipeline, first start by deleting the insfrastructure provisioned by the pipeline: 
+  * Navigate to the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=fisWorkshopDemo&viewNested=true&hideStacks=false) and find the stack named `fisWorkshopDemo` 
   * Select the stack 
   * Select "Delete" 
+* Once, the `fisWorkshopDemo` is deleted, following the same procedure as above, delete the `CicdStack` stack
   {{< img "delete-cicd.en.png" "Delete stack visual">}}
 * If you created the `CpuStress` stack in the **AWS Systems Manager Integration** section, delete it following the same procedure.
 * Following the same procedure as above, delete the following stacks
