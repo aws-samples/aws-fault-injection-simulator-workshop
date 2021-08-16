@@ -38,9 +38,9 @@ Return to the FIS console and enter the ARN you copied into the "documentArn" fi
 
 {{< img "WinStressActionSettings.png" "Action Settings" >}}
 
-5. Once we have saved the action, let's edit our targets. Click on "Edit" button under the Targets section. To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisWindowsCPUStress`. Finally click "Save". 
+5. Once we have saved the action, let's edit our targets. Click on "Edit" in "Instaces-Target-1" card inside the "Targets" card. To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Click "Add new tag" and enter a "Key" of `Name` and a "Value" of `FisWindowsCPUStress`. Finally click "Save". 
 
-{{< img "WinEditTarget.png" "Target Settings" >}}
+{{< img "WinEditTarget-rev1.png" "Target Settings" >}}
 
 6. Once we have actions and targets specified we can click on the "Create Experiment" button toward the bottom of the console to create our template. 
 

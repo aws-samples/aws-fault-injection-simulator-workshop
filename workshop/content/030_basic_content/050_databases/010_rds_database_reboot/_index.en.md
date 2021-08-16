@@ -18,10 +18,10 @@ We are assuming that you know how to set up a basic FIS experiment and will focu
 
 ### General template setup
 
-* create a new experiment template
-  * add `Name` tag of `FisWorkshopRds1`
-  * add `Description` of `RebootRDSInstance`
-  * select `FisWorkshopServiceRole` as execution role
+* Create a new experiment template
+  * Add `Name` tag of `FisWorkshopRds1`
+  * Add `Description` of `RebootRDSInstance`
+  * Select `FisWorkshopServiceRole` as execution role
 
 ### Target selection
 
@@ -29,9 +29,11 @@ Now we need to define targets. Scroll to the "Targets" section and select "Add T
 
 {{< img "create-template-2-targets-1.en.png" "Add FIS target" >}}
 
-On the "Add target" popup enter `FisWorkshopRDSDB` for name and select `aws:rds:db`. For "Target method" we will select resources based on the ID. Select the `Resource IDs` checkbox. Pick the target cluster then Pick `All` from "Selection mode". Select "Save".
+On the "Add target" popup, enter `FisWorkshopRDSDB` for name and select `aws:rds:db` for resource type. For "Target method" we will select resources based on the ID. Select the `Resource IDs` checkbox. Pick the target DB instance (the one with "MySQL Community" engine - check yours in [RDS console](https://console.aws.amazon.com/rds/home?#databases:)), then pick `All` from "Selection mode". Select "Save".
 
-{{< img "create-template-2-targets-2.en.png" "Edit FIS target" >}}
+{{< img "rds-check-resource-id.en.png" "Edit FIS target" >}}
+
+{{< img "create-template-2-targets-2-rev1.en.png" "Edit FIS target" >}}
 
 ### Action definition
 
@@ -49,7 +51,7 @@ Under "Target" select the `FisWorkshopRDSDB` target created above. Select "Save"
 
 ### Creating template without stop conditions
 
-* confirm that you wish to create the template without stop condition
+* Confirm that you wish to create the template without stop condition
 
 ## Validation procedure
 
@@ -112,6 +114,7 @@ If all went well you should see output similar to this:
 ```
 AURORA                         RDS
 10.0.89.224                    10.0.95.247
+done
 ```
 
 Now start the test script and leave it running:
@@ -130,12 +133,12 @@ Navigate to the [RDS console](https://console.aws.amazon.com/rds/home?#databases
 
 ### Start the experiment
 
-* select the `FisWorkshopRds1` experiment template you created above 
-* select start experiment
-* add a `Name` tag of `FisWorkshopMysql1Run1`
-* confirm that you want to start an experiment
-* watch the output of your test script 
-* check the state of your database in the [RDS console](https://console.aws.amazon.com/rds/home?#databases:)
+* Select the `FisWorkshopRds1` experiment template you created above 
+* Select start experiment
+* Add a `Name` tag of `FisWorkshopMysql1Run1`
+* Confirm that you want to start an experiment
+* Watch the output of your test script 
+* Check the state of your database in the [RDS console](https://console.aws.amazon.com/rds/home?#databases:)
 
 ### Review results
 
@@ -161,3 +164,5 @@ Fortunately there is another common library that has very similar configuration 
 ```
 
 This time you should see almost no interruption in your code's ability to interact with the database.
+
+To end the session, hit CTRL+C to stop the script, and click Terminate button.

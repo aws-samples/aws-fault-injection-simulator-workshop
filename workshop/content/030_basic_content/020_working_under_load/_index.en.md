@@ -1,5 +1,5 @@
 +++
-title = "Synthetic user experience"
+title = "Synthetic User Experience"
 weight = 20
 +++
 
@@ -13,11 +13,11 @@ In the previous section you navigated to the basic website for our web server se
 export URL_HOME=[PASTE URL HERE]
 ```
 
-Next we need to generate load. There are many [load testing tools](https://en.wikipedia.org/wiki/Category:Load_testing_tools) available to generate a variety of load patterns. However, for the purpose of this workshop we have included a lambda function that will make HTTP GET calls to our site and log performance data to CloudWatch. To find the lambda function  navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "FisStackLoadGen" stack and click on the “Outputs” tab which will show you the lambda function ARN:
+Next we need to generate load. There are many [load testing tools](https://en.wikipedia.org/wiki/Category:Load_testing_tools) available to generate a variety of load patterns. However, for the purpose of this workshop we have included a lambda function that will make HTTP GET calls to our site and log performance data to CloudWatch. To find the lambda function  navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "**FisStackLoadGen**" stack and click on the "**Outputs**" tab which will show you the lambda function ARN:
 
 {{< img "cloudformation.en.png" "Cloudformation Lambda Function ARN" >}}
 
-and save the function name in another environment variable:
+and save the Lambda function ARN in another environment variable:
 
 ```bash
 export LAMBDA_ARN=[PASTE ARN HERE]
@@ -66,7 +66,7 @@ Click through on the topmost entry and expand any of the log lines. You may noti
 
 {{< img "nginx-log-stream-2.en.png" "Nginx access log" >}}
 
-While not necessary it makes it very easy to create [Metric Filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringPolicyExamples.html). Navigate back to the `/fis-workshop/asg-access-log` log group and select the "Metric filters" tab. You will see that we have created filters to extract the count of responses with HTTP `status` codes in the `2xx` (good responses) and `5xx` (bad responses) ranges. We also created a filter to select all entries that have a `request_time` set. The resulting metrics can be found under  Metrics / All metrics / Custom Namespaces / fisworkshop. These are also the metrics for `nginx connection status` and `nginx response time` you saw on the dashboard in the previous section.
+While not necessary it makes it very easy to create [Metric Filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringPolicyExamples.html). Navigate back to the `/fis-workshop/asg-access-log` log group and select the "**Metric filters**" tab. You will see that we have created filters to extract the count of responses with HTTP `status` codes in the `2xx` (good responses) and `5xx` (bad responses) ranges. We also created a filter to select all entries that have a `request_time` set. The resulting metrics can be found under  **Metrics** / **All metrics** / **Custom Namespaces** / **fisworkshop**. These are also the metrics for `nginx connection status` and `nginx response time` you saw on the dashboard in the previous section.
 
 Let's look at our dashboard:
 

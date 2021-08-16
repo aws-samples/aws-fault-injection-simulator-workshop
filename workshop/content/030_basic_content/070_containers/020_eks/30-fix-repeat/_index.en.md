@@ -32,6 +32,19 @@ From a local terminal, run the following command to update the application's pod
 kubectl scale --current-replicas=1 --replicas=2 deployment/hello-kubernetes
 ```
 
+To verify, you can run `kubectl get pods` and `kubectl get deployments`. Here's the sample output.
+
+```text
+NAME                               READY   STATUS    RESTARTS   AGE
+hello-kubernetes-ffd764cf9-5v7z9   1/1     Running   0          25s
+hello-kubernetes-ffd764cf9-6bdbn   1/1     Running   0          4m43s
+```
+
+```text
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+hello-kubernetes   2/2     2            2           46h
+```
+
 ## Repeat the experiment
 
 Now that we have improved our configuration, let's re-run the experiment. Before starting review the EKS Cluster to ensure that the instance capacity has increased to `2` and that the number of running containers is `2`.
