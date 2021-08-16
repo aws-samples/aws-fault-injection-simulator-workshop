@@ -36,7 +36,7 @@ export class FisStackRdsAurora extends cdk.Stack {
           subnetType: ec2.SubnetType.PRIVATE,
         },
         vpc,
-        securityGroups: [rdsSecurityGroup]
+        securityGroups: [rdsSecurityGroup],
       },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
