@@ -36,7 +36,8 @@ export class FisStackRdsAurora extends cdk.Stack {
           subnetType: ec2.SubnetType.PRIVATE,
         },
         vpc,
-        securityGroups: [rdsSecurityGroup]
+        securityGroups: [rdsSecurityGroup],
+        removalPolicy: cdk.RemovalPolicy.DESTROY
       },
     });
 
@@ -60,7 +61,8 @@ export class FisStackRdsAurora extends cdk.Stack {
         ec2.InstanceSize.MICRO,
       ),
       multiAz: true,
-      securityGroups: [rdsSecurityGroup]
+      securityGroups: [rdsSecurityGroup],
+      removalPolicy: cdk.RemovalPolicy.DESTROY
     });
     
     // Store things in SSM so we can coordinate multiple stacks
