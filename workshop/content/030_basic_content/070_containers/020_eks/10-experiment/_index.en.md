@@ -68,7 +68,7 @@ Open the URL in a new tab to validate that our website is in fact up and running
 
 {{< img "hello-kubernetes-app.en.png" "Hello Kubernetes App" >}}
 
-How will we know that our instance failure was in fact non-impacting? For this workshop we'll be using a simple Bash script that continuosly polls our application.
+How will we know that our instance failure was in fact non-impacting? For this workshop we'll be using a simple Bash script that continuously polls our application.
 
 ### Starting the validation procedure
 
