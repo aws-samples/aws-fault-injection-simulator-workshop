@@ -7,8 +7,8 @@ In this section, we will integrate a Fault Injection Simulator experiment with a
 
 ## Create The Pipeline
 
-We will use the AWS CDK to provision our CICD pipeline.
-First start by cloning the repository for the workshop.
+We will use the AWS CDK to provision our CICD pipeline.  
+First, in your cloud9 terminal, start by cloning the repository for the workshop.
 
 ```
 cd ~/environment

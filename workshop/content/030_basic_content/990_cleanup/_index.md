@@ -30,7 +30,7 @@ To ensure you don't incur any further costs after the workshop, please follow th
 
 ## Using a script
 
-On the same machine where you performed the **Provision AWS resources** step run the following commans:
+In your cloud9 terminal where you performed the **Provision AWS resources** step run the following commans:
 
 ```bash
 cd ~/environment
