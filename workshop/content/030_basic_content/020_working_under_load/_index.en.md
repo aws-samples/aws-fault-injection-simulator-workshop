@@ -101,6 +101,9 @@ for ii in 1 2 3; do
     invoke-${ii}.txt 
 done
 ```
+{{% notice warning %}}
+If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-format raw-in-base64-out` or you'll get the error "Invalid base64" when sending the payload.
+{{% /notice %}}
 
 While this is running we encourage you to explore CloudWatch logs and create some of your own dashboard views.
 
