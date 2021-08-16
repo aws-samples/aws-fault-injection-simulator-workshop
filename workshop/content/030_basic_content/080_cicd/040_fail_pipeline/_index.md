@@ -9,7 +9,7 @@ Then while our pipeline is running, we will force an error to test that our pipe
 ## Change the Infrastructure Template
 
 We will be making a change to our CloudFormation template that creates our EC2 Instance and defines our experiment. 
-Open the [AWS Code Commit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home) and select the ```FIS_Workshop``` repository.
+Open the [AWS CodeCommit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home) and select the ```FIS_Workshop``` repository.
 Click on ```cfn_fis_demos.yaml``` and select edit in the upper right hand corner.
 Edit the file to comment out line ```122``` and uncomment lines ```123``` -> ```127```.
 
@@ -25,7 +25,7 @@ This will trigger the pipeline to start immediately.
 ## Forcing an Error
 
 To simulate an failed experiment, we will manually set our CloudWatch alarm to an error state.
-Navigate back to the [AWS Code Pipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home) and watch the pipeline status. 
+Navigate back to the [AWS CodePipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home) and watch the pipeline status. 
 Once the FIS section changes to in progress, run the below command from your workstation to force an error. 
 
 ```
@@ -38,7 +38,7 @@ You should see that your latest experiment has failed do to the stop condition.
 
 {{< img "fisfail.png" "Failed Experiment" >}}
 
-Finally navigate back to the [AWS Code Pipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
+Finally navigate back to the [AWS CodePipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
 You should see that your pipeline has also failed do to the experiment stopping.
 
 {{< img "codepipelinefail.png" "Failed Pipeline" >}}

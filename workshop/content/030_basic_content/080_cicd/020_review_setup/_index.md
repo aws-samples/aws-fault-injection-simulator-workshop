@@ -5,22 +5,22 @@ weight = 20
 
 Lets review the components our previous section created. 
 
-## Code Commit
+## CodeCommit
 
-Open the [AWS Code Commit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home).
+Open the [AWS CodeCommit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home).
 You should see the newly created ```FIS_Workshop``` repository.
 
 {{< img "codecommit.png" "Newly created AWS Code Commit repository" >}}
 
-## Code Build
+## CodeBuild
 
-Open the [AWS Code Build Console](https://console.aws.amazon.com/codesuite/codebuild/projects). You should see the ```FIS_Workshop``` build project.
+Open the [AWS CodeBuild Console](https://console.aws.amazon.com/codesuite/codebuild/projects). You should see the ```FIS_Workshop``` build project.
 
 {{< img "codebuild.png" "AWS Code Build build project" >}}
 
-## Code Pipeline
+## CodePipeline
 
-Open the [AWS Code Pipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
+Open the [AWS CodePipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
 You should now see the ```FIS_Workshop``` pipeline.
 
 {{< img "codepipeline.png" "AWS CodePipeline pipeline" >}}
