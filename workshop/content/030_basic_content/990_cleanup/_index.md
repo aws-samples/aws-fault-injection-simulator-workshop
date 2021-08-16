@@ -13,10 +13,10 @@ To ensure you don't incur any further costs after the workshop, please follow th
   * Select the stack 
   * Select "Delete" 
   {{< img "delete-cicd.en.png" "Delete stack visual">}}
-* If you created the `CpuStress` stack in the **AWS Systems Manager Integration** section, delete it follwing the same procedure.
+* If you created the `CpuStress` stack in the **AWS Systems Manager Integration** section, delete it following the same procedure.
 * Following the same procedure as above, delete the following stacks
-  * `FisStackEKS`
-  * `FisStackECS`
+  * `FisStackEks`
+  * `FisStackEcs`
   * `FisStackRdsAurora`
   * `FisStackLoadGen`
   * `FisStackAsg`
@@ -27,6 +27,10 @@ To ensure you don't incur any further costs after the workshop, please follow th
   * Search for `fis-workshop`
   * Select the checkboxes
   * Under "Actions" select "Delete log group(s)"
+
+* Delete Cloud9 Environments
+  * Navigate to the [AWS Cloud9 console](https://ap-southeast-1.console.aws.amazon.com/cloud9/home)
+  * Delete the Cloud9 environment that you use during the workshop
 
 ## Using a script
 

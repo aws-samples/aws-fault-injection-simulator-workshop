@@ -44,8 +44,8 @@ git push -u
 ## View Progress
 
 After you commit the files, the pipeline will start. 
-Open the [AWS Code Pipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
-You should now see the ```FIS_Workshop``` pipeline is in progress.
+Open the [AWS CodePipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
+You should now see the `FIS_Workshop` pipeline is in progress.
 Click on the pipeline name to view the step details.
 
 {{< img "codepipelineinprogress.png" "AWS CodePipeline in progress" >}}
@@ -64,11 +64,11 @@ You should see the experiment is completed successfully.
 
 {{< img "fissuccessfully.png" "Successful Experiment" >}}
 
-Finally navigate back to the [AWS Code Pipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
+Finally navigate back to the [AWS CodePipeline Console](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
 You should also see that your pipeline has completed successfully.
 
 {{< img "codepipelinesuccessfully.png" "Successful Pipeline" >}}
 
-Congratulations! You have successfully integrated a Fault Injection Simulator Experiment into a CICD pipeline.
+Congratulations! You have successfully integrated a Fault Injection Simulator Experiment into a CI/CD pipeline.
 In this scenario, we completed a happy path to ensure that our infrastructure and experiment completed without error. 
 Continue on to the next section, where we will deploy a new version of our CloudFormation template and force our experiment (and pipeline) fail. 

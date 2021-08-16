@@ -22,7 +22,7 @@ jobs:
         run: |
           wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
           echo "List of broken links:"
-          if grep -B1 'broken link!' run1.log; then
+          if grep -B1 'broken link!' /tmp/run1.log; then
             echo "Found broken links, exit with error"
             exit 1
           else
