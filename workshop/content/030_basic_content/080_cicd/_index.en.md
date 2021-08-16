@@ -1,5 +1,5 @@
 +++
-title = "Cicd"
+title = "CI/CD"
 weight = 80
 +++
 
