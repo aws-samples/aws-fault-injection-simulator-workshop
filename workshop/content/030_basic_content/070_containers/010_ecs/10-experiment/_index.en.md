@@ -34,9 +34,9 @@ Now we need to define targets. Scroll to the "Targets" section and select "Add T
 
 {{< img "create-template-2-targets-1.en.png" "Add FIS target" >}}
 
-On the "Add target" popup enter `FisWorkshopECSInstance` for name and select `aws:ec2:instance`. For "Target method" we will dynamically select resources based on an associated tag. Select the `Resource tags and filters` checkbox. Pick `Count` from "Selection mode" and enter `1`. Under "Resource tags" enter `Name` in the "Key" field and `FisStackEcs/EcsAsgProvider` for "Value". Under filters enter `State.Name` in the "Attribute path" field and `running` under "Values". Select "Save".
+On the "Add target" popup enter `FisWorkshopECSInstance` for name and select `aws:ec2:instance` for resource type. For "Target method" we will dynamically select resources based on an associated tag. Select the `Resource tags and filters` checkbox. Pick `Count` from "Selection mode" and enter `1`. Under "Resource tags" enter `Name` in the "Key" field and `FisStackEcs/EcsAsgProvider` for "Value". Under filters enter `State.Name` in the "Attribute path" field and `running` under "Values". Select "Save".
 
-{{< img "create-template-2-targets-2.en.png" "Add FIS target" >}}
+{{< img "create-template-2-targets-2-rev1.en.png" "Add FIS target" >}}
 
 ### Action definition
 
@@ -66,7 +66,7 @@ Open the URL in a new tab to validate that our website is in fact up and running
 
 {{< img "ecs-sample-app.en.png" "ECS Sample App" >}}
 
-How will we know that our instance failure was in fact non-impacting? For this workshop we'll be using a simple Bash script that continuosly polls our application.
+How will we know that our instance failure was in fact non-impacting? For this workshop we'll be using a simple Bash script that continuously polls our application.
 
 ### Starting the validation procedure
 
@@ -110,9 +110,9 @@ curl -IL <REPLACE_WITH_ECS_SERVICE_ALB_URL> | grep "^HTTP\/"
 
 ### Start the experiment
 
-* select the `FisWorkshopECS` experiment template you created above 
-* select **Start experiment** from the **Action** drop-down menu
-* add a `Name` tag of `FisWorkshopECSRun1`
-* confirm that you want to start an experiment
+* Select the `FisWorkshopECS` experiment template you created above 
+* Select **Start experiment** from the **Action** drop-down menu
+* Add a `Name` tag of `FisWorkshopECSRun1`
+* Confirm that you want to start an experiment
 
 {{< img "start-experiment-3.en.png" "Confirm Start Experiment" >}}

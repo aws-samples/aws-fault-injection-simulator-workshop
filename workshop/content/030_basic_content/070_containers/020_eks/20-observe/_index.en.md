@@ -9,7 +9,6 @@ weight = 20
 Let's take a look at the output in the terminal window where your Bash script is running:
 
 ```text
-  ```text
 Code 200 Duration 0.137204 
 Code 200 Duration 0.080911 
 Code 200 Duration 0.081539 
