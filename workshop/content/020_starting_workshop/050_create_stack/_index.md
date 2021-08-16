@@ -24,3 +24,5 @@ cd aws-fault-injection-simulator-workshop
 cd resources/templates
 ./deploy-parallel.sh
 ```
+
+It can take up to 30 minutes to complete.  

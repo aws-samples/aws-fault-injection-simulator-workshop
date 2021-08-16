@@ -10,6 +10,22 @@ ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
 echo "Cleanup in AWS Account: ${ACCOUNT_ID}"
 echo "Cleanup in Region: ${REGION}"
 
+# Optional demo infrastructure stack used in the CiCd lab
+(
+    STACK_NAME=$( aws cloudformation list-stacks --query "StackSummaries[?(StackName=='fisWorkshopDemo')&&(StackStatus!='DELETE_COMPLETE')].StackName" --output text )
+    if [ -n "${STACK_NAME}" ]; then
+        echo "Deleting demo infrastructure stack used in the CiCd lab"
+
+        # Delete CloudFormation stack
+        aws cloudformation delete-stack \
+        --stack-name fisWorkshopDemo
+        aws cloudformation wait stack-delete-complete \
+        --stack-name fisWorkshopDemo
+    else
+        echo "Demo infrastructure stack used in the CiCd lab not found"
+    fi
+)
+
 # Optional CiCd stack
 (
     STACK_NAME=$( aws cloudformation list-stacks --query "StackSummaries[?(StackName=='CicdStack')&&(StackStatus!='DELETE_COMPLETE')].StackName" --output text )
