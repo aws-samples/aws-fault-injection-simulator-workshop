@@ -29,7 +29,7 @@ Now we need to define targets. Scroll to the "Targets" section and select "Add T
 
 {{< img "create-template-2-targets-1.en.png" "Add FIS target" >}}
 
-On the "Add target" popup enter `FisWorkshopRDSDB` for name and select `aws:rds:db`. For "Target method" we will select resources based on the ID. Select the `Resource IDs` checkbox. Pick the target cluster then Pick `All` from "Selection mode". Select "Save".
+On the "Add target" popup enter `FisWorkshopRDSDB` for name and select `aws:rds:db`. For "Target method" we will select resources based on the ID. Select the `Resource IDs` checkbox. Pick the target RDS instance (Make sure to select the DB identifier of your RDS MySQL Community database, as listed in the [RDS Console](https://console.aws.amazon.com/rds/home?#databases:)) then Pick `All` from "Selection mode". Select "Save".
 
 {{< img "create-template-2-targets-2.en.png" "Edit FIS target" >}}
 
