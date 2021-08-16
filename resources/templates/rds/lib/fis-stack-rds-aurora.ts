@@ -38,6 +38,7 @@ export class FisStackRdsAurora extends cdk.Stack {
         vpc,
         securityGroups: [rdsSecurityGroup]
       },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
     // based on https://bobbyhadz.com/blog/aws-cdk-rds-example
@@ -60,7 +61,8 @@ export class FisStackRdsAurora extends cdk.Stack {
         ec2.InstanceSize.MICRO,
       ),
       multiAz: true,
-      securityGroups: [rdsSecurityGroup]
+      securityGroups: [rdsSecurityGroup],
+      removalPolicy: cdk.RemovalPolicy.DESTROY
     });
     
     // Store things in SSM so we can coordinate multiple stacks
