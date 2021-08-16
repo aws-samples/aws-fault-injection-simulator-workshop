@@ -22,26 +22,32 @@ If for some reason you only have access to the public site reach out to rudpot@a
 ### Is there an introduction that states what will be covered in the workshop?                                                      
 
 * @rudpot - 2021-07-28 - Yes – in intro section
+* @taryono - 2021-08-16 - Yes – in intro section
 
 ### Does the introduction give an expected duration?
 
 * @rudpot - 2021-07-28 - Yes – in intro section
+* @taryono - 2021-08-16 - Yes – in intro section
 
 ### Does the introduction state the outcomes? (ie what someone completing the workshop will learn)
 
 * @rudpot - 2021-07-28 - Yes – in intro section
+* @taryono - 2021-08-16 - Yes – in intro section
 
 ### Does the introduction describe the target audience?
 
 * @rudpot - 2021-07-28 - Yes – in intro section
+* @taryono - 2021-08-16 - Yes – in intro section
 
 ### Does the introduction list or describe any necessary background knowledge? For example, a workshop that deals with databases may need some knowledge of basic SQL commands. A workshop on front-end may require knowledge of Javascript, node.js v14 installed, etc.
 
 * @rudpot - 2021-07-28 - Yes – in intro section
+* @taryono - 2021-08-16 - Yes – in intro section
 
 ### Does the introduction warn of any costs that may be incurred by the customer?
 
 * @rudpot - 2021-07-28 - Yes – in intro section
+* @taryono - 2021-08-16 - Yes – in intro section
 
 
 ## Environment setup
@@ -49,6 +55,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 ### If the workshop supports using a customer’s own account, does the workshop describe how to create pre-requisite infrastructure (eg via a CloudFormation, CDK, SAM template, etc) with instructions on how to deploy it?
 
 * @rudpot - 2021-07-28 - Yes
+* @taryono - 2021-08-16 - Yes
 
 ### If the workshop integrates with Event Engine, does the workshop include instructions on how to log in via EE. Similarly, if the workshop supports other systems (Qwiklabs, etc) it should provide login instructions for those.
 
@@ -62,10 +69,12 @@ If for some reason you only have access to the public site reach out to rudpot@a
 ### Does the workshop include steps to set up local prerequisites? For example, an attendee may need to install things like node, python, an SSH client, or a Cloud9 environment, etc.
 
 * @rudpot - 2021-07-28 - Yes - the workshop uses Cloud9 and explains how to configure additional requirements
+* @taryono - 2021-08-16 - Yes - the workshop uses Cloud9 and explains how to configure additional requirements
 
 ### If the workshop runs only in specific regions, are these clearly listed?
 
 * @rudpot - 2021-07-28 - Yes
+* @taryono - 2021-08-16 - Yes
 
 
 ## Environment clean-up
@@ -74,29 +83,50 @@ If for some reason you only have access to the public site reach out to rudpot@a
 
 * @rudpot - 2021-07-28 - Yes – with extra work to automate cleanup on backlog
 * @rudpot - 2021-08-12 - Yes - Automation scripts also added
+* @taryono - 2021-08-16 - Yes
 
 ### Are the instructions at the right level of detail? For example, a 100-level workshop may need to walk a customer through all steps of terminating an EC2 instance. A 400-level workshop may simply tell a user to terminate EC2 instances the user created during the workshop.
 
 * @rudpot - 2021-07-28 - Yes
+* @taryono - 2021-08-16 - Yes
 
 ### Are the clean-up steps specific to the resources created in the workshop? Generalisations like “terminate all EC2 instances” could have unintended consequences.
 
 * @rudpot - 2021-07-28 - Yes – on the current assumption that all resources are generated through stacks
+* @taryono - 2021-08-16 - Yes
 
 ### Are the steps specific to the user? If more than one person is sharing an AWS account, generalisations like “terminate all EC2 instances” could have unintended consequences.
 
 * @rudpot - 2021-07-28 - Yes – on the current assumption that all resources are generated through stacks
 * @rudpot - 2021-08-12 - Yes – additional comments added for optionally created resources
+* @taryono - 2021-08-16 - Yes
 
 ### Are deliberately retained resources explained? For example, the workshop may deliberately retain an S3 bucket holding the results of a process.
 
 * @rudpot - 2021-07-28 - Yes
+* @taryono - 2021-08-16 - The retained resources are mentioned explicitly, but no explanation why those resources are retained. See: 030_basic_content/990_cleanup
+* @taryono - 2021-08-16 - There are some resources also retained, but not explicitly mentioned.
+    * FIS Experiment Templates
+    * CloudWatch Log groups with prefix `/aws/lambda/FisStackEcs-`, `/aws/lambda/FisStackEks-`, `/aws/lambda/FisStackLoadGen-`
+    * Cloud9 environments (reviewer added this instruction)
+    * RDS Snapshots
+    * S3 buckets: `cdktoolkit-` and `cicdstack-fispipelineartifactsbucket-`
 
 ### If resources are being retained, is there an explicit comment about costs those resources may incur?
 
 * @rudpot - 2021-07-28 - N/A
+* @taryono - 2021-08-16 - The retained resources are mentioned explicitly, but no explicit comment about cost. See: 030_basic_content/990_cleanup
 
-### If clean-up instructions ask the user to delete a CloudFormation Stack, does this delete all resources in the stack? 
+### If clean-up instructions ask the user to delete a CloudFormation Stack, does this delete all resources in the stack?
+
+* @taryono - 2021-08-16 - Deleting `FisStackVpc` is failed due to the dependency violation. There is 1 EC2 instance with following tags that need to be deleted prior to the VPC deletion.
+    * Key: `aws:cloudformation:logical-id`, Value: `instance0B661231D`
+    * Key: `aws:cloudformation:stack-name`, Value: `fisWorkshopDemo`
+    * Key: `FIS-Target`, Value: `true`
+    * Key: `aws:cloudformation:stack-id	`, Value: `arn:aws:cloudformation:ap-southeast-1:810259017959:stack/fisWorkshopDemo/0b883280-fde7-11eb-862e-0a51f5211668`
+    * Key: `Name`, Value: `FisExampleStack/instance-0`
+* @taryono - 2021-08-16 - See previous questions for some resources that is not being cleaned up.
+
 
 ####  CloudFormation stack deletion fail to remove some resources, like non-empty S3 buckets. These could then incur ongoing costs and/or raise possible future security risks.
 
@@ -110,22 +140,24 @@ If for some reason you only have access to the public site reach out to rudpot@a
 ### Does the workshop reference/link to the clean-up steps in the introduction or setup chapters? If someone cannot complete the workshop, they should still know about the existence of clean-up steps. They should not need to complete the workshop before being told of clean-up steps.	
 
 * @rudpot - 2021-07-28 - Yes
-
+* @taryono - 2021-08-16 - Yes
 
 ## Well-architected workshop infrastructure
 
 ### Are resources deployed in multiple availability zones?
 
 * @rudpot - 2021-07-28 - Yes
+* @taryono - 2021-08-16 - Yes
 
 ### Will resources scale with demand? For example: are EC2 instances deployed within an ASG?
 
 * @rudpot - 2021-07-28 - Yes
+* @taryono - 2021-08-16 - Yes
 
 ### For any resources that are not deployed in a redundant, scalable, cost-efficient manner: Is there a comment that this choice is deliberate?	
 
 * @rudpot - 2021-07-28 - Yes
-
+* @taryono - 2021-08-16 - Yes
 
 ## External links and privacy
 
@@ -146,6 +178,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 ### Do links to any Youtube videos use the Hugo “Youtube” shortcode? (This allows us to enforce privacy-enhanced mode when linking to the content)	
 
 * @rudpot - 2021-07-28 - N/A
+* @taryono - 2021-08-16 - No videos found.
 
 ### Are all included data sets comprised of fake data or open data sets held in places like https://registry.opendata.aws/ (Third party data sets can be referenced in the workshop but should not be included)
 
@@ -154,46 +187,53 @@ If for some reason you only have access to the public site reach out to rudpot@a
 ### Is the workshop self-contained? (Will the workshop function/can it be delivered if your personal accounts are lost)
 
 * @rudpot - 2021-07-28 - Yes
-
+* @taryono - 2021-08-16 - Yes
 
 ## Security
 
 ### Confirm the content does not reference any confidential information, internal tools, or internal-only jargon. (e.g.; internal Amazon systems, employee information, containment scores, etc)s	
 
 * @rudpot - 2021-07-28 - Yes
+* @taryono - 2021-08-16 - Yes
 
 ### If IAM Users or Roles are created, do they have appropriately scoped policies? IAM principals should use AWS-managed policies unless there’s a specific need for a custom policy.	
 
 * @rudpot - 2021-07-28 - Yes – exact scopes still TBD based on EE requirements
+* @taryono - 2021-08-16 - Yes
 
-### Do S3 Buckets restrict public access,  either via S3 Block Public Access or an S3 Bucket Policy?
+### Do S3 Buckets restrict public access, either via S3 Block Public Access or an S3 Bucket Policy?
 
 * @rudpot - 2021-07-28 - N/A
 
 ### Do EC2 Security Groups restrict access to specific source IPs and ports?
 
 * @rudpot - 2021-07-28 - Yes
+* @taryono - 2021-08-16 - Yes
 
 ### Do RDS instances have Public Access disabled?
 
 * @rudpot - 2021-07-28 - Yes
+* @taryono - 2021-08-16 - Yes
 
 ### For configurations that don’t adhere to AWS Well-Architected practices, is there a note that explains why this is done, and a recommendation for a best-practice approach?
 
 * @rudpot - 2021-07-28 - N/A
+* @taryono - 2021-08-16 - Yes, some resources are deliberately configured as non-HA, for experiment purpose, then remediated into best-practice approach.
 
 ### Does sample code (eg Lambda functions) perform only the required actions?
 
 * @rudpot - 2021-07-28 - Yes
+* @taryono - 2021-08-16 - Yes
 
 ### Does sample code run using an IAM role that allows only required actions?
 
 * @rudpot - 2021-07-28 - Yes
+* @taryono - 2021-08-16 - Yes
 
 ### If attendees are asked to enter information, is this anonymised? Personally Identifiable Information (PII) should be avoided unless strictly necessary (for example testing SES may require the attendees enter a valid email address to receive an email).
 
 * @rudpot - 2021-07-28 - N/A
-
+* @taryono - 2021-08-16 - No PII asked
 
 ## Source code, sample data, third party sources, and Open Source
 
@@ -223,27 +263,31 @@ If for some reason you only have access to the public site reach out to rudpot@a
 ### Is the information in the workshop factually correct?
 
 * @rudpot - 2021-07-28 - Yes – to the best of our current knowledge
+* @taryono - 2021-08-16 - Yes
 
 ### Could you complete all the steps in the workshop without error?
 
 * reviewer - YYYY-MM-DD - TBD
+* @taryono - 2021-08-16 - Yes, except DevOps Guru section (TBD for DevOps Guru), and cleanup section. There are errors in cleanup section. See questions related to cleanup above.
 
 ### If you did encounter errors, did the workshop guide help resolve those?	
 
 * reviewer - YYYY-MM-DD - TBD
+* @taryono - 2021-08-16 - Yes
 
 ### Is the workshop specific enough in its instructions, without being verbose? This can be dependent on level. For example, a 100-level workshop may need to walk a customer through all steps of launching an EC2 instance. A 400 level workshop may simply tell a user to launch an EC2 instance using an AmazonLinux2 AMI. Note/list any sections that could be improved.	
 
 * reviewer - YYYY-MM-DD - TBD
+* @taryono - 2021-08-16 - Yes
 
 ### Are there any sections that would be better described with a diagram or image? Minimize the use of AWS Console screenshots. Frequent changes to the AWS Console mean these become outdated, and then cause confusion.	
 
-* reviewer - YYYY-MM-DD - TBD
+* @taryono - 2021-08-16 - All sections are well written, with the right level of diagram, image and AWS Console screenshots usage.
 
 ### Does the workshop avoid rhetorical devices that may be unclear to non-native-language speakers? For example “grab a cup of joe while you wait. Most of the time, it’s faster than a rat up a drainpipe”	
 
 * @rudpot - 2021-08-12 - Yes
-
+* @taryono - 2021-08-16 - Yes
 
 ## Accessibility and Inclusion
 
@@ -262,8 +306,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 
 ### Does the workshop content adhere to Amazon’s Inclusive Tech Guidelines? e.g.: Do not use terms such as blacklist/whitelist, master/slave, etc. 	
 
-* reviewer - YYYY-MM-DD - TBD
-
+* @taryono - 2021-08-16 - Yes
 
 ## Internationalization / multi-language
 
