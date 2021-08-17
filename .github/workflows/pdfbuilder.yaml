@@ -45,7 +45,8 @@ jobs:
           git config --global user.email "rudpot@amazon.com"
           cd .github/workflows/pdfbuilder
           pwd
-          ls -acp merged.pdf ../../../deck/
+          ls -a
+          cp merged.pdf ../../../deck/
           git add ../../../deck/merged.pdf
           git commit -m "PDF renderer `date '+%Y-m-d H:M:S'"
           git push
