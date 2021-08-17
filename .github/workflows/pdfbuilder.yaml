@@ -32,7 +32,7 @@ jobs:
           cd .github/workflows/pdfbuilder
           pwd
           ls -a
-          npm -i
+          npm install
           node example.js
 
       # - name: wget and check
