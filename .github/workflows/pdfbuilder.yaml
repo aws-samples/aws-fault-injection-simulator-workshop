@@ -60,7 +60,7 @@ jobs:
           git add ../../../deck/merged.pdf
           git commit -m "PDF renderer ${DATE}"
           git push --set-upstream origin automation/pdfrender
-          gh auth login
+          echo $GITHUB_TOKEN | gh auth login --with-token
           gh pr create --title "PR for autogen PDF"
 
           
