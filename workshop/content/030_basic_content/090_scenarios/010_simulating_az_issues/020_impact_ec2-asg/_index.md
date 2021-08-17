@@ -360,4 +360,4 @@ Note that the above SSM document example limits itself to affecting the ASG and 
 
 For EC2 instances in ASGs avoid the _exclusive_ use Network Access Control Lists (NACLs) or security groups (SGs) as they will create untypical failure scenarios. In particular NACLs preventing access to an ASG or LB subnet will lead to churn when the ASG tries to spin up new instances and they fail to register as healthy. 
 
-If other aspects of your simulation require using NACLs or SGs we suggest combining them with the prevention autoscaling actions as described in the first workaround section above and/or with the removal of subnets from the ASG as shown in the second example.
+If other aspects of your simulation require using NACLs or SGs we suggest combining them with the prevention Auto Scaling actions as described in the first workaround section above and/or with the removal of subnets from the ASG as shown in the second example.
