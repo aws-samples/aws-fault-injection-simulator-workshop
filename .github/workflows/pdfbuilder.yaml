@@ -22,20 +22,26 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v2
 
-      - name: spider links 
-        run: |
-          wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
-          cat /tmp/run1.log | perl -ne 'if (/URL:([^\s]+\.html)/) { print "$1\n"; }' > /tmp/run1.urls
+      # - name: spider links 
+      #   run: |
+      #     wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
+      #     cat /tmp/run1.log | perl -ne 'if (/URL:([^\s]+\.html)/) { print "$1\n"; }' > /tmp/run1.urls
 
-      - name: convert to pdf
+      # - name: convert to pdf
+      #   run: |
+      #     set -x
+      #     ls -a
+      #     cd .github/workflows/pdfbuilder
+      #     pwd
+      #     ls -a
+      #     npm install
+      #     node example.js
+
+      - name: shim pdf building
         run: |
           set -x
-          ls -a
           cd .github/workflows/pdfbuilder
-          pwd
-          ls -a
-          npm install
-          node example.js
+          date > merged.pdf
 
       # This works in conjunction with actions/checkout@v2
       - name: commit back to repo
@@ -44,6 +50,8 @@ jobs:
           DATE=$( date '+%Y-%m-%d %H:%M:%S' )
           git config --global user.name "pdfrenderer"
           git config --global user.email "rudpot@amazon.com"
+          git remote -v
+          git branch -a
           git checkout main
           cd .github/workflows/pdfbuilder
           pwd
