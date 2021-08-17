@@ -46,7 +46,7 @@ If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-form
 {{% /notice %}}
 
 
-Now, let's generate some load. The invocation above will generate 1000 connections per second for 3 minutes. We expect our website's performance to degrade and for Auto-Scaling to kick in. 
+Now, let's generate some load. The invocation above will generate 1000 connections per second for 3 minutes. We expect our website's performance to degrade and for Auto Scaling to kick in. 
 
 ## Explore impact of load
 
