@@ -11,7 +11,7 @@ Then while our pipeline is running, we will force an error to test that our pipe
 We will be making a change to our CloudFormation template that creates our EC2 Instance and defines our experiment. 
 Open the [AWS CodeCommit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home) and select the ```FIS_Workshop``` repository.
 Click on ```cfn_fis_demos.yaml``` and select edit in the upper right hand corner.
-Edit the file as below to enable a Cloudwatch Alarm as a Stop Condition. 
+Edit the file as below to enable a CloudWatch alarm as a Stop Condition. 
 
 Before:
 {{< img "sourcebefore.png" "Source Before" >}}
