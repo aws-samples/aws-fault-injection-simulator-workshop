@@ -24,6 +24,7 @@ jobs:
       - name: spider links 
         run: |
           wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
+          cat /tmp/run1.log | perl -ne 'if (/URL:([^\s]+\.html)/) { print "$1\n"; }' > /tmp/run1.urls
 
       - name: convert to pdf
         run: |
