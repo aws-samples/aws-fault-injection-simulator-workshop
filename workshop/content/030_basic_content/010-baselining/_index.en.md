@@ -33,7 +33,7 @@ We have a user trying to access a website running on AWS. We have designed it fo
 
 Once you've started the template as described in [**Getting Started**]({{< ref "020_starting_workshop/050_create_stack" >}}) you can navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "FisStackAsg" stack and click on the "Outputs" tab which will show you the server URL:
 
-{{< img "cloudformation.en.png" "Autoscaling group URL" >}}
+{{< img "cloudformation.en.png" "Auto Scaling group URL" >}}
 
 To gain visibility into the user experience from the sysops side we've used the [cloudwatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) to export our web server logs to [cloudwatch logs](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log) and we created [CloudWatch Logs metrics filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) to track server response codes and speeds on a [dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:name=FisDashboard-us-west-2). Note that the dashboard's name is based on the region. If you chose another region the dashboard's name will be different. The dashboard also shows the number of instances in our Auto Scaling Group (ASG).
 
