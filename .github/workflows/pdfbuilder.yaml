@@ -41,6 +41,7 @@ jobs:
       - name: commit back to repo
         run: |
           set -x
+          DATE=$( date '+%Y-m-d H:M:S' )
           git config --global user.name "pdfrenderer"
           git config --global user.email "rudpot@amazon.com"
           cd .github/workflows/pdfbuilder
@@ -48,7 +49,7 @@ jobs:
           ls -a
           cp merged.pdf ../../../deck/
           git add ../../../deck/merged.pdf
-          git commit -m "PDF renderer `date '+%Y-m-d H:M:S'"
+          git commit -m "PDF renderer ${DATE}"
           git push
 
           
