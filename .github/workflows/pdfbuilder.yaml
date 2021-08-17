@@ -37,11 +37,11 @@ jobs:
           npm install
           node example.js
 
-      - name: shim pdf building
-        run: |
-          set -x
-          cd .github/workflows/pdfbuilder
-          date > merged.pdf
+      # - name: shim pdf building
+      #   run: |
+      #     set -x
+      #     cd .github/workflows/pdfbuilder
+      #     date > merged.pdf
 
       # This works in conjunction with actions/checkout@v2
       - name: commit back to repo
