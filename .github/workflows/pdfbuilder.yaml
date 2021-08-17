@@ -41,9 +41,10 @@ jobs:
       - name: commit back to repo
         run: |
           set -x
-          DATE=$( date '+%Y-m-d H:M:S' )
+          DATE=$( date '+%Y-%m-%d %H:%M:%S' )
           git config --global user.name "pdfrenderer"
           git config --global user.email "rudpot@amazon.com"
+          git checkout main
           cd .github/workflows/pdfbuilder
           pwd
           ls -a
