@@ -9,7 +9,7 @@ weight = 10
 In this section we want to ensure that our containerized application running on Amazon ECS is designed in a fault tolerant way, so that even if an instance in the cluster fails our application is still available. Let's validate this:
 
 * **Given**: we have a containerized application running on Amazon ECS exposing a web page.
-* **Hypothesis**: failure of a single container instance will not adversely affect our application. The Web page will continue to be available.
+* **Hypothesis**: failure of a single container instance will not adversely affect our application. The web page will continue to be available.
 
 ## Experiment setup
 
