@@ -21,11 +21,19 @@ jobs:
       - name: checkout remp
         uses: actions/checkout@v2
 
+      - name: spider links 
+        run: |
+          wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
+
       - name: convert to pdf
         run: |
           set -x
+          ls -a
+          cd .github/workflows/pdfbuilder
           pwd
           ls -a
+          npm -i
+          node example.js
 
       # - name: wget and check
       #   run: |
