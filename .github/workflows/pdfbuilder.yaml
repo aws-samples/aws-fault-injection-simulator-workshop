@@ -59,7 +59,7 @@ jobs:
           cp merged.pdf ../../../deck/
           git add ../../../deck/merged.pdf
           git commit -m "PDF renderer ${DATE}"
-          git push
+          git push --set-upstream origin automation/pdfrender
           gh pr create --title "PR for autogen PDF"
 
           
