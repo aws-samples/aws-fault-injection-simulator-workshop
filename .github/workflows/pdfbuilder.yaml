@@ -62,6 +62,6 @@ jobs:
           git push --set-upstream origin automation/pdfrender
           echo ${{ github.token }} | gh auth login --with-token
           git status
-          gh pr create --title "PR for autogen PDF"
+          gh pr create --title "PR for autogen PDF" --body "Pull request for a PDF rendering of workshop created by automation workflow."
 
           
