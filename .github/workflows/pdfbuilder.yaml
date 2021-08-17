@@ -22,20 +22,20 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v2
 
-      # - name: spider links 
-      #   run: |
-      #     wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
-      #     cat /tmp/run1.log | perl -ne 'if (/URL:([^\s]+\.html)/) { print "$1\n"; }' > /tmp/run1.urls
+      - name: spider links 
+        run: |
+          wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
+          cat /tmp/run1.log | perl -ne 'if (/URL:([^\s]+\.html)/) { print "$1\n"; }' > /tmp/run1.urls
 
-      # - name: convert to pdf
-      #   run: |
-      #     set -x
-      #     ls -a
-      #     cd .github/workflows/pdfbuilder
-      #     pwd
-      #     ls -a
-      #     npm install
-      #     node example.js
+      - name: convert to pdf
+        run: |
+          set -x
+          ls -a
+          cd .github/workflows/pdfbuilder
+          pwd
+          ls -a
+          npm install
+          node example.js
 
       - name: shim pdf building
         run: |
