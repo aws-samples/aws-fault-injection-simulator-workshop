@@ -14,20 +14,20 @@ This section relies on the use of SSM Automation documents. Please review the [F
 
 ## Standalone EC2
 
-Standalone EC2 instances can be directly targeted based on avaliability zone placement using the target filter and set `Placement.AvailabilityZone` to the desired availability zone.
+Standalone EC2 instances can be directly targeted based on availability zone placement using the target filter and set `Placement.AvailabilityZone` to the desired availability zone.
 
 ## EC2 with Auto Scaling
 
 
-We can use `Placement.AvailabilityZone` to target instances that are part of an autoscaling grouop as well. However, as mentioned in the [background]({{< ref "010_background" >}}) section, autoscaling groups (ASGs) will try to rebalance instances and will likely create new instances in the "affected" AZ. 
+We can use `Placement.AvailabilityZone` to target instances that are part of an Auto Scaling group as well. However, as mentioned in the [background]({{< ref "010_background" >}}) section, Auto Scaling groups (ASGs) will try to rebalance instances and will likely create new instances in the "affected" AZ. 
 
-### Workaround: prevent autoscaling
+### Workaround: prevent Auto Scaling
 
 If you only need to verify continued availability you can instruct to ASG to [suspend activity](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-suspend-resume-processes.html) and not add any new instances.  
 
 For this we can extend the SSM Automation approach shown in [FIS SSM Start Automation Setup]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}).
 
-Similar to the `aws:ec2:terminate-instances` FIS action, the updated SSM document below will terminate EC2 instances that are members of a specified autoscaling group and are in the selected AZ. Additionally this document will use the Autoscaling API to suspend and re-enable auto-scaling activity: 
+Similar to the `aws:ec2:terminate-instances` FIS action, the updated SSM document below will terminate EC2 instances that are members of a specified Auto Scaling group and are in the selected AZ. Additionally this document will use the Auto Scaling API to suspend and re-enable auto-scaling activity: 
 
 ```yaml
 ---
@@ -40,7 +40,7 @@ parameters:
     description: "(Required) The Availability Zone to impact"
   AutoscalingGroupName:
     type: String
-    description: "(Required) The names of the autoscaling group"
+    description: "(Required) The names of the Auto Scaling group"
   AutomationAssumeRole:
     type: String
     description: "The ARN of the role that allows Automation to perform
@@ -162,7 +162,7 @@ This SSM document requires an SSM role with the following permissions:
 }
 ```
 
-From here follow the "Create FIS Expereiment Template" step shown in [FIS SSM Start Automation Setup]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}) to add this as an action to your FIS experiment.
+From here follow the "Create FIS Experiment Template" step shown in [FIS SSM Start Automation Setup]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}) to add this as an action to your FIS experiment.
 
 ### Workaround: remove AZ from ASG / LB
 
@@ -351,7 +351,7 @@ This SSM document requires an SSM role with the following permissions:
 }
 ```
 
-From here follow the "Create FIS Expereiment Template" step shown in [FIS SSM Start Automation Setup]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}) to add this as an action to your FIS experiment.
+From here follow the "Create FIS Experiment Template" step shown in [FIS SSM Start Automation Setup]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}) to add this as an action to your FIS experiment.
 
 Note that the above SSM document example limits itself to affecting the ASG and relying on the ASG to _cleanly_ drain and remove instances from the LB. You can add extra steps to explicitly terminate instances and/or add NACLs to achieve more extreme failure scenarios on your instances.
 
