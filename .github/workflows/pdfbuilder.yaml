@@ -18,7 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps: 
-      - name: checkout remp
+      # This configures git including credentials and allows push
+      - name: checkout repo
         uses: actions/checkout@v2
 
       - name: spider links 
@@ -36,15 +37,15 @@ jobs:
           npm install
           node example.js
 
-      # - name: wget and check
-      #   run: |
-      #     wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
-      #     echo "List of broken links:"
-      #     if grep -B1 'broken link!' /tmp/run1.log; then
-      #       echo "Found broken links, exit with error"
-      #       exit 1
-      #     else
-      #       echo "Found no broken links"
-      #       exit 0
-      #     fi
+      # This works in conjunction with actions/checkout@v2
+      - name: commit back to repo
+        run: |
+          set -x
+          git config --global user.name "pdfrenderer"
+          git config --global user.email "rudpot@amazon.com"
+          cp merged.pdf ../../../deck/
+          git add ../../../deck/merged.pdf
+          git commit -m "PDF renderer `date '+%Y-m-d H:M:S'"
+          git push
+
           
