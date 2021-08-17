@@ -5,7 +5,7 @@ weight = 20
 
 
 
-This section covers approaches to simulating AZ issues for EC2 instances and autoscaling groups. 
+This section covers approaches to simulating AZ issues for EC2 instances and Auto Scaling groups. 
 
 {{% notice warning %}}
 This section relies on the use of SSM Automation documents. Please review the [FIS SSM Start Automation Setup]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}) when you need additional details.
