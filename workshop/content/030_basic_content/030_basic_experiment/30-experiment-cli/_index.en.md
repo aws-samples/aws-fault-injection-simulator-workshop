@@ -3,7 +3,7 @@ title = "Experiment (CLI)"
 weight = 30
 +++
 
-In this section we will show you how to create an experiment using FIS templates. For clarity we will replicate the same experiment as we set up via the console in the previous section.
+In this section we will show you how to create an experiment using AWS FIS templates. For clarity, we will replicate the same experiment as we previously did via the AWS console.
 
 ## Template overview
 
@@ -156,7 +156,7 @@ Before using this template, please ensure that you replace the ARN for the FIS e
             "description": "Terminate 50% of instances based on Name Tag",
             "parameters": {},
             "targets": {
-                "Instances": "FisWorkshop-AsgInstances"
+                "Instances": "Instances-Target-1"
             }
         },
         "Wait": {
@@ -167,7 +167,7 @@ Before using this template, please ensure that you replace the ARN for the FIS e
         }
     },
     "targets": {
-        "FisWorkshop-AsgInstances": {
+        "Instances-Target-1": {
             "resourceType": "aws:ec2:instance",
             "resourceTags": {
                 "Name": "FisStackAsg/ASG"

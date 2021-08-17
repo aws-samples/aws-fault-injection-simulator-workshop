@@ -23,7 +23,7 @@ The CloudFormation template uses the same format as the API but capitalizes the 
             "Description": "Terminate 50% of instances based on Name Tag",
             "Parameters": {},
             "Targets": {
-                "Instances": "FisWorkshop-AsgInstances"
+                "Instances": "Instances-Target-1"
             }
         },
         "Wait": {
@@ -34,7 +34,7 @@ The CloudFormation template uses the same format as the API but capitalizes the 
         }
     },
     "Targets": {
-        "FisWorkshop-AsgInstances": {
+        "Instances-Target-1": {
             "ResourceType": "aws:ec2:instance",
             "ResourceTags": {
                 "Name": "FisStackAsg/ASG"
@@ -71,7 +71,7 @@ We can wrap this into the `Resources` section of a [CloudFormation template](htt
                         "Description": "Terminate 50% of instances based on Name Tag",
                         "Parameters": {},
                         "Targets": {
-                            "Instances": "FisWorkshop-AsgInstances"
+                            "Instances": "Instances-Target-1"
                         }
                     },
                     "Wait": {
@@ -82,7 +82,7 @@ We can wrap this into the `Resources` section of a [CloudFormation template](htt
                     }
                 },
                 "Targets": {
-                    "FisWorkshop-AsgInstances": {
+                    "Instances-Target-1": {
                         "ResourceType": "aws:ec2:instance",
                         "ResourceTags": {
                             "Name": "FisStackAsg/ASG"
