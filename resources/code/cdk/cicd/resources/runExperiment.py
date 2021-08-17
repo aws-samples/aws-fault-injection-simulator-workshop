@@ -43,7 +43,7 @@ def getExperimentTemplateID(experiment):
     print("Getting experiment template for " + experiment)
     templates = fisClient.list_experiment_templates()
     for template in templates['experimentTemplates']:
-        if(template['tags']['Name'] == experiment):
+        if('Name' in template['tags'] and template['tags']['Name'] == experiment):
             print("Found template with ID [" + template['id'] + "]")
             return template['id']
 
