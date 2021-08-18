@@ -45,11 +45,14 @@ jobs:
           npm view npm-check-updates version
           aws --version
 
+      # Test with an offline CDK synth ... it's a bit hacky ... 
+      # and we need to inject fake context data but 
       - name: fix package files and check synth
         run: |
           set -x
           export CDK_DEFAULT_ACCOUNT=238810465798
           export CDK_DEFAULT_REGION=us-west-2
+          aws configure set region ${CDK_DEFAULT_REGION}
           CDKDIRS=$( ls resources/templates/*/package*.json | sed 's#/[^/]*$##' | uniq )
           tar -xvzf .github/workflows/npmfixer.context.tar.gz 
           for dir in ${CDKDIRS}; do
