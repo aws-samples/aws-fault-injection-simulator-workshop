@@ -22,29 +22,53 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v2
 
-      - name: fix package files 
+      - name: install pre-reqs
         run: |
           set -x
-          echo NPM stuff goes here
+          nvm install stable
+          npm install -g typescript
+          npm install -g aws-cdk
+          npm install -g npm-check-updates
+          #
+          nvm version
+          npm version
+          npm view typescript version
+          npm view aws-cdk version
+          cdk --version
+          npm view npm-check-updates version
 
-      - name: validate new files will CDK synth
+      - name: fix package files and check synth
         run: |
           set -x
-          echo CDK stuff goes here
+          CDKDIRS=$( resources/templates/*/package*.json | sed 's#/[^/]*$##' | uniq )
+          for dir in ${CDKDIRS}; do
+            (
+              echo ------------------------------------------
+              echo $dir
+              echo ------------------------------------------
+              cd $dir
+              rm -rf node_modules package-lock.json
+              ncu -u
+              cdk synth
+            )
+          done
 
-      # # This works in conjunction with actions/checkout@v2
-      # - name: commit back to repo
-      #   run: |
-      #     set -x
-      #     DATE=$( date '+%Y-%m-%d %H:%M:%S' )
-      #     RENDER_BRANCH=automation/npm-fixes
-      #     git config --global user.name "npmfixer"
-      #     git config --global user.email "rudpot@amazon.com"
-      #     git fetch origin
-      #     git checkout main
-      #     git pull
-      #     git branch -a | fgrep ${RENDER_BRANCH} && git checkout ${RENDER_BRANCH} || git checkout -b ${RENDER_BRANCH}
-      #     cp /tmp/merged.pdf deck/merged.pdf
+
+
+      # This works in conjunction with actions/checkout@v2
+      - name: commit back to repo
+        run: |
+          set -x
+          DATE=$( date '+%Y-%m-%d %H:%M:%S' )
+          RENDER_BRANCH=automation/npm-fixes
+          git config --global user.name "npmfixer"
+          git config --global user.email "rudpot@amazon.com"
+          git fetch origin
+          git checkout main
+          git pull
+          git branch -a | fgrep ${RENDER_BRANCH} && git checkout ${RENDER_BRANCH} || git checkout -b ${RENDER_BRANCH}
+          git status
+          git diff
       #     git add deck/merged.pdf
       #     git commit -m "PDF renderer ${DATE}"
       #     git push --set-upstream origin ${RENDER_BRANCH}
