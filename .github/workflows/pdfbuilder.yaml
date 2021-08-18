@@ -24,16 +24,14 @@ jobs:
 
       - name: spider links 
         run: |
+          set -x
           wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
           cat /tmp/run1.log | perl -ne 'if (/URL:([^\s]+\.html)/) { print "$1\n"; }' > /tmp/run1.urls
 
       - name: convert to pdf
         run: |
           set -x
-          ls -a
           cd .github/workflows/pdfbuilder
-          pwd
-          ls -a
           npm install
           node example.js
           mv merged.pdf /tmp/merged.pdf
@@ -55,7 +53,7 @@ jobs:
           git checkout main
           git branch -a | fgrep 'automation/pdfrender' && git checkout automation/pdfrender || git checkout -b automation/pdfrender
           cp /tmp/merged.pdf deck/merged.pdf
-          git deck/merged.pdf
+          git add deck/merged.pdf
           git commit -m "PDF renderer ${DATE}"
           git push --set-upstream origin automation/pdfrender
           echo ${{ github.token }} | gh auth login --with-token
