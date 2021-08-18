@@ -5,4 +5,4 @@ phases:
       - pip install boto3
   build:
     commands:
-      - python3 runExperiment.py StopStartInstanceById
+      - python3 runExperiment.py StopStartInstanceById ${CODEBUILD_RESOLVED_SOURCE_VERSION}
