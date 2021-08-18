@@ -48,6 +48,7 @@ jobs:
         run: |
           set -x
           CDKDIRS=$( ls resources/templates/*/package*.json | sed 's#/[^/]*$##' | uniq )
+          tar -xvzf .github/workflows/npmfixer.context.tar.gz 
           for dir in ${CDKDIRS}; do
             (
               echo ------------------------------------------
