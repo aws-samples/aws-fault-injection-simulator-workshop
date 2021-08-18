@@ -1,0 +1,17 @@
+Description: FIS Workshop deployment template
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  EEAssetsBucket:
+    Description: S3 bucket for template assets.
+    Type: String
+  EEAssetsKeyPrefix:
+    Description: S3 prefix for template assets.
+    Type: String
+Resources:
+  vpcStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Tags:
+        - Key: "Event"
+          Value: "FIS-Workshop"
+      TemplateURL: !Join [ "/",["https://s3.amazonaws.com",!Ref EEAssetsBucket,!Ref EEAssetsKeyPrefix,"templates",vpc_stack.template ] ]

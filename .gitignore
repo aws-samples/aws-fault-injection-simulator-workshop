@@ -7,3 +7,4 @@ resources/_gen
 .DS_Store
 .vscode/*
 resources/templates/eks/outputs.json
+.python-version
