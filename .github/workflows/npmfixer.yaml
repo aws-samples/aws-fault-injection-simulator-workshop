@@ -31,12 +31,13 @@ jobs:
         run: |
           set -x
           # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-          nvm install stable
+          # nvm install stable
           npm install -g typescript
           npm install -g aws-cdk
           npm install -g npm-check-updates
           #
-          nvm version
+          # nvm version
+          node --version
           npm version
           npm view typescript version
           npm view aws-cdk version
