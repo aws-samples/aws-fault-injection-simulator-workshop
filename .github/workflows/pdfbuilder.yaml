@@ -47,15 +47,17 @@ jobs:
         run: |
           set -x
           DATE=$( date '+%Y-%m-%d %H:%M:%S' )
+          RENDER_BRANCH=automation/pdf-render
           git config --global user.name "pdfrenderer"
           git config --global user.email "rudpot@amazon.com"
           git fetch origin
           git checkout main
-          git branch -a | fgrep 'automation/pdfrender' && git checkout automation/pdfrender || git checkout -b automation/pdfrender
+          git pull
+          git branch -a | fgrep ${RENDER_BRANCH} && git checkout ${RENDER_BRANCH} || git checkout -b ${RENDER_BRANCH}
           cp /tmp/merged.pdf deck/merged.pdf
           git add deck/merged.pdf
           git commit -m "PDF renderer ${DATE}"
-          git push --set-upstream origin automation/pdfrender
+          git push --set-upstream origin ${RENDER_BRANCH}
           echo ${{ github.token }} | gh auth login --with-token
           # Can't see a way to check if there is a PR already so this will "fail"
           gh pr create --title "PR for autogen PDF" --body "Pull request for a PDF rendering of workshop created by automation workflow."
