@@ -47,7 +47,7 @@ jobs:
       - name: fix package files and check synth
         run: |
           set -x
-          CDKDIRS=$( resources/templates/*/package*.json | sed 's#/[^/]*$##' | uniq )
+          CDKDIRS=$( ls resources/templates/*/package*.json | sed 's#/[^/]*$##' | uniq )
           for dir in ${CDKDIRS}; do
             (
               echo ------------------------------------------
