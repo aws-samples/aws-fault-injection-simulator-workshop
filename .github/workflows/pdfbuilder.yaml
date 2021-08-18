@@ -36,6 +36,7 @@ jobs:
           ls -a
           npm install
           node example.js
+          mv merged.pdf /tmp/merged.pdf
 
       # - name: shim pdf building
       #   run: |
@@ -50,18 +51,15 @@ jobs:
           DATE=$( date '+%Y-%m-%d %H:%M:%S' )
           git config --global user.name "pdfrenderer"
           git config --global user.email "rudpot@amazon.com"
-          git remote -v
-          git fetch origin          
+          git fetch origin
+          git checkout main
           git branch -a | fgrep 'automation/pdfrender' && git checkout automation/pdfrender || git checkout -b automation/pdfrender
-          cd .github/workflows/pdfbuilder
-          pwd
-          ls -a
-          cp merged.pdf ../../../deck/
-          git add ../../../deck/merged.pdf
+          cp /tmp/merged.pdf deck/merged.pdf
+          git deck/merged.pdf
           git commit -m "PDF renderer ${DATE}"
           git push --set-upstream origin automation/pdfrender
           echo ${{ github.token }} | gh auth login --with-token
-          git status
+          # Can't see a way to check if there is a PR already so this will "fail"
           gh pr create --title "PR for autogen PDF" --body "Pull request for a PDF rendering of workshop created by automation workflow."
 
           
