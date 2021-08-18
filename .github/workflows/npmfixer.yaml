@@ -22,10 +22,15 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v2
 
+      - name: install node / nvm
+        uses: actions/setup-node@v2
+        with: 
+          node-version: 16
+
       - name: install pre-reqs
         run: |
           set -x
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+          # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
           nvm install stable
           npm install -g typescript
           npm install -g aws-cdk
