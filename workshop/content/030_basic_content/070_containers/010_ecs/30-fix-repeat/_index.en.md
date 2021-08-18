@@ -14,7 +14,7 @@ In our ECS configuration we have chosen to use EC2 with an auto scaling group as
 
 {{< img "auto-scaling-group-details.en.png" "Auto Scaling Group Details" >}}
 
-In the lower pane, in the **Details** tab, click the **Edit** button.
+In the lower pane, in the **Details** tab and under **Group details** section, click the **Edit** button.
 
 - Change the current settings for "minimum" to `2` to ensure we always have at least 2 instances available for redundancy. Note: if you only increase "desired" and "maximum" then the scaling policy for the auto scaling group could decrease the "desired" value back to `1` during low load periods.
 

@@ -37,8 +37,11 @@ When it comes up, customize the environment by:
 ### Increase the disk size on the Cloud9 instance
 
 {{% notice info %}}
-Some commands we will run require more than the default disk allocation on a cloud9 workspace. The following command adds more disk space to the root volume of the EC2 instance that Cloud9 runs on. Once the command completes, we reboot the instance and it could take a minute or two for the IDE to come back online.
+Some commands we will run require more than the default disk allocation on a cloud9 workspace. The following command adds more disk space to the root volume of the EC2 instance that Cloud9 runs on. 
 {{% /notice %}}
+
+Copy/Paste the following code in your cloud9 terminal (you can paste the whole block at once).  
+Once the command completes, we reboot the instance and it could take a minute or two for the IDE to come back online.
 
 ```bash
 pip3 install --user --upgrade boto3
@@ -78,6 +81,8 @@ fi
 {{% notice info %}}
 The instructions in this workshop assume you are using a bash shell in a linux-like environment. They also rely on a number of tools. Follow these instructions to install the required tools in a cloud9 workspace:
 {{% /notice %}}
+
+Copy/Paste the following code in your cloud9 terminal (you can paste the whole block at once).
 
 ```bash
 # Update to the latest stable release of npm and nodejs.

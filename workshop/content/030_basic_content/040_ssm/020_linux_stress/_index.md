@@ -25,7 +25,7 @@ First, lets create our stress experiment. We can do this programmatically but we
 
 4. After we have entered a description and a role, we need to setup our actions. Click on the "Add Action" button in the Actions section. 
 
-Name the Action as `StressCPUViaSSM`, and under "Action Type" select `aws:ssm:send-command/AWSFIS-Run-Cpu-Stress`. This is an out of the box action to run stress test on Linux Instances using the [stress-ng](https://kernel.ubuntu.com/git/cking/stress-ng.git/) tool. Enter a "Name" of `StressCPUViaSSM`, and set the "documentParameters" field to `{"DurationSeconds":120}` which is passed to the script and the "duration" field to `2` which tells FIS how long to wait for a result. Finally click "Save". This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes.
+Name the Action as `StressCPUViaSSM`, and under "Action Type" select `aws:ssm:send-command/AWSFIS-Run-Cpu-Stress`. This is an out of the box action to run stress test on Linux Instances using the [stress-ng](https://kernel.ubuntu.com/git/cking/stress-ng.git/) tool. Set the "documentParameters" field to `{"DurationSeconds":120}` which is passed to the script and the "duration" field to `2` which tells FIS how long to wait for a result. Finally click "Save". This action will use [AWS Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the AWSFIS-Run-Cpu-Stress command document against our targets for two minutes.
 
 {{< img "StressActionSettings.png" "Action Settings" >}}
 

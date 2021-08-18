@@ -3,13 +3,13 @@ title = "Start the Pipeline"
 weight = 30
 +++
 
-To start our pipeline we need to commit files to our CodeCommit repository. 
+To start our pipeline we need to commit files to our CodeCommit repository.  
 The commit action will trigger the pipeline that provisions our infrastructure and then runs our experiment. 
 
 ## Commit Files
 
-Start by cloning the ```FIS_Workshop``` repository.
-Open the [AWS CodeCommit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home). 
+In your cloud9 terminal, start by cloning the ```FIS_Workshop``` repository.  
+Open the [AWS Code Commit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home). 
 Click the HTTPS link next to the repository name. 
 See the below command for an example, when working in the ```US-EAST-1``` region.
 
@@ -52,7 +52,7 @@ Click on the pipeline name to view the step details.
 
 Wait for the infrastructure provisioning step to complete. 
 After this step, our Experiment will start.
-You can monitor the progress of your experiment from both the CodePipeline details page of the [FIS console](https://console.aws.amazon.com/fis/home?#Experiments). 
+You can monitor the progress of your experiment from both the CodePipeline details page or from the [FIS console](https://console.aws.amazon.com/fis/home?#Experiments). 
 
 Click on the running experiment.
 You should see the experiment in a running status. 

@@ -10,7 +10,7 @@ This section requires that you followed the [setup instructions]({{< ref "/020_s
 
 ## Dashboard overview
 
-Navigate to the [DevOps Guru console](https://console.aws.amazon.com/devops-guru/home?#/dashboard). Once enough time has passed for DevOps Guru to generate insigths you should see a dashboard similar to this:
+Navigate to the [DevOps Guru console](https://console.aws.amazon.com/devops-guru/home?#/dashboard). Once enough time has passed for DevOps Guru to generate insights you should see a dashboard similar to this:
 
 {{< img "dashboard.en.png" "DevOps Guru dashboard" >}}
 
