@@ -25,6 +25,8 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-13 - Yes – in intro section
 * @taryono - 2021-08-16 - Yes – in intro section
 * @haeree - 2021-08-17 - Yes – in intro section
+* @gjohnson - 2021-08-18 - Yes – in intro section
+
 
 ### Does the introduction give an expected duration?
 
@@ -32,6 +34,8 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-13 - Yes – in intro section
 * @taryono - 2021-08-16 - Yes – in intro section
 * @haeree - 2021-08-17 - Yes – in intro section
+* @gjohnson - 2021-08-18 - Yes – in intro section
+
 
 ### Does the introduction state the outcomes? (ie what someone completing the workshop will learn)
 
@@ -39,6 +43,8 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-13 - Yes – in intro section
 * @taryono - 2021-08-16 - Yes – in intro section
 * @haeree - 2021-08-17 - Yes – in intro section
+* @gjohnson - 2021-08-18 - Yes – in intro section
+
 
 ### Does the introduction describe the target audience?
 
@@ -46,6 +52,8 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-13 - Yes – in intro section
 * @taryono - 2021-08-16 - Yes – in intro section
 * @haeree - 2021-08-17 - Yes – in intro section
+* @gjohnson - 2021-08-18 - Yes – in intro section
+
 
 ### Does the introduction list or describe any necessary background knowledge? For example, a workshop that deals with databases may need some knowledge of basic SQL commands. A workshop on front-end may require knowledge of Javascript, node.js v14 installed, etc.
 
@@ -53,6 +61,8 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-13 - Yes – in intro section
 * @taryono - 2021-08-16 - Yes – in intro section
 * @haeree - 2021-08-17 - Yes – in intro section
+* @gjohnson - 2021-08-18 - Yes – in intro section
+
 
 ### Does the introduction warn of any costs that may be incurred by the customer?
 
@@ -60,6 +70,8 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-13 - Yes – in intro section
 * @taryono - 2021-08-16 - Yes – in intro section
 * @haeree - 2021-08-17 - Yes – in intro section
+* @gjohnson - 2021-08-18 - Yes – in intro section
+
 
 
 ## Environment setup
@@ -70,6 +82,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### If the workshop integrates with Event Engine, does the workshop include instructions on how to log in via EE. Similarly, if the workshop supports other systems (Qwiklabs, etc) it should provide login instructions for those.
 
@@ -77,12 +90,14 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @rudpot - 2021-08-12 - Yes - description exists and it is is now possible to run the workshop in EE but creating an EE blueprint is still on the backlog
 * @chateauv - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### If the workshop can only use Event Engine, does the front page clearly state that the workshop can only be used at AWS-run events?
                                                                 
 * @rudpot - 2021-07-28 - N/A
 * @chateauv - 2021-08-16 - N/A
 * @haeree - 2021-08-17 - N/A
+* @gjohnson - 2021-08-18 - N/A
 
 ### Does the workshop include steps to set up local prerequisites? For example, an attendee may need to install things like node, python, an SSH client, or a Cloud9 environment, etc.
 
@@ -90,6 +105,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes - Cloud9 + local tools (AWS CLI, SM plugin, ...)
 * @taryono - 2021-08-16 - Yes - the workshop uses Cloud9 and explains how to configure additional requirements
 * @haeree - 2021-08-17 - Yes - the workshop uses Cloud9 and explains how to configure additional requirements
+* @gjohnson - 2021-08-18 - Yes
 
 ### If the workshop runs only in specific regions, are these clearly listed?
 
@@ -97,6 +113,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 
 ## Environment clean-up
@@ -108,6 +125,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### Are the instructions at the right level of detail? For example, a 100-level workshop may need to walk a customer through all steps of terminating an EC2 instance. A 400-level workshop may simply tell a user to terminate EC2 instances the user created during the workshop.
 
@@ -115,6 +133,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### Are the clean-up steps specific to the resources created in the workshop? Generalisations like “terminate all EC2 instances” could have unintended consequences.
 
@@ -122,6 +141,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### Are the steps specific to the user? If more than one person is sharing an AWS account, generalisations like “terminate all EC2 instances” could have unintended consequences.
 
@@ -130,6 +150,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### Are deliberately retained resources explained? For example, the workshop may deliberately retain an S3 bucket holding the results of a process.
 
@@ -143,6 +164,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
     * RDS Snapshots
     * S3 buckets: `cdktoolkit-` and `cicdstack-fispipelineartifactsbucket-`
 * @haeree - 2021-08-17 - The retained resources - The resources retained - SSM document `TerminateAsgInstancesWithSsm` 
+* @gjohnson - 2021-08-18 - Yes
 
 ### If resources are being retained, is there an explicit comment about costs those resources may incur?
 
@@ -150,6 +172,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - N/A
 * @taryono - 2021-08-16 - The retained resources are mentioned explicitly, but no explicit comment about cost. See: 030_basic_content/990_cleanup
 * @haeree - 2021-08-17 - N/A
+* @gjohnson - 2021-08-18 - N/A
 
 ### If clean-up instructions ask the user to delete a CloudFormation Stack, does this delete all resources in the stack?
 
@@ -161,11 +184,13 @@ If for some reason you only have access to the public site reach out to rudpot@a
     * Key: `Name`, Value: `FisExampleStack/instance-0`
 * @taryono - 2021-08-16 - See previous questions for some resources that is not being cleaned up.
 * @haeree - 2021-08-17 - See previous questions for some resources that is not being cleaned up.
+* @gjohnson - 2021-08-18 - See previous questions for some resources that is not being cleaned up.
 
 ####  CloudFormation stack deletion fail to remove some resources, like non-empty S3 buckets. These could then incur ongoing costs and/or raise possible future security risks.
 
 * @rudpot - 2021-07-28 - TBD
 * @chateauv - 2021-08-16 - Updated the stack to destroy DB snapshots on DB removal
+* @gjohnson - 2021-08-18 - See fix by @chateauv
 
 #### Often a stack provides a workshop’s starting state, and other resources are then created via the console.
 
@@ -173,6 +198,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @rudpot - 2021-08-12 - Yes – additional comments added for optionally created resources
 * @chateauv - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### Does the workshop reference/link to the clean-up steps in the introduction or setup chapters? If someone cannot complete the workshop, they should still know about the existence of clean-up steps. They should not need to complete the workshop before being told of clean-up steps.	
 
@@ -180,6 +206,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ## Well-architected workshop infrastructure
 
@@ -189,6 +216,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### Will resources scale with demand? For example: are EC2 instances deployed within an ASG?
 
@@ -196,6 +224,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### For any resources that are not deployed in a redundant, scalable, cost-efficient manner: Is there a comment that this choice is deliberate?	
 
@@ -203,6 +232,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ## External links and privacy
 
@@ -212,6 +242,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @rudpot - 2021-08-12 - Yes - Verified that this works in public deployment
 * @chateauv - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### Do all images used in this workshop have a CC0 license? 
 
@@ -223,6 +254,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @rudpot - 2021-08-12 - Yes - Event outfitters pulls directly from GitHub repo
 * @chateauv - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes, GitHub
 
 ### Do links to any Youtube videos use the Hugo “Youtube” shortcode? (This allows us to enforce privacy-enhanced mode when linking to the content)	
 
@@ -230,6 +262,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - N/A
 * @taryono - 2021-08-16 - No videos found.
 * @haeree - 2021-08-17 - N/A
+* @gjohnson - 2021-08-18 - N/A
 
 ### Are all included data sets comprised of fake data or open data sets held in places like https://registry.opendata.aws/ (Third party data sets can be referenced in the workshop but should not be included)
 
@@ -242,6 +275,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ## Security
 
@@ -251,6 +285,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### If IAM Users or Roles are created, do they have appropriately scoped policies? IAM principals should use AWS-managed policies unless there’s a specific need for a custom policy.	
 
@@ -258,12 +293,14 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### Do S3 Buckets restrict public access, either via S3 Block Public Access or an S3 Bucket Policy?
 
 * @rudpot - 2021-07-28 - N/A
 * @chateauv - 2021-08-16 - N/A
 * @haeree - 2021-08-17 - N/A
+* @gjohnson - 2021-08-18 - N/A
 
 ### Do EC2 Security Groups restrict access to specific source IPs and ports?
 
@@ -271,6 +308,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### Do RDS instances have Public Access disabled?
 
@@ -278,6 +316,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### For configurations that don’t adhere to AWS Well-Architected practices, is there a note that explains why this is done, and a recommendation for a best-practice approach?
 
@@ -285,6 +324,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - N/A
 * @taryono - 2021-08-16 - Yes, some resources are deliberately configured as non-HA, for experiment purpose, then remediated into best-practice approach.
 * @haeree - 2021-08-17 - N/A
+* @gjohnson - 2021-08-18 - N/A
 
 ### Does sample code (eg Lambda functions) perform only the required actions?
 
@@ -292,6 +332,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### Does sample code run using an IAM role that allows only required actions?
 
@@ -299,6 +340,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - Yes
 * @taryono - 2021-08-16 - Yes
 * @haeree - 2021-08-17 - Yes
+* @gjohnson - 2021-08-18 - Yes
 
 ### If attendees are asked to enter information, is this anonymised? Personally Identifiable Information (PII) should be avoided unless strictly necessary (for example testing SES may require the attendees enter a valid email address to receive an email).
 
@@ -306,6 +348,7 @@ If for some reason you only have access to the public site reach out to rudpot@a
 * @chateauv - 2021-08-16 - N/A
 * @taryono - 2021-08-16 - No PII asked
 * @haeree - 2021-08-17 - N/A
+* @gjohnson - 2021-08-18 - No information collected.
 
 ## Source code, sample data, third party sources, and Open Source
 
