@@ -4,9 +4,9 @@ name: PdfRender
 
 # Controls when the workflow will run
 on:
-  # schedule:
-  #   # Run daily at ~8am MT
-  #   - cron: '0 14 * * *'
+  schedule:
+    # Run weekly on Friday at ~8am MT - infrequent runs to allow merging PRs
+    - cron: '0 14 * * FRI'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -60,6 +60,6 @@ jobs:
           git push --set-upstream origin ${RENDER_BRANCH}
           echo ${{ github.token }} | gh auth login --with-token
           # Can't see a way to check if there is a PR already so this will "fail"
-          gh pr create --title "PR for autogen PDF" --body "Pull request for a PDF rendering of workshop created by automation workflow."
+          gh pr create --title "PR for autogen PDF" --body "Pull request for a PDF rendering of workshop created by automation workflow. This should only change a SINGLE FILE, deck/merged.pdf. If it changes anything other than that, reject the PR and review automation"
 
           
