@@ -43,10 +43,13 @@ jobs:
           npm view aws-cdk version
           cdk --version
           npm view npm-check-updates version
+          aws --version
 
       - name: fix package files and check synth
         run: |
           set -x
+          export CDK_DEPLOY_ACCOUNT=238810465798
+          export CDK_DEPLOY_REGION=us-east-2
           CDKDIRS=$( ls resources/templates/*/package*.json | sed 's#/[^/]*$##' | uniq )
           tar -xvzf .github/workflows/npmfixer.context.tar.gz 
           for dir in ${CDKDIRS}; do
