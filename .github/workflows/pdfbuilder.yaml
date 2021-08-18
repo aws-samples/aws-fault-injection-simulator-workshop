@@ -1,0 +1,65 @@
+# This is a basic workflow to help you get started with Actions
+
+name: PdfRender
+
+# Controls when the workflow will run
+on:
+  schedule:
+    # Run weekly on Friday at ~8am MT - infrequent runs to allow merging PRs
+    - cron: '0 14 * * FRI'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # Run linck checker
+  pdfrender:
+    runs-on: ubuntu-latest
+    
+    steps: 
+      # This configures git including credentials and allows push
+      - name: checkout repo
+        uses: actions/checkout@v2
+
+      - name: spider links 
+        run: |
+          set -x
+          wget --spider -r -nd -nv  https://chaos-engineering.workshop.aws/ -o /tmp/run1.log
+          cat /tmp/run1.log | perl -ne 'if (/URL:([^\s]+\.html)/) { print "$1\n"; }' > /tmp/run1.urls
+
+      - name: convert to pdf
+        run: |
+          set -x
+          cd .github/workflows/pdfbuilder
+          npm install
+          node example.js
+          mv merged.pdf /tmp/merged.pdf
+
+      # - name: shim pdf building
+      #   run: |
+      #     set -x
+      #     cd .github/workflows/pdfbuilder
+      #     date > merged.pdf
+
+      # This works in conjunction with actions/checkout@v2
+      - name: commit back to repo
+        run: |
+          set -x
+          DATE=$( date '+%Y-%m-%d %H:%M:%S' )
+          RENDER_BRANCH=automation/pdf-render
+          git config --global user.name "pdfrenderer"
+          git config --global user.email "rudpot@amazon.com"
+          git fetch origin
+          git checkout main
+          git pull
+          git branch -a | fgrep ${RENDER_BRANCH} && git checkout ${RENDER_BRANCH} || git checkout -b ${RENDER_BRANCH}
+          cp /tmp/merged.pdf deck/merged.pdf
+          git add deck/merged.pdf
+          git commit -m "PDF renderer ${DATE}"
+          git push --set-upstream origin ${RENDER_BRANCH}
+          echo ${{ github.token }} | gh auth login --with-token
+          # Can't see a way to check if there is a PR already so this will "fail"
+          gh pr create --title "PR for autogen PDF" --body "Pull request for a PDF rendering of workshop created by automation workflow. This should only change a SINGLE FILE, deck/merged.pdf. If it changes anything other than that, reject the PR and review automation"
+
+          
