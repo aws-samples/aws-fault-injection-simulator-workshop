@@ -66,6 +66,8 @@ jobs:
       # This configures git including credentials and allows push
       - name: checkout repo
         uses: actions/checkout@v2
+        with:
+          ref: main
 
       - name: install node / nvm
         uses: actions/setup-node@v2
@@ -123,9 +125,9 @@ jobs:
           RENDER_BRANCH=automation/npm-fixes
           git config --global user.name "npmfixer"
           git config --global user.email "rudpot@amazon.com"
-          git fetch origin
-          git checkout main
-          git pull
+          # git fetch origin
+          # git checkout main
+          # git pull
           git branch -a | fgrep ${RENDER_BRANCH} && git checkout ${RENDER_BRANCH} || git checkout -b ${RENDER_BRANCH}
           git status
           git diff
