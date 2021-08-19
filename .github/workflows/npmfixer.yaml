@@ -137,5 +137,3 @@ jobs:
           echo ${{ github.token }} | gh auth login --with-token
           # Can't see a way to check if there is a PR already so this will "fail"
           gh pr create --title "PR for autogen NPM update" --body "Pull request for automatically updated CDK version and NPM dependencies. This should only change a package.json and package-lock.json files. If it changes anything other than that, reject the PR and review automation"
-
-          
