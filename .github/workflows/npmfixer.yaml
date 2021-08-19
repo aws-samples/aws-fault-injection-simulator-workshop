@@ -1,12 +1,52 @@
-# This is a basic workflow to help you get started with Actions
+# This workflow will update the package.json and package-lock.json files
+# in known CDK directories. This should help prevent/address most of the 
+# dependabot alerts. 
+#
+# This does some light validation to make sure we didn't break CDK
+# by doing a CDK synth. For this to work we have to submit fake context
+# information. To get this context information do the following:
+#
+# * checkout the repo and deploy to a real account as per README / workshop
+#
+# * note the AWS account ID and region of the profile you used
+#
+# * replace any account / region information in the generated context files
+#
+#     MY_ACCOUNT_ID=987654321098
+#     MY_DEPLOY_REGION=us-east-1
+#     cd aws-fault-injection-simulator
+#     tar -cf - \
+#       resources/templates/*/*context*.json \
+#       resources/code/cdk/cicd/*context*.json \
+#       | tar -C /tmp/ -xf -
+#     cd /tmp
+#     sed -i -e 's/'${MY_ACCOUNT_ID}'/111122223333/g; s/'${MY_DEPLOY_REGION}'/us-west-2/g' \
+#       resources/templates/*/*context*.json \
+#       resources/code/cdk/cicd/*context*.json
+#     rm \
+#       resources/templates/*/*context*.json-e \
+#       resources/code/cdk/cicd/*context*.json-e
+#     cd - 
+#     tar -C /tmp -czf .github/workflows/npmfixer.context.tar.gz \
+#       resources/templates/*/*context*.json \
+#       resources/code/cdk/cicd/*context*.json 
+#
+# * Add and commit the updated file - needs github admin rights
+#
+#   git checkout -b user/update-context
+#   git add .github/workflows/npmfixer.context.tar.gz
+#   git commit -m "Add updated context files"
+#   git push
+#
+# * open a pull request on github
 
 name: NpmFixer
 
 # Controls when the workflow will run
 on:
-  # schedule:
-  #   # Run weekly on Friday at ~8am MT - infrequent runs to allow merging PRs
-  #   - cron: '0 14 * * FRI'
+  schedule:
+    # Run weekly on Friday at ~8am MT - infrequent runs to allow merging PRs
+    - cron: '0 14 * * FRI'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -19,6 +59,9 @@ jobs:
     
     env:
       PKG_SELECTOR: resources/templates/*/package*.json resources/code/cdk/cicd/package*.json
+      FAKE_ACCOUNT: 111122223333
+      FAKE_REGION: us-west-2
+
     steps: 
       # This configures git including credentials and allows push
       - name: checkout repo
@@ -52,8 +95,8 @@ jobs:
       - name: fix package files and check synth
         run: |
           set -x
-          export CDK_DEFAULT_ACCOUNT=238810465798
-          export CDK_DEFAULT_REGION=us-west-2
+          export CDK_DEFAULT_ACCOUNT=${{ env.FAKE_ACCOUNT }}
+          export CDK_DEFAULT_REGION=${{ env.FAKE_REGION }}
           aws configure set region ${CDK_DEFAULT_REGION}
           CDKDIRS=$( ls ${{ env.PKG_SELECTOR }} | sed 's#/[^/]*$##' | uniq )
           tar -xvzf .github/workflows/npmfixer.context.tar.gz 
