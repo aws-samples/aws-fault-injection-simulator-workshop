@@ -55,7 +55,7 @@ jobs:
           export CDK_DEFAULT_ACCOUNT=238810465798
           export CDK_DEFAULT_REGION=us-west-2
           aws configure set region ${CDK_DEFAULT_REGION}
-          CDKDIRS=$( ls ${{ env.PKG_ELECTOR }} | sed 's#/[^/]*$##' | uniq )
+          CDKDIRS=$( ls ${{ env.PKG_SELECTOR }} | sed 's#/[^/]*$##' | uniq )
           tar -xvzf .github/workflows/npmfixer.context.tar.gz 
           for dir in ${CDKDIRS}; do
             (
@@ -86,7 +86,7 @@ jobs:
           git branch -a | fgrep ${RENDER_BRANCH} && git checkout ${RENDER_BRANCH} || git checkout -b ${RENDER_BRANCH}
           git status
           git diff
-          git add ${{ env.PKG_ELECTOR }}
+          git add ${{ env.PKG_SELECTOR }}
           git commit -m "NPM fixer ${DATE}"
           git push --set-upstream origin ${RENDER_BRANCH}
           echo ${{ github.token }} | gh auth login --with-token
