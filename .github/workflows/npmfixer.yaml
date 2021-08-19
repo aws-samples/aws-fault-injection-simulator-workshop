@@ -17,6 +17,8 @@ jobs:
   npmfixer:
     runs-on: ubuntu-latest
     
+    env:
+      PKG_SELECTOR: resources/templates/*/package*.json resources/code/cdk/cicd/package*.json
     steps: 
       # This configures git including credentials and allows push
       - name: checkout repo
@@ -53,7 +55,7 @@ jobs:
           export CDK_DEFAULT_ACCOUNT=238810465798
           export CDK_DEFAULT_REGION=us-west-2
           aws configure set region ${CDK_DEFAULT_REGION}
-          CDKDIRS=$( ls resources/templates/*/package*.json | sed 's#/[^/]*$##' | uniq )
+          CDKDIRS=$( ls ${{ env.PKG_ELECTOR }} | sed 's#/[^/]*$##' | uniq )
           tar -xvzf .github/workflows/npmfixer.context.tar.gz 
           for dir in ${CDKDIRS}; do
             (
@@ -84,11 +86,11 @@ jobs:
           git branch -a | fgrep ${RENDER_BRANCH} && git checkout ${RENDER_BRANCH} || git checkout -b ${RENDER_BRANCH}
           git status
           git diff
-      #     git add deck/merged.pdf
-      #     git commit -m "PDF renderer ${DATE}"
-      #     git push --set-upstream origin ${RENDER_BRANCH}
-      #     echo ${{ github.token }} | gh auth login --with-token
-      #     # Can't see a way to check if there is a PR already so this will "fail"
-      #     gh pr create --title "PR for autogen PDF" --body "Pull request for a PDF rendering of workshop created by automation workflow. This should only change a SINGLE FILE, deck/merged.pdf. If it changes anything other than that, reject the PR and review automation"
+          git add ${{ env.PKG_ELECTOR }}
+          git commit -m "NPM fixer ${DATE}"
+          git push --set-upstream origin ${RENDER_BRANCH}
+          echo ${{ github.token }} | gh auth login --with-token
+          # Can't see a way to check if there is a PR already so this will "fail"
+          gh pr create --title "PR for autogen NPM update" --body "Pull request for automatically updated CDK version and NPM dependencies. This should only change a package.json and package-lock.json files. If it changes anything other than that, reject the PR and review automation"
 
           
