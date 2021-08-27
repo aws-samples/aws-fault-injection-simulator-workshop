@@ -57,5 +57,5 @@ Many workshops focus on "click here", replicating a lot procedural instructions.
 We are currently developing these:
 
 * References to other sections should be bolded `[**Section Name**]({{< ref ... >}})`
-* Strings that are entered into the UI should be enclosed in backticks, e.g.  `\`Name\`` to render as `Name`
+* Strings that are entered into the UI should be enclosed in backticks, e.g.  `` `Name` `` to render as `Name`
 * 
