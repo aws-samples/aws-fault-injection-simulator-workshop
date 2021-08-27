@@ -3,7 +3,7 @@ title = "Baselining and Monitoring"
 weight = 10
 +++
 
-Before we start down injecting faults into our system we should consider the following thought experiment:
+Before we start injecting faults into our system we should consider the following thought experiment:
 
 _"If a tree falls in a forest and no one is around to hear it, does it make a sound?"_
  
@@ -29,7 +29,7 @@ Before starting our first fault injection experiment, let's take a look at our m
 
 {{< img "BasicASG-with-user.png" "Image of architecture to be injected with chaos" >}}
 
-We have a user trying to access a website running on AWS. We have designed it for high availability. We used EC2 instances with an auto scaling group and a load balancer to ensure that users can always reach our website even under heavy load or if an instance suddenly fails.
+We have a user trying to access a website running on AWS. We have designed it for high availability. We used EC2 instances with an Auto Scaling group and a load balancer to ensure that users can always reach our website even under heavy load or if an instance suddenly fails.
 
 Once you've started the template as described in [**Getting Started**]({{< ref "020_starting_workshop/050_create_stack" >}}) you can navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "FisStackAsg" stack and click on the "Outputs" tab which will show you the server URL:
 

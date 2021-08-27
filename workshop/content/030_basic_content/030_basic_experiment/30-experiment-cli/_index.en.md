@@ -156,7 +156,7 @@ Before using this template, please ensure that you replace the ARN for the FIS e
             "description": "Terminate 50% of instances based on Name Tag",
             "parameters": {},
             "targets": {
-                "Instances": "Instances-Target-1"
+                "Instances": "FisWorkshopAsg-50Percent"
             }
         },
         "Wait": {
@@ -167,7 +167,7 @@ Before using this template, please ensure that you replace the ARN for the FIS e
         }
     },
     "targets": {
-        "Instances-Target-1": {
+        "FisWorkshopAsg-50Percent": {
             "resourceType": "aws:ec2:instance",
             "resourceTags": {
                 "Name": "FisStackAsg/ASG"

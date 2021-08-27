@@ -4,13 +4,13 @@ chapter = true
 weight = 10
 +++
 
-This workshop provides an introduction to chaos engineering using AWS tooling, with a focus on AWS Fault Injection Simulator (AWS FIS). It introduces the core elements of chaos engineering: stress, observe, and improve. You will learn how to use AWS FIS and other AWS tools to inject faults in you infrastructure to validate your system's resilience as well as verifying your alarms, observability, and monitoring practices.
+This workshop provides an introduction to chaos engineering using AWS tooling, with a focus on AWS Fault Injection Simulator (AWS FIS). It introduces the core elements of chaos engineering: stress, observe, and improve. You will learn how to use AWS FIS and other AWS tools to inject faults in your infrastructure to validate your system's resilience as well as verifying your alarms, observability, and monitoring practices.
 
 ## Target audience
 
 This is a technical workshop introducing chaos engineering concepts for dev, QA and Ops teams. For best results, the participants should have familiarity with the AWS console as well as some proficiency with command-line tooling. 
 
-Additionally, chaos engineering is about proving or disproving an hypothesis of how a particular fault might affect the overall system behavior (steady-state) so an understanding of the systems being disrupted is helpful but not required to do the workshop.
+Additionally, chaos engineering is about proving or disproving a hypothesis of how a particular fault might affect the overall system behavior (steady-state) so an understanding of the systems being disrupted is helpful but not required to do the workshop.
 
 ## Duration
 
