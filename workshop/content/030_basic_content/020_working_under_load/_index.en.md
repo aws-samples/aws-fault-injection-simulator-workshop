@@ -54,7 +54,7 @@ While our load is running let's explore the setup a little more.
 
 ### Webserver logs and metrics
 
-The first thing we want to look at is our webserver logs. Because we are using AWS Auto Scaling, virtual machines can be terminated and recycled which means logs written locally on the EC2 instance won't be accessible anymore. Therefor, we have installed the [Unified CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) on configured our webserver to write logs to a [CloudWatch Log Group](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log). 
+The first thing we want to look at is our webserver logs. Because we are using AWS Auto Scaling, virtual machines can be terminated and recycled which means logs written locally on the EC2 instance won't be accessible anymore. Therefore, we have installed the [Unified CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) and configured our webserver to write logs to a [CloudWatch Log Group](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log). 
 
 {{%expand "Navigating to CloudWatch Log Groups" %}}
 Log into the AWS console as described in **Getting Started**. From the "**Services**" dropdown navigate to "**CloudWatch**" under "**Management & Governance**" or use the search bar. On the left hand side expand the burger menu if necessary, then select "**Logs**" and "**Log Groups**". If you have many log groups you can search for `/fis-workshop/asg-access-log`
@@ -66,13 +66,13 @@ Click through on the topmost entry and expand any of the log lines. You may noti
 
 {{< img "nginx-log-stream-2.en.png" "Nginx access log" >}}
 
-While not necessary, this makes it easy to create [Metric Filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringPolicyExamples.html). Navigate back to the `/fis-workshop/asg-access-log` log group and select the "**Metric filters**" tab. You will see that we have created filters to extract the count of responses with HTTP `status` codes in the `2xx` (good responses) and `5xx` (bad responses) ranges. We also created a filter to select all entries that have a `request_time` set. The resulting metrics can be found under  **Metrics** / **All metrics** / **Custom Namespaces** / **fisworkshop**. These are also the metrics for `nginx connection status` and `nginx response time` you saw on the dashboard in the previous section.
+While not necessary, this makes it easy to create [Metric Filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringPolicyExamples.html). Navigate back to the `/fis-workshop/asg-access-log` log group and select the "**Metric filters**" tab. You will see that we have created filters to extract the count of responses with HTTP `status` codes in the `2xx` (good responses) and `5xx` (bad responses) ranges. We also created a filter to select all entries that have a `request_time` set. The resulting metrics can be found under  **Metrics** / **All metrics** / **Custom Namespaces** / **fisworkshop**. These are also the metrics for `Server (nginx) connection status` and `Server (nginx) response time` you saw on the dashboard in the previous section.
 
 Let's look at our dashboard:
 
 {{< img "dashboard-basic-home.en.png" "Load against home page" >}}
 
-That's odd, did anything happen? According to nginx, it looks like nothing happened. Remember the falling tree in the forest and no one is around to hear it? We need to look at what the server CPU and the load runner. For this, we have added a more detailed dashboard:
+That's odd, did anything happen? According to Nginx, it looks like nothing happened. Remember the falling tree in the forest and no one is around to hear it? We need to look at what the server CPU and the load runner. For this, we have added a more detailed dashboard:
 
 {{< img "dashboard-extended-home.en.png" "Load against home page" >}}
 
