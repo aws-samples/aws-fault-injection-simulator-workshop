@@ -7,14 +7,19 @@ fisClient = boto3.client('fis')
 
 def main(argv):
     experiment_name = argv[0]
+    commit_id = argv[1]
     templateID = getExperimentTemplateID(experiment_name)
     if(templateID == None):
         print("Could not find experiment template for [" + experiment_name + "]")
         sys.exit()
 
-    print("Starting new [" + experiment_name + "] experiment")
+    formatted_experiment_name = f"cicd-{experiment_name}-{commit_id}"
+    print("Starting new [" + formatted_experiment_name + "] experiment")
     startExperimentResponse = fisClient.start_experiment(
-        experimentTemplateId=templateID
+        experimentTemplateId=templateID,
+        tags={
+            'Name': formatted_experiment_name
+        }
     )
 
     experimentID = startExperimentResponse['experiment']['id']
@@ -43,7 +48,7 @@ def getExperimentTemplateID(experiment):
     print("Getting experiment template for " + experiment)
     templates = fisClient.list_experiment_templates()
     for template in templates['experimentTemplates']:
-        if(template['tags']['Name'] == experiment):
+        if (template.get('tags',{}).get('Name','') == experiment):
             print("Found template with ID [" + template['id'] + "]")
             return template['id']
 

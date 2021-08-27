@@ -9,7 +9,7 @@ weight = 10
 In this section we want to ensure that our containerized application running on Amazon EKS is designed in a fault tolerant way, so that even if an instance in the cluster fails our application is still available. Let's validate this:
 
 * **Given**: we have a containerized application running on Amazon EKS exposing a web page.
-* **Hypothesis**: failure of a single worker node instance will not adversely affect our application. The Web page will continue to be available.
+* **Hypothesis**: failure of a single worker node instance will not adversely affect our application. The web page will continue to be available.
 
 ## Experiment setup
 
@@ -68,7 +68,7 @@ Open the URL in a new tab to validate that our website is in fact up and running
 
 {{< img "hello-kubernetes-app.en.png" "Hello Kubernetes App" >}}
 
-How will we know that our instance failure was in fact non-impacting? For this workshop we'll be using a simple Bash script that continuosly polls our application.
+How will we know that our instance failure was in fact non-impacting? For this workshop we'll be using a simple Bash script that continuously polls our application.
 
 ### Starting the validation procedure
 

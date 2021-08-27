@@ -1,0 +1,141 @@
+# This workflow will update the package.json and package-lock.json files
+# in known CDK directories. This should help prevent/address most of the 
+# dependabot alerts. 
+#
+# This does some light validation to make sure we didn't break CDK
+# by doing a CDK synth. For this to work we have to submit fake context
+# information. To get this context information do the following:
+#
+# * checkout the repo and deploy to a real account as per README / workshop
+#
+# * note the AWS account ID and region of the profile you used
+#
+# * replace any account / region information in the generated context files
+#
+#     MY_ACCOUNT_ID=987654321098
+#     MY_DEPLOY_REGION=us-east-1
+#     cd aws-fault-injection-simulator
+#     tar -cf - \
+#       resources/templates/*/*context*.json \
+#       resources/code/cdk/cicd/*context*.json \
+#       | tar -C /tmp/ -xf -
+#     cd /tmp
+#     sed -i -e 's/'${MY_ACCOUNT_ID}'/111122223333/g; s/'${MY_DEPLOY_REGION}'/us-west-2/g' \
+#       resources/templates/*/*context*.json \
+#       resources/code/cdk/cicd/*context*.json
+#     rm \
+#       resources/templates/*/*context*.json-e \
+#       resources/code/cdk/cicd/*context*.json-e
+#     cd - 
+#     tar -C /tmp -czf .github/workflows/npmfixer.context.tar.gz \
+#       resources/templates/*/*context*.json \
+#       resources/code/cdk/cicd/*context*.json 
+#
+# * Add and commit the updated file - needs github admin rights
+#
+#   git checkout -b user/update-context
+#   git add .github/workflows/npmfixer.context.tar.gz
+#   git commit -m "Add updated context files"
+#   git push
+#
+# * open a pull request on github
+
+name: NpmFixer
+
+# Controls when the workflow will run
+on:
+  schedule:
+    # Run weekly on Friday at ~8am MT - infrequent runs to allow merging PRs
+    - cron: '0 14 * * FRI'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # Run linck checker
+  npmfixer:
+    runs-on: ubuntu-latest
+    
+    env:
+      PKG_SELECTOR: resources/templates/*/package*.json resources/code/cdk/cicd/package*.json
+      FAKE_ACCOUNT: 111122223333
+      FAKE_REGION: us-west-2
+
+    steps: 
+      # This configures git including credentials and allows push
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: install node / nvm
+        uses: actions/setup-node@v2
+        with: 
+          node-version: 16
+
+      - name: install pre-reqs
+        run: |
+          set -x
+          # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+          # nvm install stable
+          npm install -g typescript
+          npm install -g aws-cdk
+          npm install -g npm-check-updates
+          #
+          # nvm version
+          node --version
+          npm version
+          npm view typescript version
+          npm view aws-cdk version
+          cdk --version
+          npm view npm-check-updates version
+          aws --version
+
+      # Test with an offline CDK synth ... it's a bit hacky ... 
+      # and we need to inject fake context data but 
+      - name: fix package files and check synth
+        run: |
+          set -x
+          export CDK_DEFAULT_ACCOUNT=${{ env.FAKE_ACCOUNT }}
+          export CDK_DEFAULT_REGION=${{ env.FAKE_REGION }}
+          aws configure set region ${CDK_DEFAULT_REGION}
+          CDKDIRS=$( ls ${{ env.PKG_SELECTOR }} | sed 's#/[^/]*$##' | uniq )
+          tar -xvzf .github/workflows/npmfixer.context.tar.gz 
+          for dir in ${CDKDIRS}; do
+            (
+              echo ------------------------------------------
+              echo $dir
+              echo ------------------------------------------
+              cd $dir
+              rm -rf node_modules package-lock.json
+              ncu -u
+              npm install
+              cdk synth
+            )
+          done
+
+
+
+      # This works in conjunction with actions/checkout@v2
+      - name: commit back to repo
+        run: |
+          set -x
+          DATE=$( date '+%Y-%m-%d %H:%M:%S' )
+          RENDER_BRANCH=automation/npm-fixes
+          git config --global user.name "npmfixer"
+          git config --global user.email "rudpot@amazon.com"
+          # git fetch origin
+          # git checkout main
+          # git pull
+          git branch -a | fgrep ${RENDER_BRANCH} && git checkout ${RENDER_BRANCH} || git checkout -b ${RENDER_BRANCH}
+          git status
+          # git diff
+          git add ${{ env.PKG_SELECTOR }}
+          git commit -m "NPM fixer ${DATE}"
+          git push --set-upstream origin ${RENDER_BRANCH}
+          echo ${{ github.token }} | gh auth login --with-token
+          # Can't see a way to check if there is a PR already so this will "fail"
+          gh pr create \
+            --title "PR for autogen NPM update" \
+            --body "Pull request for automatically updated CDK version and NPM dependencies. This should only change a package.json and package-lock.json files. If it changes anything other than that, reject the PR and review automation"

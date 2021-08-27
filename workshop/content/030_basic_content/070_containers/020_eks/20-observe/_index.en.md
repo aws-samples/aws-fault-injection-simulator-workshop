@@ -106,7 +106,7 @@ ip-10-0-150-147.eu-west-1.compute.internal   Ready    <none>   12m   v1.20.4-eks
 
 This configuration is not optimal:
 
-- A cluster with a single worker node means that if that instance fails, all the containers running on that instance will also be killed. This is what happened during our experiment and the reason why we observed some `curl: (52) Empty reply from server` messages. We should change this so that our cluster has more than one instance across muliple Avalability Zones (AZs).
+- A cluster with a single worker node means that if that instance fails, all the containers running on that instance will also be killed. This is what happened during our experiment and the reason why we observed some `curl: (52) Empty reply from server` messages. We should change this so that our cluster has more than one instance across multiple Availability Zones (AZs).
 
 - An EKS workload with **one** pod also means that if that pod fails, there aren't any other pods to continue serving requests. We can modify this by adjusting the pod count to `2` (or any number greater than `1`).
 

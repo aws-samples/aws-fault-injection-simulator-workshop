@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "pdf-merger-js": "^3.2.1",
+    "puppeteer": "^10.2.0"
+  }
+}

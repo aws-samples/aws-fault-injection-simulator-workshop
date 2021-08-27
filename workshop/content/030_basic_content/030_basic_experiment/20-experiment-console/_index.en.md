@@ -19,6 +19,7 @@ To create a fault injection experiment, we first need to create an AWS FIS templ
 
 ### Create an AWS FIS experiment template
 
+
 Navigate to the [FIS console](https://console.aws.amazon.com/fis/home?#Home) and select "Create experiment template".
 
 {{< img "create-template-1.en.png" "AWS FIS console" >}}
@@ -43,6 +44,7 @@ For "Name" enter `FisWorkshopAsg-TerminateInstances` and add a "Description" lik
 
 We will leave the "Start after" section blank since we are only taking a single action in this experiment template. 
 
+
 Leave the default "Target" `Instances-Target-1` and click "Save".
 
 {{< img "create-template-2-actions-2-autogen.en.png" "Edit FIS actions" >}}
@@ -51,7 +53,7 @@ Leave the default "Target" `Instances-Target-1` and click "Save".
 `Instances-Target-1` was auto-generated for us because no appropriate target type existed in the experiment template. If one or more targets already exist, e.g. because we added actions before, then we will be presented with a drop down selector for existing targets instead.
 {{% /notice %}}
 
-#### Target selection
+#### Action definition
 
 For our action we are choosing to terminate EC2 instances. In the target section we define which instances to terminate. As a reminder, for this first experiment we want to prove the hypothesis that we can safely impact half the instances in our Auto Scaling group. 
 
@@ -78,6 +80,7 @@ For this experiment we will give our template a short name to be used on the lis
 
 {{< img "create-template-2-name.en.png" "Set FIS template name" >}}
 
+
 #### Creating template without stop conditions
 
 
@@ -85,7 +88,7 @@ Scroll to the bottom of the template definition page and select "Create experime
 
 Since we didn't specify a stop condition we receive a warning. This is ok, for this experiment we won't use a stop condition. Type `create` in the text box as indicated and select "Create experiment template".
 
-{{< img "create-template-3-confirm.en.png" "Confirm and save FIS template" >}}
+{{< img "create-template-3-confirm.en.png" "Confirm and save FIS template" >}} #TO-UPDATE
 
 
 

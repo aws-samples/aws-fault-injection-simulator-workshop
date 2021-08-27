@@ -57,7 +57,7 @@ Now click on the "ECS Instances" tab. You'll see here that there's only one inst
 
 This configuration is not optimal:
 
-- A cluster with a single instance means that if that instance fails, all the containers running on that instance will also be killed. This is what happened during our experiment and the reason why we observed some [HTTP 503](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503) "Service Unavailable" return codes. We should change this so that our cluster has more than one instance across muliple Avalability Zones (AZs).
+- A cluster with a single instance means that if that instance fails, all the containers running on that instance will also be killed. This is what happened during our experiment and the reason why we observed some [HTTP 503](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503) "Service Unavailable" return codes. We should change this so that our cluster has more than one instance across multiple Availability Zones (AZs).
 
 - Having an ECS Service with **one** desired task also means that if that task fails, there aren't any other tasks to continue serving requests. We can modify this by adjusting the desired task capacity to `2` (or any number greater than `1`).
 
