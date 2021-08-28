@@ -94,7 +94,7 @@ Currently we only support using a deploy script against an existing AWS account.
 
 **Note:** The deploy script does not specify a deploy profile. Following AWS CLI conventions it will use the default profile and region. If you wish to use a different profile/region, set the AWS_PROFILE and AWS_DEFAULT_REGION environment variables.
 
-**Note:** RDS and EKS deployments are extremely slow. To speed up deployments the deploy-parallel script will run as much as possible in parallel and write output to files named `deploy-output.SECTION.txt`. If you want serialized deployments, e.g. for debugging, yse the `deploy.sh` script instead.
+**Note:** RDS and EKS deployments take time and don't need to be serialized. To speed up deployments the `deploy-parallel.sh` script will run as much as possible in parallel and write output to files named `deploy-output.SECTION.txt`. If you want serialized deployments, e.g. for debugging, use the `deploy.sh` script instead.
 
 ```
 cd aws-fault-injection-simulator-workshop
@@ -103,7 +103,7 @@ cd resources/templates
 ./deploy-parallel.sh
 ```
 
-If you need to make updates to existing stacks, the deploy script can be called as
+If you need to make updates to existing stacks, the deploy script can be with the `update` flag:
 
 ```
 ./deploy-parallel.sh update
