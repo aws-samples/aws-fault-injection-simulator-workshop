@@ -7,7 +7,7 @@ In this section we will show you how to create an experiment using AWS FIS templ
 
 ## Template overview
 
-[Experiment templates](https://docs.aws.amazon.com/fis/latest/userguide/experiment-templates.html) are JSON files containing Actions, Targets, an IAM role, and optional Stop Conditions, and Tags: 
+[**Experiment templates**](https://docs.aws.amazon.com/fis/latest/userguide/experiment-templates.html) are JSON files containing Actions, Targets, an IAM role, and optional Stop Conditions, and Tags: 
 
 ```json
 {
@@ -24,7 +24,7 @@ In this section we will show you how to create an experiment using AWS FIS templ
 
 ### Actions
 
-[Actions](https://docs.aws.amazon.com/fis/latest/userguide/action-sequence.html) specify an action name and `description`, an `actionId` and matching `parameters` picked from the [AWS FIS Action reference](https://docs.aws.amazon.com/fis/latest/userguide/fis-actions-reference.html), and a list of `targets` which references the target section in the same template:
+[**Actions**](https://docs.aws.amazon.com/fis/latest/userguide/action-sequence.html) specify an action name and `description`, an `actionId` and matching `parameters` picked from the [**AWS FIS Action reference**](https://docs.aws.amazon.com/fis/latest/userguide/fis-actions-reference.html), and a list of `targets` which references the target section in the same template:
 
 ```json
 "ActionName": {
@@ -37,7 +37,7 @@ In this section we will show you how to create an experiment using AWS FIS templ
 
 ### Targets
 
-[Targets](https://docs.aws.amazon.com/fis/latest/userguide/targets.html) specify a name, a `resourceType` from which to select by `resourceArn`, `resourceTags` or `filters`, and `selectionMode` for sampling from the eligible resources by `COUNT()` or `PERCENT()`. 
+[**Targets**](https://docs.aws.amazon.com/fis/latest/userguide/targets.html) specify a name, a `resourceType` from which to select by `resourceArn`, `resourceTags` or `filters`, and `selectionMode` for sampling from the eligible resources by `COUNT()` or `PERCENT()`. 
 
 ```json
 "TargetGroupName": {
@@ -60,7 +60,7 @@ In this section we will show you how to create an experiment using AWS FIS templ
 }
 ```
 
-A note on finding the `path` and `values` for `filters`: as described under ["Resource filters"](https://docs.aws.amazon.com/fis/latest/userguide/targets.html#target-identification), filter paths are based on API output. E.g.: if we want to only target running EC2 instances we could use the AWS CLI to list instances:
+A note on finding the `path` and `values` for `filters`: as described under ["**Resource filters**"](https://docs.aws.amazon.com/fis/latest/userguide/targets.html#target-identification) in the AWS documentation, filter paths are based on API output. E.g.: if we want to only target running EC2 instances we could use the AWS CLI to list instances:
 
 ```bash
 aws ec2 describe-instances
@@ -125,7 +125,7 @@ E.g.: to select an instance that is `running` in `us-east-2a` we would add the f
 
 ### Stop conditions
 
-[Stop conditions](https://docs.aws.amazon.com/fis/latest/userguide/stop-conditions.html) use a list of Amazon CloudWatch alarms to prematurely stop the experiment if it does not proceed along expected lines:
+[**Stop conditions**](https://docs.aws.amazon.com/fis/latest/userguide/stop-conditions.html) use a list of Amazon CloudWatch alarms to prematurely stop the experiment if it does not proceed along expected lines:
 
 ```json
 "stopConditions": [
@@ -141,7 +141,7 @@ E.g.: to select an instance that is `running` in `us-east-2a` we would add the f
 Using the above, this would be the finished template. 
 
 {{% notice note %}}
-Before using this template, please ensure that you replace the ARN for the FIS execution role on the last line with the ARN of the role you you created earlier in this section.
+Before using this template, please ensure that you replace the ARN for the FIS execution role on the last line with the ARN of the role you you created in the [**Configuring permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions">}}) section.
 {{% /notice %}}
 
 ```json
@@ -186,9 +186,9 @@ Before using this template, please ensure that you replace the ARN for the FIS e
 
 ## Working with templates
 
-The rest of this section uses the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html). If you are using [AWS Cloud9](https://console.aws.amazon.com/cloud9/home/product) this should work out of the box. Otherwise please ensure you have configured AWS credentials for the CLI.
+The rest of this section uses the [**AWS CLI**](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html). If you are using [**AWS Cloud9**](https://console.aws.amazon.com/cloud9/home/product) this should work out of the box. Otherwise please ensure you have configured AWS credentials for the CLI.
 
-### Creating template
+### Creating templates
 
 To create an experiment template, copy the above JSON into a file named `fis.json` and ensure you have changed the `roleArn` entry to be the ARN of the role you created earlier. Then use the CLI to create the template in AWS:
 
@@ -196,7 +196,7 @@ To create an experiment template, copy the above JSON into a file named `fis.jso
 aws fis create-experiment-template --cli-input-json file://fis.json
 ```
 
-You should now be able to see the newly created experiment template in the [AWS Console](https://console.aws.amazon.com/fis/home?#ExperimentTemplates). 
+You should now be able to see the newly created experiment template in the [**AWS Console**](https://console.aws.amazon.com/fis/home?#ExperimentTemplates). 
 
 ### Listing templates
 
@@ -208,7 +208,7 @@ aws fis list-experiment-templates
 
 will list all the templates. If you happened to run the `create-experiment-template` command above multiple times you might notice that it is possible to have multiple copies of a template only differentiated by the `id` field. 
 
-While it is possible to update an existing experiment template via the `update-experiment-template` command, this will make it hard to establish what happened during an experiment. 
+While it is possible to update an existing experiment template via the `update-experiment-template` command, and while the content of the template at execution time is saved with the experiment data, this may make it harder to establish what happened during an experiment.
 
 ### Exporting / saving templates
 
@@ -244,7 +244,7 @@ aws fis get-experiment --id YOUR_EXPERIMENT_ID_HERE
 
 The learnings here should be the same as for the console section:
 
-* Carefully choose the resource to affect and how to select them. If we had originally chosen to terminate a single instance (COUNT) rather than a fraction (PERCENT), we would have severely affected our service.
+* Carefully choose the resource to affect and how to select them. If we had originally chosen to terminate a single instance (`COUNT`) rather than a fraction (`PERCENT`), we would have severely affected our service.
 * Spinning up instances takes time. To achieve resilience, ASGs should be set to have at least two instances running at all times
 
-In the next section we will explore larger experiments.
+From here you can explore how to set up experiments using [**AWS CloudFormation**]({{< ref "030_basic_content/030_basic_experiment/40-experiment-cfn" >}}) or move on exploring [**more fault types**]({{< ref "030_basic_content/040_ssm" >}}) to inject.

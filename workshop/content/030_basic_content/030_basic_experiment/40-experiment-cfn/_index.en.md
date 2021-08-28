@@ -7,7 +7,7 @@ In this section we will cover how to define and update experiment templates usin
 
 ## CFN template format
 
-The CloudFormation template uses the same format as the API but capitalizes the first letter of section names. As such the FIS experiment template from the previous section would become:
+The AWS CloudFormation template uses the same format as the API but capitalizes the first letter of section names. As such the FIS experiment template from the previous section would become:
 
 ```json
 {
@@ -53,7 +53,7 @@ The CloudFormation template uses the same format as the API but capitalizes the 
 }
 ```
 
-We can wrap this into the `Resources` section of a [CloudFormation template](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/gettingstarted.templatebasics.html#gettingstarted.templatebasics.multiple). Additionally CloudFormation allows us to use [pseudo parameters](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html#cfn-pseudo-param-accountid) which we can use to automatically insert the account number into the role definition using the `AWS::AccountId` parameter in conjunction with the [`Fn::Sub`](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-sub.html) function. Thus, a simple CFN template would become:
+We can wrap this into the `Resources` section of a [**CloudFormation template**](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/gettingstarted.templatebasics.html#gettingstarted.templatebasics.multiple). Additionally CloudFormation allows us to use [**pseudo parameters**](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html#cfn-pseudo-param-accountid) which we can use to automatically insert the account number into the role definition using the `AWS::AccountId` parameter in conjunction with the [`Fn::Sub`](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-sub.html) function. Thus, a simple CFN template would become:
 
 ```json
 {
@@ -106,7 +106,7 @@ We can wrap this into the `Resources` section of a [CloudFormation template](htt
 
 ## Using the CFN template
 
-A deep dive into [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) is beyond the scope of this workshop, so we will only cover how to create and update stacks via the CLI.
+A deep dive into [**AWS CloudFormation**](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) is beyond the scope of this workshop, so we will only cover how to create and update stacks via the CLI.
 
 ### Create a new template / experiment
 
@@ -116,7 +116,7 @@ To create a stack, and thus the contained FIS experiment template, copy the abov
 aws cloudformation create-stack --stack-name FisWorkshopExperimentTemplate --template-body file://cfn-fis-experiment.json
 ```
 
-If you navigate to the [CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=FisWorkshopExperiment&viewNested=true&hideStacks=false) you should now see a new stack named `FisWorkshopExperimentTemplate` and navigating to the [FIS console](https://console.aws.amazon.com/fis/home?#ExperimentTemplates) should show an experiment named `FisWorkshop-Exp1-CFN-v1.0.0`
+If you navigate to the [**CloudFormation console**](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=FisWorkshopExperiment&viewNested=true&hideStacks=false) you should now see a new stack named `FisWorkshopExperimentTemplate` and navigating to the [**FIS console**](https://console.aws.amazon.com/fis/home?#ExperimentTemplates) should show an experiment named `FisWorkshop-Exp1-CFN-v1.0.0`
 
 ### Update template / experiment
 
@@ -134,7 +134,7 @@ This should update the name of your experiment template in the FIS console. Obvi
 
 The learnings here should be the same as for the console section:
 
-* Carefully choose the resource to affect and how to select them. If we had originally chosen to terminate a single instance (COUNT) rather than a fraction (PERCENT), we would have severely affected our service.
+* Carefully choose the resource to affect and how to select them. If we had originally chosen to terminate a single instance (`COUNT`) rather than a fraction (`PERCENT`), we would have severely affected our service.
 * Spinning up instances takes time. To achieve resilience, ASGs should be set to have at least two instances running at all times
 
-In the next section we will explore larger experiments.
+In the next section we will explore more fault injection optioms.

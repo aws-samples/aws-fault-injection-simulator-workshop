@@ -4,7 +4,8 @@ chapter = true
 weight = 30
 +++
 
-This workshop is broken into multiple chapters. The chapters are designed to be done in sequence. At the end of each chapter we include a "cheat" that should allow you to easily implement all the work required and allow you to move forward to the next chapter if you are already familiar with the material covered.
+This workshop is broken into multiple chapters. The chapters are designed to be done in sequence with each chapter assuming familiarity with some concepts from previous chapters and focusing on new learnings. We include refresher links to relevant prior sections to help you skip over materials you are already familiar with.
+
 
 ## Chapters:
 
@@ -12,15 +13,15 @@ This workshop is broken into multiple chapters. The chapters are designed to be 
 
 ## Architecture Diagrams
 
-This workshop is focused on how to inject fault into an existing infrastructure. For this purpose the template in the **Getting Started** section sets up a variety of components. Throughout this workshop we will be showing you architecture diagrams focusing on only the components relevant to the section, e.g.:
+This workshop is focused on how to inject fault into an existing infrastructure. For this purpose the template in the [**Provision AWS resources**]({{< ref "020_starting_workshop/050_create_stack" >}}) section sets up a variety of components. Throughout this workshop we will be showing you architecture diagrams focusing on only the components relevant to the section, e.g.:
 
 {{< img "BasicASG.png" "Image of architecture to be injected with chaos" >}}
 
 You can click on these images to enlarge them.
 
-{{% expand "Click to expand if you are running a demo" %}}
+{{% expand "Click to expand if you are hosting a demo" %}}
 
-If you are running a demo you should start generating load now. This will pull the relevant variables from CloudFormation:
+If you are hosting a demo you should start generating load now. This will pull the relevant variables from CloudFormation:
 
 ```bash
 export LAMBDA_ARN=$( aws cloudformation describe-stacks --stack-name FisStackLoadGen --query "Stacks[*].Outputs[?OutputKey=='LoadGenArn'].OutputValue" --output text )

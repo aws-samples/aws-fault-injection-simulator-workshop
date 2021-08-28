@@ -5,13 +5,13 @@ weight = 10
 
 Before we start injecting faults into our system we should consider the following thought experiment:
 
-_"If a tree falls in a forest and no one is around to hear it, does it make a sound?"_
+> _"If a tree falls in a forest and no one is around to hear it, does it make a sound?"_
  
 For the purpose of our fault injection experiments we can rephrase this in two ways:
 
-_"If part of our system is disrupted and we do not receive any irate calls from users, did anything break?"_
+> _"If part of our system is disrupted and we do not receive any irate calls from users, did anything break?"_
 
-_"If part of our system is disrupted and sysops isn't alerted, did anything break?"_
+> _"If part of our system is disrupted and sysops isn't alerted, did anything break?"_
 
 Think about this for a second. There is a distinct difference between those two statements because users and ops have very different experiences.
 
@@ -31,16 +31,16 @@ Before starting our first fault injection experiment, let's take a look at our m
 
 We have a user trying to access a website running on AWS. We have designed it for high availability. We used EC2 instances with an Auto Scaling group and a load balancer to ensure that users can always reach our website even under heavy load or if an instance suddenly fails.
 
-Once you've started the template as described in [**Getting Started**]({{< ref "020_starting_workshop/050_create_stack" >}}) you can navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "FisStackAsg" stack and click on the "Outputs" tab which will show you the server URL:
+Once you've created the resources as described in [**Provision AWS resources**]({{< ref "020_starting_workshop/050_create_stack" >}}) you can navigate to [**CloudFormation**](https://console.aws.amazon.com/cloudformation/home), select the `FisStackAsg` stack and selecdt the **"Outputs"** tab which will show you the server URL:
 
 {{< img "cloudformation.en.png" "Auto Scaling group URL" >}}
 
-To gain visibility into the user experience from the sysops side we've used the [cloudwatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) to export our web server logs to [cloudwatch logs](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log) and we created [CloudWatch Logs metrics filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) to track server response codes and speeds on a [dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:name=FisDashboard-us-west-2). Note that the dashboard's name is based on the region. If you chose another region the dashboard's name will be different. The dashboard also shows the number of instances in our Auto Scaling Group (ASG).
+To gain visibility into the user experience from the sysops side we've used the [**AWS CloudWatch agent**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) to export our web server logs to [**AWS CloudWatch Logs**](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log) and we created [**AWS CloudWatch Logs metrics filters**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) to track server response codes and speeds on a [**dashboard**](https://console.aws.amazon.com/cloudwatch/home?#dashboards:name=FisDashboard-us-west-2). Note that the dashboard's name is based on the region in which we deployed. If you chose a region other than `us-west-2` the dashboard's name will be different. The dashboard also shows the number of instances in our Auto Scaling Group (ASG).
 
 {{< img "fis-dashboard-1.png" "CloudWatch dashboard" >}}
 
 {{%expand "Accessing the dashboard from the console" %}}
-To access the dashboard, log into the AWS console as described in **Getting Started**. From the "**Services**" dropdown navigate to "**CloudWatch**" under "**Management & Governance**" or use the search bar. On the top left select "**Dashboards**" and choose "fis-dashboard-us-west-2" (or the appropriate dashboard's name based on the region you selected).
+To access the dashboard, log into the AWS console as described in [**Start the workshop**]({{< ref "020_starting_workshop" >}}). From the "**Services**" dropdown navigate to "**CloudWatch**" under "**Management & Governance**" or use the search bar. On the top left select "**Dashboards**" and choose `fis-dashboard-us-west-2` (or the appropriate dashboard's name based on the region you selected).
 {{% /expand%}}
 
 In the next section we will cover how to measure the user experience. 
