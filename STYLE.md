@@ -24,6 +24,7 @@ We will keep adding to this list as the workshop grows. Please review frequently
 
 * references
   * should use `[]()` style
+* cross references between pages
   * should use the `ref` shortcode for internal referencdes
   * should be based on directory names and thus exclude the leading 2 letter language label rendered in the URL
   * should not have trailing `/` characters
@@ -31,6 +32,18 @@ We will keep adding to this list as the workshop grows. Please review frequently
     * Reference `/030_region_selection/_index.en.md` as `[Good]({{< ref "030_region_selection" >}}`
   * workaround for directories not following page bundle format:
     * Reference non-conformant file `/020_starting_workshop/020_aws_event/portal.md` from sibling `/020_starting_workshop/010_self_paced/_index.en.md` as `[Avoid this]({{< ref "../020_aws_event/portal" >}}`
+* references to the AWS console
+  * should not contain region information
+  * may be more specific than the text description to avoid extra navigation if possible
+  * example:
+    * `https://console.aws.amazon.com/fis/home?#` instead of `https://us-west-2.console.aws.amazon.com/fis/home?region=us-west-2#`
+    * `https://console.aws.amazon.com/fis/home?#ExperimentTemplates` instead of `https://console.aws.amazon.com/fis/home?#`
+
+
+## Overview pages
+
+We want to provide context for learning. As such major sections should provide an overview of the intended learning and should provide archticture diagrams to support visual learning.
+
 
 ## Experiment template section structure
 
@@ -50,12 +63,20 @@ Idea description
 
 ## Brevity
 
-Many workshops focus on "click here", replicating a lot procedural instructions. We want to focus on learning. As such we suggest referring back to previous sections for purely procedural instructions. E.g. the [RDS/General template setup](https://chaos-engineering.workshop.aws/en/030_basic_content/050_databases/010_rds_database_reboot.html#general-template-setup) summarizes the desired settings and refers back to the general setup instructions if youe need a refresher.
+* Remove text duplication - Many workshops focus on "click here", replicating a lot procedural instructions. We want to focus on learning. As such we suggest referring back to previous sections for purely procedural instructions. E.g. the [RDS/General template setup](https://chaos-engineering.workshop.aws/en/030_basic_content/050_databases/010_rds_database_reboot.html#general-template-setup) summarizes the desired settings and refers back to the general setup instructions if youe need a refresher.
+* Focus on relevant code and configs - There is friction between providing fully functional code while also providing the reader with focus on the relevant aspects of the code. Because this workshop provides an associated GitHub repository for the code we suggest only showing what the reader needs to pay attention to. E.g. in the [First Experiment / Configuring Permissions](https://chaos-engineering.workshop.aws/en/030_basic_content/030_basic_experiment/10-permissions.html) section we show a full IAM policy because we want to reader to deeply study it. In contrast in the [AWS FIS template overview](https://chaos-engineering.workshop.aws/en/030_basic_content/030_basic_experiment/30-experiment-cli.html#template-overview) section we show only the relevant scaffolding items.
 
-## Formatting guidelines
+## Text formatting guidelines
 
 We are currently developing these:
 
 * References to other sections should be bolded `[**Section Name**]({{< ref ... >}})`
-* Strings that are entered into the UI should be enclosed in backticks, e.g.  `` `Name` `` to render as `Name`
-* 
+* Verbatim strings from the UI, strings that are entered into the UI, and strings referencing code should be enclosed in backticks, e.g.  `` `Name` `` to render as `Name`
+* References to UI tabs should be formatted as `**"Tab name"**` to render as **"Tab name"**
+* References to UI burger menu items should be formatted as `**"Menu item"**` to render as **"Menu item"**
+
+## Image formatting guidelines
+
+* obscure any sensitive information such as account numbers
+* create visual context. It is tempting to take multiple screen shots zoomed in on relevant sections of the UI but this hides context. Wherever practical take a single screenshot and highlight relevant points in context of the overall UI view.
+* ensure that entry fields in images match entry text in description
