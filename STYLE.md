@@ -76,6 +76,8 @@ We are currently developing these:
 
 * References to other sections should be bolded `[**Section Name**]({{< ref ... >}})`
 * Verbatim strings from the UI, strings that are entered into the UI, and strings referencing code should be enclosed in backticks, e.g.  `` `Name` `` to render as `Name`
+* References to grouping box / section titles should be formatted as `"Box title"` to render as "Box Title".
+* References to input box names should be formatted as `"Input name"` to render as "Input name".
 * References to UI tabs should be formatted as `**"Tab name"**` to render as **"Tab name"** and should use the wording "select **"Tab name"**" to avoid arguments over whether this is a "button" or a "link".
 * References to buttons should be formatted as `**"Button text"**` to render as **"Button text"** and should use the wording "select **"Button text"**" to avoid arguments over whether this is a "button" or a "link".
 * References to UI list items that show a different behavior for a checkbox / radio button and the link of the item, e.g. EC2 instances listings should differentiate in wording:
@@ -83,7 +85,6 @@ We are currently developing these:
   * use "click **"List item"**" for following the link to a different view
 * References to UI burger menu items should be formatted as `**"Menu item"**` to render as **"Menu item"**
 * References to Role and Policy names should be formatted as **"RoleName"** and **"PolicyName"**
-* References to Buttons should use the wording 
 
 ## Image formatting guidelines
 
