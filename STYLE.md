@@ -11,24 +11,28 @@ We will keep adding to this list as the workshop grows. Please review frequently
   * should use snake case, i.e. all lower case characters with underscores `_` as separators
   * example `030_basic_content/010-baselining/`
 * content should use [page bundle](https://gohugo.io/content-management/organization/#page-bundles) conventions
-  * directories should contain singe `.md` file named `_index.en.md` (or an appropriate 2-letter language code for translations)
+  * directories should contain single `.md` file named `_index.en.md` (or an appropriate 2-letter language code for translations)
   * directories should not contain additional `.md` files
 * images
   * should be located in same directory as `.md` file referencing them (placing them in `static/` will work but is strongly discouraged)
   * should contain a 2-letter language code, e.g. `myimage.en.png`
   * should use the `img` shortcode
   * must have alt text
-  * example: `{{< img "create-template-2-targets-1.en.png" "Add FIS target" >}}`
+  * example: 
+    * `{{< img "myimg.en.png" "My Alt Text" >}}`
+  * workaround for directories not following page bundle format:
+    * place images in `/workshop/static/images`
+    * reference images with `{{< img "images/myimg.png" "My Alt Text" >}}`
 
 ## References
 
 * references
   * should use `[]()` style
 * cross references between pages
-  * should use the `ref` shortcode for internal referencdes
+  * should use the [`ref`](https://gohugo.io/functions/ref/) shortcode for internal referencdes
   * should be based on directory names and thus exclude the leading 2 letter language label rendered in the URL
   * should not have trailing `/` characters
-  * examples:
+  * example:
     * Reference `/030_region_selection/_index.en.md` as `[Good]({{< ref "030_region_selection" >}}`
   * workaround for directories not following page bundle format:
     * Reference non-conformant file `/020_starting_workshop/020_aws_event/portal.md` from sibling `/020_starting_workshop/010_self_paced/_index.en.md` as `[Avoid this]({{< ref "../020_aws_event/portal" >}}`
@@ -72,8 +76,14 @@ We are currently developing these:
 
 * References to other sections should be bolded `[**Section Name**]({{< ref ... >}})`
 * Verbatim strings from the UI, strings that are entered into the UI, and strings referencing code should be enclosed in backticks, e.g.  `` `Name` `` to render as `Name`
-* References to UI tabs should be formatted as `**"Tab name"**` to render as **"Tab name"**
+* References to UI tabs should be formatted as `**"Tab name"**` to render as **"Tab name"** and should use the wording "select **"Tab name"**" to avoid arguments over whether this is a "button" or a "link".
+* References to buttons should be formatted as `**"Button text"**` to render as **"Button text"** and should use the wording "select **"Button text"**" to avoid arguments over whether this is a "button" or a "link".
+* References to UI list items that show a different behavior for a checkbox / radio button and the link of the item, e.g. EC2 instances listings should differentiate in wording:
+  * use "select **"List item"**" for selecting the checkbox / radio button
+  * use "click **"List item"**" for following the link to a different view
 * References to UI burger menu items should be formatted as `**"Menu item"**` to render as **"Menu item"**
+* References to Role and Policy names should be formatted as **"RoleName"** and **"PolicyName"**
+* References to Buttons should use the wording 
 
 ## Image formatting guidelines
 
