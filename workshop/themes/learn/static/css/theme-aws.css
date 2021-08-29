@@ -184,6 +184,8 @@ a:hover {
     color: #e07d04 !important;
 }
 
+#sidebar li.draft { background-color: rgba(216, 129, 23, 0.673); }
+
 div.notices p:first-child:before {
     position: absolute;
     top: 2px;
