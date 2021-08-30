@@ -2,7 +2,7 @@
 
 This is the source repo for both code and instructions for the [AWS chaos engineering workshop](https://chaos-engineering.workshop.aws/). 
 
-## I want to do the workshop:
+## I want to do the workshop hands-on
 
 Start from the [workshop site](https://chaos-engineering.workshop.aws/). It will guide you through setting up an AWS account, cloning this repo and learning more about chaos engineering.
 
