@@ -3,7 +3,7 @@ title = "FIS SSM Send Command Setup"
 weight = 10
 +++
 
-For this section we will use Linux and Windows instances created specifically for the purpose of enabling FIS SSM commands. As shown in the diagram below, SSM access to the instance [requires an instance role](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-profile.html#instance-profile-policies-overview) with the `AmazonSSMManagedInstanceCore` policy attached. Additionally FIS access to SSM is controlled via the execution policy as shown in the [**First Experiment**]({{< ref "030_basic_experiment" >}}) section. 
+For this section we will use Linux and Windows instances created specifically for the purpose of enabling FIS SSM commands. As shown in the diagram below, SSM access to the instance [**requires an instance role**](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-profile.html#instance-profile-policies-overview) with the `AmazonSSMManagedInstanceCore` policy attached. Additionally FIS access to SSM is controlled via the execution policy as shown in the [**First Experiment**]({{< ref "030_basic_experiment" >}}) section. 
 
 {{< img "StressTest-with-user.png" "Stress test architecture" >}}
 
@@ -15,7 +15,7 @@ The resources above have been created as part of the [**Start the workshop**]({{
 
 ## CloudFormation deployment example
 
-To demonstrate how to configure EC2 instances with SSM access we will use the AWS CLI with CloudFormation to provision our instances. You can inspect the [template](https://github.com/aws-samples/aws-fault-injection-simulator-workshop/blob/main/resources/templates/cpu-stress/CPUStressInstances.yaml) to see how it creates an instance role with the AWS Managed policy named *AmazonSSMManagedInstanceCore* attached, and how it attaches it to our instances via an Instance Profile. 
+To demonstrate how to configure EC2 instances with SSM access we will use the AWS CLI with CloudFormation to provision our instances. You can inspect the [**template**](https://github.com/aws-samples/aws-fault-injection-simulator-workshop/blob/main/resources/templates/cpu-stress/CPUStressInstances.yaml) to see how it creates an instance role with the AWS Managed policy named *AmazonSSMManagedInstanceCore* attached, and how it attaches it to our instances via an Instance Profile. 
 
 If you want to try this yourself, using the Cloud9 instance you created in the [**Start the workshop**]({{< ref "020_starting_workshop/040_create_workspace" >}}) section, clone the repository if you have not done so yet:
 
@@ -32,7 +32,7 @@ cd aws-fault-injection-simulator-workshop/resources/templates/cpu-stress/
 
 In this folder you can examine the template file named `CPUStressInstances.yaml`.
 
-Finally, deploy the stack. By default, this template will deploy into the default VPC. In the context of this workshop, we want to ensure the instances are deployed into the public subnet created in the [**Start the workshop**]({{< ref "020_starting_workshop/050_create_stack" >}}) section. We will use the first public subnet created by the initial setup. You could do this manually by navigating to the [CloudFormation console](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks?filteringStatus=active&filteringText=FisStackVpc&viewNested=true&hideStacks=false), selecting the `FisStackVpc` stack, selecting `Outputs` and picking the subnet ID associated with `FisPub1`. For your convenience we've added that as a CLI query in the code below:
+Finally, deploy the stack. By default, this template will deploy into the default VPC. In the context of this workshop, we want to ensure the instances are deployed into the public subnet created in the [**Start the workshop**]({{< ref "020_starting_workshop/050_create_stack" >}}) section. We will use the first public subnet created by the initial setup. You could do this manually by navigating to the [**CloudFormation console**](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks?filteringStatus=active&filteringText=FisStackVpc&viewNested=true&hideStacks=false), selecting the `FisStackVpc` stack, selecting `Outputs` and picking the subnet ID associated with `FisPub1`. For your convenience we've added an equivalent CLI query in the code below:
 
 ```bash
 # Query public subnet from VPC stack
@@ -48,7 +48,7 @@ aws cloudformation create-stack \
 
 ```
 
-The stack will take a few minutes to complete. 
+The stack will take a few minutes to complete creation. 
 You can monitor the progress from the CloudFormation Console. 
 Once this is finished you can continue to the next section.
 

@@ -9,13 +9,13 @@ The second role governs what resources an AWS FIS experiment can affect during a
 
 ### Create FIS service role
 
-We need to create an [IAM role for the AWS FIS service](https://docs.aws.amazon.com/fis/latest/userguide/getting-started-iam.html#getting-started-iam-service-role) to grant it permissions to inject faults into the system. While we could have pre-created this IAM role for you, we think it is important to review its scope with you.
+We need to create an [**IAM role for the AWS FIS service**](https://docs.aws.amazon.com/fis/latest/userguide/getting-started-iam.html#getting-started-iam-service-role) to grant it permissions to inject faults into the system. While we could have pre-created this IAM role for you, we think it is important to review its scope with you.
 
-Navigate to the [IAM console](https://console.aws.amazon.com/iam/home?#/policies) and create a new policy called `FisWorkshopServicePolicy`. On the *Create Policy* page select the JSON tab
+Navigate to the [**IAM console**](https://console.aws.amazon.com/iam/home?#/policies) and create a new policy called `FisWorkshopServicePolicy`. On the "Create Policy" page select the **JSON** tab
 
 {{< img "create-policy-1.en.png" "Create AWS FIS service policy" >}}
 
-and paste the following policy - take the time to look at how broad these permissions are:
+and paste the following policy. Take the time to look at how broad these permissions are:
 
 ```json
 {
@@ -113,17 +113,17 @@ and paste the following policy - take the time to look at how broad these permis
 }
 ```
 
-Navigate to the [IAM console](https://console.aws.amazon.com/iam/home?#/roles) and create a new role called `FisWorkshopServiceRole`.
+Navigate to the [**IAM console**](https://console.aws.amazon.com/iam/home?#/roles) and create a new role called `FisWorkshopServiceRole`.
 
-On the **Select type of trusted entity** page AWS FIS does not exist as a trusted service yet. Select "Another AWS Account" and add the current account number. You can find the account number in the drop-down menu as shown:
+On the "Select type of trusted entity" page AWS FIS does not exist as a trusted service yet. Select **"Another AWS Account"** and add the current account number. You can find the account number in the drop-down menu as shown:
 
 {{< img "create-role-1.en.png" "Create AWS FIS service role" >}}
 
-On the **Attach permissions** page search for the `FisWorkshopServicePolicy` we just created and check the box beside it to attach it to the role.
+On the "Attach permissions" page search for the `FisWorkshopServicePolicy` we just created and check the box beside it to attach it to the role.
 
 {{< img "create-role-2.en.png" "Attach role policy" >}}
 
-Back in the **IAM Roles** page, find and edit the `FisWorkshopServiceRole`. Select *Trust relationships* and the *Edit trust relationship* button.
+Back in the **IAM Roles** page, find and edit the `FisWorkshopServiceRole`. Select **"Trust relationships"** and the **"Edit trust relationship"** button.
 
 {{< img "create-role-3.en.png" "Edit trust relationship" >}}
 

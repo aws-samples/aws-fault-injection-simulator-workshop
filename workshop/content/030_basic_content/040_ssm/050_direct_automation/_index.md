@@ -3,21 +3,20 @@ title = "FIS SSM Start Automation Setup"
 weight = 50
 +++
 
-In the previous sections we used FIS actions to directly interact with AWS APIs to terminate EC2 instances, and the [SSM SendCommand](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_SendCommand.html) option to execute code directly on our virtual machines. 
+In the previous sections we used FIS actions to directly interact with AWS APIs to terminate EC2 instances, and the [**SSM SendCommand**](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_SendCommand.html) option to execute code directly on our virtual machines. 
 
-In this section we will cover how to execute additional actions against AWS APIs that are not yet supported by FIS by using [SSM Runbooks](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-documents.html).
+In this section we will cover how to execute additional actions against AWS APIs that are not yet supported by FIS by using [**SSM Runbooks**](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-documents.html).
 
 
 {{< img "StressTest-with-runbook.png" "Stress test architecture" >}}
 
 ## Configure permissions
 
-
-In the [Configuring Permissions]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section we defined a service role `FisWorkshopServiceRole` that granted us access to running the FIS `aws:ssm:send-command` on our instances. To use the `aws:ssm:start-automation-execution` action we will need to update our permissions
+In the [**Configuring Permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section we defined a service role `FisWorkshopServiceRole` that granted us access to running the FIS `aws:ssm:send-command` on our instances. To use the `aws:ssm:start-automation-execution` action we will need to update our permissions
 
 ### Create SSM role
 
-As shown in the image above, SSM Runbooks require us to define and pass a separate role. Let's say we want to create an SSM document that can terminate instances in an autoscaling group. A policy for that might need the following permissions:
+As shown in the image above, SSM Runbooks require us to define and pass a separate role. Let's say we want to create an SSM document that can terminate instances in an autoscaling group. A policy for that might need the following permissions (see [**EC2 Actions**](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonec2.html#amazonec2-actions-as-permissions) and [**Autoscaling Actions**](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonec2autoscaling.html#amazonec2autoscaling-actions-as-permissions)):
 
 ```json
 {
@@ -55,7 +54,7 @@ Since SSM needs to be able to assume this role for running an SSM document we al
 }
 ```
 
-To create a role, save the two JSON block above into files named `iam-ec2-demo-policy.json` and `iam-ec2-demo-trust.json` and run the following CLI commands to create a role named `FisWorkshopSsmEc2DemoRole`
+To create a role, save the two JSON blocks above into files named `iam-ec2-demo-policy.json` and `iam-ec2-demo-trust.json` and run the following CLI commands to create a role named `FisWorkshopSsmEc2DemoRole`
 
 ```bash
 ROLE_NAME=FisWorkshopSsmEc2DemoRole
@@ -86,7 +85,7 @@ Get the value from your Event Engine dashboard.
 
 ### Update FIS service role
 
-The `FisWorkshopServiceRole` we defined in the [Configuring Permissions]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) only grants limited access to SSM so we need to add the following two policy statements.
+The `FisWorkshopServiceRole` we defined in the [**Configuring Permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) only grants limited access to SSM so we need to add the following two policy statements.
 
 ```json
         {
@@ -109,17 +108,17 @@ The `FisWorkshopServiceRole` we defined in the [Configuring Permissions]({{< ref
         },
 ```
 
-The first statement allows FIS to use SSM actions. The second statement defines the role that SSM will use. Make sure to insert the ARN of the role you created above.
+The first statement allows FIS to use SSM actions. The second statement defines the role that SSM will use. Make sure to insert the ARN of the `FisWorkshopSsmEc2DemoRole` role you created above.
 
-To update the `FisWorkshopServiceRole`, navigate to the [IAM console](https://console.aws.amazon.com/iam/home#/roles/FisWorkshopServiceRole?section=permissions), select "Roles" on the left, and search for `FisWorkshopServiceRole`.
+To update the `FisWorkshopServiceRole`, navigate to the [**IAM console**](https://console.aws.amazon.com/iam/home#/roles/FisWorkshopServiceRole?section=permissions), select **"Roles"** on the left, and search for `FisWorkshopServiceRole`.
 
 {{< img "locate-role-policy.en.png" "Locate role policy" >}}
 
-Expand the `FisWorkshopServicePolicy` and select "Edit Policy". Then select the JSON tab and copy the above JSON block just above the first statement `AllowFISExperimentRoleReadOnly`:
+Expand the `FisWorkshopServicePolicy` and select **"Edit Policy"**. Then select the **"JSON"** tab and copy the above JSON block just above the first statement `AllowFISExperimentRoleReadOnly`:
 
 {{< img "edit-role-policy.en.png" "Edit role policy" >}}
 
-Then select "Review policy" and "Save Changes".
+Then select **"Review policy"** and **"Save Changes"**.
 
 {{% notice tip %}}
 If the policy editor shows errors, check that you have separated blocks with commas, and that you have updated the Role ARN to a valid value. 
@@ -248,11 +247,15 @@ echo $DOCUMENT_ARN
 
 Finally we have to create the FIS experiment template to call the SSM document. Copy the following JSON into a file called `fis-terminate-instances-asg-az.json`. You will need to replace the following:
 
-* DOCUMENT_ARN - use the ARN from the previous step
-* AZ_NAME - use the name of your target AZ, e.g. `us-east-1a` if you are working in `us-east-1`
-* ASG_NAME - navigate to the [EC2 console](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select the ASG starting with `FisStackAsg`, then copy the full name of the ASG, e.g. `FisStackAsg-ASG46ED3070-1RAQ30VBKLWE1`
-* SSM_ROLE_ARN - use the role ARN from the first step of this section. You can also find this by navigating to the [IAM console](https://console.aws.amazon.com/iamv2/home#/roles), searching for `FisWorkshopSsmEc2DemoRole`, clicking on the role and copying the "Role ARN"
-* FIS_WORKSHOP_ROLE_ARN - use the role ARN from the second step of this section. You can also find this by navigating to the [IAM console](https://console.aws.amazon.com/iamv2/home#/roles), searching for `FisWorkshopServiceRole`, clicking on the role and copying the "Role ARN"
+* `DOCUMENT_ARN` - use the ARN from constructed in the previous step. See explanation at the end of the [**Working with SSM documents**]({{< ref "030_basic_content/040_ssm/030_custom_ssm_docs" >}}) section.
+
+* `AZ_NAME` - use the name of your target AZ, e.g. `us-east-1a` if you are working in `us-east-1`
+
+* `ASG_NAME` - navigate to the [**EC2 console**](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select the Auto Scaling group (ASG) starting with `FisStackAsg`, then copy the full name of the ASG, e.g. `FisStackAsg-ASG46ED3070-1RAQ30VBKLWE1`
+
+* `SSM_ROLE_ARN` - use the role ARN of the `FisWorkshopSsmEc2DemoRole` created in the first step of this section. You can also find this by navigating to the [**IAM console**](https://console.aws.amazon.com/iamv2/home#/roles), searching for `FisWorkshopSsmEc2DemoRole`, clicking on the role and copying the "Role ARN"
+
+* `FIS_WORKSHOP_ROLE_ARN` - use the role ARN of the `FisWorkshopServiceRole` that you updated in the second step of this section. You can also find this by navigating to the [**IAM console**](https://console.aws.amazon.com/iamv2/home#/roles), searching for `FisWorkshopServiceRole`, clicking on the role and copying the "Role ARN"
 
 ```json
 {
@@ -295,13 +298,13 @@ Note the experiment template ID as we will use this to start the experiment next
 Using the experiment template ID from the previous step, run the following AWS CLI command to start the experiment:
 
 ```bash
+TEMPLATE_ID=[PASTE_ID_HERE]
 aws fis start-experiment \
   --tags Name=DemoSsmAutomationDocument \
-  --experiment-template-id TEMPLATE_ID
+  --experiment-template-id ${TEMPLATE_ID}
 ```
 
-Let's get back to EC2 console and check what's happening to our EC2 instances in particular AZ.
-If the experiment runs successfully, all of our instances in particular AZ will be terminated, and spin back up after some time.
+Let's get back to EC2 console and check what's happening to our EC2 instances in the AZ we selected. If the experiment runs successfully, all of our instances in that particular AZ will be terminated, and spin back up after some time.
 
 {{< img "experiment-az-down.en.png" "Update ASG" >}}
 
@@ -309,11 +312,11 @@ If the experiment runs successfully, all of our instances in particular AZ will 
 
 If you run into issues with your FIS experiment failing check the following:
 
-* Experiment fails with "Unable to start SSM automation, not authorized to perform required action" - you probably didn't update your FIS role to enable SSM AutomationExecution and allow PassRole. You can search the "Event history" in the [CloudTrail console](https://console.aws.amazon.com/cloudtrail/home?#/events?EventName=StartAutomationExecution) for "Event name" `StartAutomationExecution`. Note that events can take up to 15min to appear in CloudTrail.
+* Experiment fails with "Unable to start SSM automation, not authorized to perform required action" - you probably didn't update your FIS role to enable SSM AutomationExecution and allow PassRole. You can search the **"Event history"** in the [**CloudTrail console**](https://console.aws.amazon.com/cloudtrail/home?#/events?EventName=StartAutomationExecution) for "Event name" `StartAutomationExecution`. Note that events can take up to 15min to appear in CloudTrail.
 
-* Experiment fails with "Unable to start SSM automation. A required parameter for the document is missing, or an undefined parameter was provided." - make sure that you properly replaced all the document parameters. You can check this by editing the experiment template. This can also be caused by a role misconfiguration that prevents SSM from assuming the execution role. You can search the "Event history" in the [CloudTrail console](https://console.aws.amazon.com/cloudtrail/home?#/events?EventName=StartAutomationExecution) for "Event name" `StartAutomationExecution`. Note that events can take up to 15min to appear in CloudTrail.
+* Experiment fails with "Unable to start SSM automation. A required parameter for the document is missing, or an undefined parameter was provided." - make sure that you properly replaced all the document parameters. You can check this by editing the experiment template. This can also be caused by a role misconfiguration that prevents SSM from assuming the execution role. You can search the **"Event history"** in the [**CloudTrail console**](https://console.aws.amazon.com/cloudtrail/home?#/events?EventName=StartAutomationExecution) for "Event name" `StartAutomationExecution`. Note that events can take up to 15min to appear in CloudTrail.
 
-* Experiment fails with "Automation execution completed with status: Failed." - this can be caused by insufficient privileges on the role passed to SSM for execution. This can also happen if there are no instances found in the selected AZ. You can examine the history and output of SSM automation runs by navigating to the [Systems Manager console](https://console.aws.amazon.com/systems-manager/automation/executions) and selecting "Automation" on the left. Then click on the automation run associated with your failed experiment and examine the output of the individual steps for more detail.
+* Experiment fails with "Automation execution completed with status: Failed." - this can be caused by insufficient privileges on the role passed to SSM for execution. This can also happen if there are no instances found in the selected AZ. You can examine the history and output of SSM automation runs by navigating to the [**Systems Manager console**](https://console.aws.amazon.com/systems-manager/automation/executions) and selecting **"Automation"** in the burger menu on the left. Then click on the automation run associated with your failed experiment and examine the output of the individual steps for more detail.
 
-* Experiment succeeds but SSM automation status shows "Cancelled" steps. This can happen if you set the "Duration" in the FIS action to be shorter than the time it takes for the SSM document to finish. In this situation FIS will call a "Cancel" action on the SSM document. Ensure that you allow enough time in FIS for the SSM document to finish.
+* Experiment succeeds but SSM automation status shows "Cancelled" steps. This can happen if you set the "Duration" in the FIS action to be shorter than the time it takes for the SSM document to finish. In this situation FIS will call the `onCancel` action on the SSM document (see the end of the [**Working with SSM documents**]({{< ref "030_basic_content/040_ssm/030_custom_ssm_docs" >}}) section). Edit the FIS template and ensure that you allow enough time in FIS for the SSM document to finish.
 

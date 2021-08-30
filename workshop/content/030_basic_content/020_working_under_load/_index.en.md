@@ -13,7 +13,7 @@ In the previous section, you navigated to the basic website setup as well as the
 export URL_HOME=[PASTE URL HERE]
 ```
 
-Next, we need to generate load. There are many [load testing tools](https://en.wikipedia.org/wiki/Category:Load_testing_tools) available to generate a variety of load patterns. However, for the purpose of this workshop we have included a Lambda function that will make HTTP GET calls to our website and log performance data to CloudWatch. To find the Lambda function,  navigate to [CloudFormation](https://console.aws.amazon.com/cloudformation/home), select the "**FisStackLoadGen**" stack, and click on the "**Outputs**" tab. It will show you the Lambda function ARN:
+Next, we need to generate load. There are many [**load testing tools**](https://en.wikipedia.org/wiki/Category:Load_testing_tools) available to generate a variety of load patterns. However, for the purpose of this workshop we have included a Lambda function that will make HTTP GET calls to our website and log performance data to CloudWatch. To find the Lambda function,  navigate to [**CloudFormation**](https://console.aws.amazon.com/cloudformation/home), select the `FisStackLoadGen` stack, and click on the "**Outputs**" tab. It will show you the Lambda function ARN:
 
 {{< img "cloudformation.en.png" "Cloudformation Lambda Function ARN" >}}
 
@@ -54,10 +54,10 @@ While our load is running let's explore the setup a little more.
 
 ### Webserver logs and metrics
 
-The first thing we want to look at is our webserver logs. Because we are using AWS Auto Scaling, virtual machines can be terminated and recycled which means logs written locally on the EC2 instance won't be accessible anymore. Therefore, we have installed the [Unified CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) and configured our webserver to write logs to a [CloudWatch Log Group](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log). 
+The first thing we want to look at is our webserver logs. Because we are using AWS Auto Scaling, virtual machines can be terminated and recycled which means logs written locally on the EC2 instance won't be accessible anymore. Therefore, we have installed the [**Unified CloudWatch Agent**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) and configured our webserver to write logs to a [**CloudWatch Log Group**](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log). 
 
 {{%expand "Navigating to CloudWatch Log Groups" %}}
-Log into the AWS console as described in **Getting Started**. From the "**Services**" dropdown navigate to "**CloudWatch**" under "**Management & Governance**" or use the search bar. On the left hand side expand the burger menu if necessary, then select "**Logs**" and "**Log Groups**". If you have many log groups you can search for `/fis-workshop/asg-access-log`
+Log into the AWS console as described in [**Start the workshop**]({{< ref "020_starting_workshop" >}}). From the "**Services**" dropdown navigate to "**CloudWatch**" under "**Management & Governance**" or use the search bar. On the left hand side expand the burger menu if necessary, then select "**Logs**" and "**Log Groups**". If you have many log groups you can search for `/fis-workshop/asg-access-log`
 {{% /expand%}}
 
 {{< img "nginx-log-stream-1.en.png" "Nginx access log group" >}}
@@ -66,7 +66,7 @@ Click through on the topmost entry and expand any of the log lines. You may noti
 
 {{< img "nginx-log-stream-2.en.png" "Nginx access log" >}}
 
-While not necessary, this makes it easy to create [Metric Filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringPolicyExamples.html). Navigate back to the `/fis-workshop/asg-access-log` log group and select the "**Metric filters**" tab. You will see that we have created filters to extract the count of responses with HTTP `status` codes in the `2xx` (good responses) and `5xx` (bad responses) ranges. We also created a filter to select all entries that have a `request_time` set. The resulting metrics can be found under  **Metrics** / **All metrics** / **Custom Namespaces** / **fisworkshop**. These are also the metrics for `Server (nginx) connection status` and `Server (nginx) response time` you saw on the dashboard in the previous section.
+While not necessary, this makes it easy to create [**Metric Filters**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringPolicyExamples.html). Navigate back to the `/fis-workshop/asg-access-log` log group and select the "**Metric filters**" tab. You will see that we have created filters to extract the count of responses with HTTP `status` codes in the `2xx` (good responses) and `5xx` (bad responses) ranges. We also created a filter to select all entries that have a `request_time` set. The resulting metrics can be found under  **Metrics** / **All metrics** / **Custom Namespaces** / `fisworkshop`. These are also the metrics for `Server (nginx) connection status` and `Server (nginx) response time` you saw on the dashboard in the previous section.
 
 Let's look at our dashboard:
 
@@ -80,7 +80,7 @@ Now, it's clearer what happened. We were requesting a small static page and Ngin
 
 ## Increasing the load
 
-Clearly, hitting a static page isn't a good test to validate our Auto Scaling configuration works as intended. Fortunately, the server also exposes a `phpinfo.php` page. Let's try loading that instead. Define another environment variable and run the load test against the new URL. Since we want to see Auto Scaling happen, let's run more than one copy:
+Clearly, hitting a static page isn't a good test to validate our Auto Scaling configuration works as intended. Fortunately, the server also exposes a `phpinfo.php` page. Let's try loading that instead. Define another environment variable and run the load test against the new URL. Since we want to see the Auto Scaling group adjust capacity, let's run more than one copy:
 
 ```bash
 export URL_PHP=${URL_HOME}/phpinfo.php
@@ -109,7 +109,7 @@ While this is executing, we encourage you to explore CloudWatch logs and create 
 
 {{< img "dashboard-extended-phpinfo.en.png" "Load against phpinfo page" >}}
 
-Finally, we generated enough load to force a Auto Scaling event. We can also see how different the user experience is from the Nginx report. Requests timeout after 2s, substantially affecting user experiences, and rendering the website unavailable. Nginx, in contrast, doesn't report this as an error because the connection was terminated before being served. We will leave it as an exercise to the reader to figure out more details and will move on to fault injection experiments.
+According to the dashboards, we've now generated enough load to force a scaling event. We can also see how different the user experience is from the Nginx report. Requests timeout after 2s, substantially affecting user experiences, and rendering the website unavailable. Nginx, in contrast, doesn't report this as an error because the connection was terminated by the client before being served. We will leave it as an exercise to the reader to figure out more details and will move on to fault injection experiments.
 
 
 

@@ -23,111 +23,47 @@ We are assuming that you know how to set up a basic FIS experiment and will focu
   * Add `Description` of `FailoverAuroraCluster`
   * Select `FisWorkshopServiceRole` as execution role
 
-### Target selection
-
-Now we need to define targets. Scroll to the "Targets" section and select "Add Target"
-
-{{< img "create-template-2-targets-1.en.png" "Add FIS target" >}}
-
-On the "Add target" popup enter `FisWorkshopAuroraCluster` for name and select `aws:rds:cluster`. For "Target method" we will select resources based on the ID. Select the `Resource IDs` checkbox. Pick the target cluster, then pick `All` from "Selection mode". Select "Save".
-
-{{< img "create-template-2-targets-2-rev1.en.png" "Edit FIS target" >}}
-
 ### Action definition
 
-With targets defined we define the action to take. Scroll to the "Actions" section and select "Add Action"
-
-{{< img "create-template-2-actions-1.en.png" "Add FIS actions" >}}
+In the “Actions” section select the **“Add Action”** button.
 
 For "Name" enter `FisWorkshopFailoverAuroraCluster` and add a "Description" like `Failover Aurora Cluster`. For "Action type" select `aws:rds:failover-db-cluster`.
 
-Under "Target" select the `FisWorkshopAuroraCluster` target created above. Select "Save".
+Leave the default “Target” `Clusters-Target-1` and select **“Save”**.
 
 {{< img "create-template-2-actions-2-rev1.en.png" "Edit FIS actions" >}}
 
+### Target selection
+
+For this action we need to select our Aurora "Cluster". For this we will need to know the instance resource ID. To find this ID open a new browser window and navigate to the [**RDS console**](https://console.aws.amazon.com/rds/home?#databases:)). Note the "DB identifier" for the target cluster, the one with "Engine" type "Aurora MySQL" and "Role" "Regional Cluster".
+
+{{< img "rds-check-resource-id.en.png" "Edit FIS target" >}}
+
+Return to the FIS experiment setup, scroll to the "Targets" section, select `Clusters-Target-1` and select **"Edit"**.
+
+You may leave the default name `Clusters-Target-1` but for maintainability we rcommend using descriptive target names. Change "Name" to `FisWorkshopAuroraCluster` for name (this will automatically update the name in the action as well) and make sure "Resource type" is set to `aws:rds:cluster`. 
+
+For "Target method" we will select resources based on the ID. Select the "Resource IDs" checkbox. Under "Resource IDs" pick the target DB instance matching the "DB Identifier" you noted above, then select `All` from "Selection mode". Select **"Save"**.
+
+{{< img "create-template-2-targets-2-rev1.en.png" "Edit FIS target" >}}
+
 ### Creating template without stop conditions
 
-* Confirm that you wish to create the template without stop condition
+Select **“Create experiment template”** and confirm that you wish to create a template without stop conditions.
 
 ## Validation procedure
 
-{{% expand "Identical to RDS MySQL procedure - click to expand" %}}
-
-Before running the experiment we should consider how we will define success. How will we know that our failover was in fact non-impacting. For this workshop we have installed a python script that will read and write data to the database, conceptually like this but with some added safeguards:
-
-```python
-import mysql.connector
-mydb = mysql.connector.connect(...)
-cursor = mydb.cursor()
-while True:
-    cursor.execute("insert into test (value) values (%d)" % int(32768*random.random()))
-    cursor.execute("select * from test order by id desc limit 10")
-    for line in cursor:
-        cursor.append("%-30s" % str(line))
-```
-
-We would expect that this would keep writing output while the DB is availble, stop while it's failing over and restart when the DB has successfully failed over.
-
-Additionally because the DB connection does a DNS lookup our script will also print the IP address of the database it's currently connected to ... healthy output should look like this:
-
-```text
-AURORA                         RDS
-10.0.89.224                    10.0.95.247
-(7711, 2282)                   (5419, 15189)
-(7710, 5964)                   (5418, 15841)
-(7709, 10634)                  (5417, 8071)
-(7708, 4834)                   (5416, 21948)
-(7707, 20291)                  (5415, 27256)
-(7706, 9343)                   (5414, 8187)
-(7705, 5496)                   (5413, 9359)
-(7704, 30985)                  (5412, 6058)
-(7703, 21808)                  (5411, 26174)
-(7702, 20243)                  (5410, 21155)
-```
-
-### Starting the validation procedure
-
-Connect to one of the EC2 instances in your auto scaling group. In a new browser window - we need to be able to see this side-by-side with the FIS experiment later - navigate to your [EC2 console](https://console.aws.amazon.com/ec2/v2/home?#Instances:instanceState=running;search=FisStackAsg/ASG) and search for instances named `FisStackAsg/ASG`. Select one of the instances and click on the "Connect" button:
-
-{{< img "instance-connect-1.en.png" "Locate ASG instance" >}}
-
-On the next page select "Session Manager" and "Connect":
-
-{{< img "instance-connect-2.en.png" "Connect to ASG instance via Session Manager" >}}
-
-This will open a linux terminal session. In this session sudo to assume the `ec2-user` identity:
-
-```bash
-sudo su - ec2-user
-```
-
-If this is the first time you are doing this, run the create_db.py script to ensure we can connect to the DB and we have created the required tables:
-
-```bash
-./create_db.py
-```
-
-If all went well you should see output similar to this:
-
-```
-AURORA                         RDS
-10.0.89.224                    10.0.95.247
-done
-```
-
-Now start the test script and leave it running:
-
-```bash
-./test_mysql_connector_curses.py
-```
-
-{{% /expand %}}
+The validation procedure is identical to what we did in the [**RDS DB Instance Reboot**]({{< ref "030_basic_content/050_databases/010_rds_database_reboot" >}}) section. If you have not explored that section before, perform the steps as described there under the "Validation Procedure" heading and return here when you reach the "Run FIS experiment" heading.
 
 ## Run FIS experiment
 
+{{% notice note %}}
+We are assuming that you know how to set up a basic FIS experiment and will focus on things specific to this experiment. If you need a refresher see the previous [**First Experiment**]({{< ref "030_basic_content/030_basic_experiment/" >}}) section.
+{{% /notice %}}
+
 ### Record current Aurora state
 
-Navigate to the [RDS console](https://console.aws.amazon.com/rds/home), select "Databases" on the left menu, and search for "fisworkshop". Take a screenshot or write down the "Reader" and "Writer" AZ information, e.g.:
+Navigate to the [**RDS console**](https://console.aws.amazon.com/rds/home), select **"Databases"** on the left menu, and search for "fisworkshop". Take a screenshot or write down the "Reader" and "Writer" AZ information, e.g.:
 
 {{< img "review-1-rds-1.en.png" "Explore aurora initial state" >}}
 
@@ -141,7 +77,7 @@ Navigate to the [RDS console](https://console.aws.amazon.com/rds/home), select "
 
 ### Review results
 
-Verify that the experiment worked. If you are not already on the pane viewing your experiment, navigate to the [FIS console](https://console.aws.amazon.com/fis/home?#Experiments), select "Experiments", and select the experiment ID for the experiment you just started. This should show success.
+Verify that the experiment worked. If you are not already on the pane viewing your experiment, navigate to the [**FIS console**](https://console.aws.amazon.com/fis/home?#Experiments), select **"Experiments"**, and select the experiment ID for the experiment you just started. This should show "success".
 
 Verify that the failover actually happened. Navigate to the RDS console again and about a minute after you started the experiment you'll see the "Reader" and "Writer" instances flipped to the other AZ:
 
@@ -149,16 +85,16 @@ Verify that the failover actually happened. Navigate to the RDS console again an
 
 If all went well, the "Reader" and "Writer" instances should have traded places. 
 
-If you were watching the output of your test script carefully you might also have noticed that for a short period of time DNS returns no value for Aurora. To address this our code already contains an additional try/except block for DB reconnection.
+If you were watching the output of your test script carefully you might also have noticed that for a short period of time DNS returns no value for Aurora. To address this our code already contains an additional try/except block for DB reconnection (see [**code in GitHub**](https://github.com/aws-samples/aws-fault-injection-simulator-workshop/blob/main/resources/templates/asg-cdk/assets/test_pymysql_curses.py#L88-L92)).
 
 
 ## Learning and improving
 
-As this was essentially the same as the previous **RDS DB Instance Reboot** section there are not new learnings here.
+As this was essentially the same as the previous [**RDS DB Instance Reboot**]({{< ref "030_basic_content/050_databases/010_rds_database_reboot" >}}) section there are no new learnings here.
 
-However, you may want to experiment further built-in Aurora [fault injection queries](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.FaultInjectionQueries.html).
+However, you may want to experiment further with built-in Aurora [**fault injection queries**](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.FaultInjectionQueries.html).
 
-To access your Aurora database, you can extract the connection information from the [AWS Secrets Manager console](https://console.aws.amazon.com/secretsmanager/home?#!/secret?name=FisAuroraSecret) by selecting the `FisAuroraSecret` and selecting "Retrieve secret value":
+To access your Aurora database, you can extract the connection information from the [**AWS Secrets Manager console**](https://console.aws.amazon.com/secretsmanager/home?#!/secret?name=FisAuroraSecret) by selecting the `FisAuroraSecret` and selecting **"Retrieve secret value"**:
 
 {{< img "ssm-get-secret.en.png" "Retrieve database credentials from Secrets Manager" >}}
 
@@ -168,7 +104,7 @@ Using the information you can open another terminal, e.g. from the same instance
 mysql -h HOST -u USERNAME -p DBNAME
 ```
 
-you can then run fault injection queries as further explained in this [blog post](https://aws.amazon.com/blogs/architecture/perform-chaos-testing-on-your-amazon-aurora-cluster/) and observe the effect on the test script, e.g.:
+you can then run fault injection queries as further explained in this [**blog post**](https://aws.amazon.com/blogs/architecture/perform-chaos-testing-on-your-amazon-aurora-cluster/) and observe the effect on the test script, e.g.:
 
 ```sql
 ALTER SYSTEM CRASH NODE;
