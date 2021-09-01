@@ -1,7 +1,12 @@
 +++
 title = "FIS SSM Start Automation Setup"
 weight = 50
+draft = true
 +++
+
+{{% notice warning %}}
+This feature is in private preview. Reach out to your SA for more information.
+{{% /notice %}}
 
 In the previous sections we used FIS actions to directly interact with AWS APIs to terminate EC2 instances, and the [**SSM SendCommand**](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_SendCommand.html) option to execute code directly on our virtual machines. 
 
