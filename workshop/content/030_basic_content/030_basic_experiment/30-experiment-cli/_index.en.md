@@ -190,7 +190,7 @@ The rest of this section uses the [**AWS CLI**](https://aws.amazon.com/cli/). If
 
 ### Creating templates
 
-To create an experiment template, copy the above "Finished template" JSON into a file named `fis.json` and ensure you have changed the `roleArn` entry to be the ARN of the role you created earlier. To find this role ARN, navigate to [IAM Roles] page, search for the role `FisWorkshopServiceRole`, click on it and copy the value in **Role ARN**. Then, use the CLI to create the template in AWS:
+To create an experiment template, copy the above "Finished template" JSON into a file named `fis.json` and ensure you have changed the `roleArn` entry to the ARN of the role you created earlier. To find this role ARN, navigate to the [IAM Roles](https://console.aws.amazon.com/iamv2/home#/roles) page, search for the role `FisWorkshopServiceRole`, click on it and copy the value in **Role ARN**. Then, use the CLI to create the template in AWS:
 
 ```bash
 aws fis create-experiment-template --cli-input-json file://fis.json
