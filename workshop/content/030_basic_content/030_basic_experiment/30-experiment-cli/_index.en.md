@@ -186,11 +186,11 @@ Before using this template, please ensure that you replace the ARN for the FIS e
 
 ## Working with templates
 
-The rest of this section uses the [**AWS CLI**](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html). If you are using [**AWS Cloud9**](https://console.aws.amazon.com/cloud9/home/product) this should work out of the box. Otherwise please ensure you have configured AWS credentials for the CLI.
+The rest of this section uses the [**AWS CLI**](https://aws.amazon.com/cli/). If you are using [**AWS Cloud9**](https://console.aws.amazon.com/cloud9/home/product) this should work out of the box. Otherwise, please ensure you have installed [**AWS CLI**](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and configured [AWS credentials for the CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-config).
 
 ### Creating templates
 
-To create an experiment template, copy the above JSON into a file named `fis.json` and ensure you have changed the `roleArn` entry to be the ARN of the role you created earlier. Then use the CLI to create the template in AWS:
+To create an experiment template, copy the above "Finished template" JSON into a file named `fis.json` and ensure you have changed the `roleArn` entry to be the ARN of the role you created earlier. To find this role ARN, navigate to [IAM Roles] page, search for the role `FisWorkshopServiceRole`, click on it and copy the value in **Role ARN**. Then, use the CLI to create the template in AWS:
 
 ```bash
 aws fis create-experiment-template --cli-input-json file://fis.json
@@ -246,5 +246,7 @@ The learnings here should be the same as for the console section:
 
 * Carefully choose the resource to affect and how to select them. If we had originally chosen to terminate a single instance (`COUNT`) rather than a fraction (`PERCENT`), we would have severely affected our service.
 * Spinning up instances takes time. To achieve resilience, ASGs should be set to have at least two instances running at all times
+
+Additionally, the benefit of using AWS CLI to create and run experiments allow you to document and automate the process for consistency. The best practice is to work with experiment templates that are versioned controlled (e.g. in a Git repository) so that you can setup peer review processes as well as the ability to run experiments continuously via a CI/CD pipeline.
 
 From here you can explore how to set up experiments using [**AWS CloudFormation**]({{< ref "030_basic_content/030_basic_experiment/40-experiment-cfn" >}}) or move on exploring [**more fault types**]({{< ref "030_basic_content/040_ssm" >}}) to inject.
