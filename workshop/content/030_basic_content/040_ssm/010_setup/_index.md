@@ -8,8 +8,10 @@ For this section we will use Linux and Windows instances created specifically fo
 {{< img "StressTest-with-user.png" "Stress test architecture" >}}
 
 
-{{% notice info %}}
-The resources above have been created as part of the [**Start the workshop**]({{< ref "020_starting_workshop/050_create_stack" >}}) section. If you want to explore how the resources for this section have been created read on below. Otherwise continue to the next section.
+{{% notice warning %}}
+The resources above have already been created as part of the [**Start the workshop**]({{< ref "020_starting_workshop/050_create_stack" >}}) section. If you ran the `./deploy-parallel.sh` command earlier, the below CloudFormation deployment steps would have included the resources required in the stack called `FisCpuStress`. Skip the remaining of this and go to the next section. 
+
+If you are new here and you want to explore how the resources for this section have been created, read on below. Otherwise, continue to the next section.
 {{% /notice %}}
 
 
