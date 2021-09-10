@@ -24,8 +24,9 @@ Open the [AWS Code Commit Console](https://console.aws.amazon.com/codesuite/code
 In your Cloud9 terminal clone the repository (replace the URL in the example by pasting from the clipboard):
 
 ```bash
+GIT_URL=$( aws codecommit get-repository --repository-name FIS_Workshop --query "repositoryMetadata.cloneUrlHttp" --output text )
 cd ~/environment
-git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/FIS_Workshop
+git clone ${GIT_URL}
 cd FIS_Workshop
 ```
 
