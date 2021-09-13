@@ -19,9 +19,9 @@ Adding files to our repository is a 3-step process:
 
 ### Clone
 
-Open the [AWS Code Commit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home). Click the `HTTPS` link next to the `FIS_Workshop` repository name to copy the URL to the clipboard. 
+Open the [AWS Code Commit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home). Click the `HTTPS` link next to the `FIS_Workshop` repository name to examine the clone URL. 
 
-In your Cloud9 terminal clone the repository (replace the URL in the example by pasting from the clipboard):
+In your Cloud9 terminal clone the repository (for convinence, the commands below show how to query the clone URL):
 
 ```bash
 GIT_URL=$( aws codecommit get-repository --repository-name FIS_Workshop --query "repositoryMetadata.cloneUrlHttp" --output text )
