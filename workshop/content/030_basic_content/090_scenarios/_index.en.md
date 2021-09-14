@@ -1,7 +1,8 @@
-+++
-title = "Common scenarios"
-weight = 90
-+++
+---
+title: "Common scenarios"
+weight: 90
+services: true
+---
 
 This section covers common scenarios customers ask about.
 

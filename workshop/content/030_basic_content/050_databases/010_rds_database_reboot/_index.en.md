@@ -1,7 +1,8 @@
-+++
-title = "RDS DB Instance Reboot"
-weight = 10
-+++
+---
+title: "RDS DB Instance Reboot"
+weight: 10
+services: true
+---
 
 ## Experiment idea
 

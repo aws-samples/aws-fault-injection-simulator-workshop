@@ -1,7 +1,8 @@
-+++
-title = "Force a Pipeline Error"
-weight = 40
-+++
+---
+title: "Force a Pipeline Error"
+weight: 40
+services: true
+---
 
 In this section we will update the experiment template defined in our repository to contain a stop condition that will prevent or abort experiment execution if our cloudwatch alarm is in ALARM state. 
 
@@ -15,7 +16,7 @@ In this section we are directly updating the file in AWS CodeCommit. This is equ
 
 We will be making a change to our CloudFormation template that creates our EC2 Instance and defines our experiment. 
 
-Open the [AWS CodeCommit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home) and select the `FIS_Workshop` repository. Click on `cfn_fis_demos.yaml` and select **"Edit"** in the upper right hand corner. Edit the file as shown below to enable am AWS CloudWatch alarm as a Stop Condition. 
+Open the [**AWS CodeCommit Console**](https://console.aws.amazon.com/codesuite/codecommit/home?#Home) and select the `FIS_Workshop` repository. Click on `cfn_fis_demos.yaml` and select **"Edit"** in the upper right hand corner. Edit the file as shown below to enable am AWS CloudWatch alarm as a Stop Condition. 
 
 Before:
 {{< img "sourcebefore.png" "Source Before" >}}
@@ -56,7 +57,7 @@ Congratulations! You have built a CI/CD pipeline, instrumented it with an AWS FI
 From this starting point you can explore improvements like:
 
 * **add more pipeline stages** - In our pipeline the experiment is the last step and does not gate progress. In a production scenario there might be a additional steps that would only run if the AWS FIS experiment succeeds. Try adding a pipeline stage and verify that it only runs if the experiment succeeds.
-* **explore alternative ways to change the template** - in this example we are using an AWS CloudFormation template to define the experiment template as shown in the [**Experiment (CloudFormation)**]({{< ref "030_basic_content/030_basic_experiment/40-experiment-cfn" >}}) section. Could you store the experiment template as a separate file and update it using the CLI as show in [**Experiment (CLI)**]({{< ref "030_basic_content/030_basic_experiment/30-experiment-cli" >}}) or expand the `runExperiment.py` script (see [code in GitHub](https://github.com/aws-samples/aws-fault-injection-simulator-workshop/blob/main/resources/code/cdk/cicd/resources/runExperiment.py))?
+* **explore alternative ways to change the template** - in this example we are using an AWS CloudFormation template to define the experiment template as shown in the [**Experiment (CloudFormation)**]({{< ref "030_basic_content/030_basic_experiment/40-experiment-cfn" >}}) section. Could you store the experiment template as a separate file and update it using the CLI as show in [**Experiment (CLI)**]({{< ref "030_basic_content/030_basic_experiment/30-experiment-cli" >}}) or expand the `runExperiment.py` script (see [**code in GitHub**](https://github.com/aws-samples/aws-fault-injection-simulator-workshop/blob/main/resources/code/cdk/cicd/resources/runExperiment.py))?
 * **trigger AWS CloudWatch alarm from experiment template** - AWS FIS templates allow you to run a sequence of steps, try triggering the alarm from a step in the template. Hint: you could do this via the [**AWS Sytems Manager integration**](){{< ref "030_basic_content/040_ssm" >}}.
 * **set up a real alarm** 
 

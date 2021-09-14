@@ -1,7 +1,8 @@
-+++
-title = "Recurrent Experiments - CI/CD"
-weight = 80
-+++
+---
+title: "Recurrent Experiments - CI/CD"
+weight: 80
+services: true
+---
 
 So far we have discussed iterating through a cycle of: 
 

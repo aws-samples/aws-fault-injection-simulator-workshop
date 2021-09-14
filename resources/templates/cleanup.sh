@@ -60,6 +60,35 @@ echo "Cleanup in Region: ${REGION}"
     fi
 )
 
+# Fault stacks added as CFN
+(
+    STACK_NAME=$( aws cloudformation list-stacks --query "StackSummaries[?(StackName=='FisApiFailureUnavailable')&&(StackStatus!='DELETE_COMPLETE')].StackName" --output text )
+    if [ -n "${STACK_NAME}" ]; then
+        echo "Deleting API faulrt injections stack FisApiFailureUnavailable"
+
+        # Delete CloudFormation stack
+        aws cloudformation delete-stack \
+        --stack-name FisApiFailureUnavailable
+        aws cloudformation wait stack-delete-complete \
+        --stack-name FisApiFailureUnavailable
+    else
+        echo "API fault injection stack FisApiFailureUnavailable not found"
+    fi
+
+    STACK_NAME=$( aws cloudformation list-stacks --query "StackSummaries[?(StackName=='FisApiFailureThrottling')&&(StackStatus!='DELETE_COMPLETE')].StackName" --output text )
+    if [ -n "${STACK_NAME}" ]; then
+        echo "Deleting API faulrt injections stack FisApiFailureThrottling"
+
+        # Delete CloudFormation stack
+        aws cloudformation delete-stack \
+        --stack-name FisApiFailureThrottling
+        aws cloudformation wait stack-delete-complete \
+        --stack-name FisApiFailureThrottling
+    else
+        echo "API fault injection stack FisApiFailureThrottling not found"
+    fi
+)
+
 # Stress VM stack added as CFN
 (
     STACK_NAME=$( aws cloudformation list-stacks --query "StackSummaries[?(StackName=='FisCpuStress')&&(StackStatus!='DELETE_COMPLETE')].StackName" --output text )

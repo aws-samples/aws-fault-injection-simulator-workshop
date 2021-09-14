@@ -1,7 +1,8 @@
-+++
-title = "Experiment (Console)"
-weight = 20
-+++
+---
+title: "Experiment (Console)"
+weight: 20
+services: true
+---
 
 In this section, we will learn how to create an AWS FIS experiment template using the AWS Console. 
 
@@ -153,7 +154,7 @@ It looks like our ASG was configured to scale down to just one instance while id
 
 **Great! While this wasn't really what we expected, we just found a flaw in our configuration that would severely affect our system's resilience! Let's fix it and try again!**
 
-Click on the auto scaling group name and **"Edit"** the "Group Details" to raise both the "Desired capacity" and "Minimum capacity" to `2`.
+Click on the Auto Scaling group name and **"Edit"** the "Group Details" to raise both the "Desired capacity" and "Minimum capacity" to `2`.
 
 {{< img "review-1-asg-2.en.png" "Update ASG" >}}
 

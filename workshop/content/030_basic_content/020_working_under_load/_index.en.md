@@ -1,7 +1,8 @@
-+++
-title = "Synthetic User Experience"
-weight = 20
-+++
+---
+title: "Synthetic User Experience"
+weight: 20
+services: true
+---
 
 To gain insights from our fault injection experiments, we want to correlate user-experience with the sysops view from the previous section. In production, we could instrument the clients to send telemetry back to us, but in non-production we don't usually have sufficient load to do this.  _You_ also probably have better things to do than sit there clicking reload on a browser page while your experiment is running.
 
@@ -13,7 +14,7 @@ In the previous section, you navigated to the basic website setup as well as the
 export URL_HOME=[PASTE URL HERE]
 ```
 
-Next, we need to generate load. There are many [**load testing tools**](https://en.wikipedia.org/wiki/Category:Load_testing_tools) available to generate a variety of load patterns. However, for the purpose of this workshop we have included a Lambda function that will make HTTP GET calls to our website and log performance data to CloudWatch. To find the Lambda function,  navigate to [**CloudFormation**](https://console.aws.amazon.com/cloudformation/home), select the `FisStackLoadGen` stack, and click on the "**Outputs**" tab. It will show you the Lambda function ARN:
+Next, we need to generate load. There are many [**load testing tools**](https://en.wikipedia.org/wiki/Category:Load_testing_tools) available to generate a variety of load patterns. However, for the purpose of this workshop we have included an AWS Lambda (Lambda) function that will make HTTP GET calls to our website and log performance data to Amazon CloudWatch (CloudWatch). To find the Lambda function, navigate to the AWS CloudFormation (CloudFormation) [**console**](https://console.aws.amazon.com/cloudformation/home), select the `FisStackLoadGen` stack, and click on the "**Outputs**" tab. It will show you the Lambda function ARN:
 
 {{< img "cloudformation.en.png" "Cloudformation Lambda Function ARN" >}}
 
@@ -54,7 +55,7 @@ While our load is running let's explore the setup a little more.
 
 ### Webserver logs and metrics
 
-The first thing we want to look at is our webserver logs. Because we are using AWS Auto Scaling, virtual machines can be terminated and recycled which means logs written locally on the EC2 instance won't be accessible anymore. Therefore, we have installed the [**Unified CloudWatch Agent**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) and configured our webserver to write logs to a [**CloudWatch Log Group**](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log). 
+The first thing we want to look at is our webserver logs. Because we are using an Auto Scaling group, virtual machines can be terminated and recycled which means logs written locally on the EC2 instance won't be accessible anymore. Therefore, we have installed the [**Unified CloudWatch Agent**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) and configured our webserver to write logs to a [**CloudWatch Log Group**](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log). 
 
 {{%expand "Navigating to CloudWatch Log Groups" %}}
 Log into the AWS console as described in [**Start the workshop**]({{< ref "020_starting_workshop" >}}). From the "**Services**" dropdown navigate to "**CloudWatch**" under "**Management & Governance**" or use the search bar. On the left hand side expand the burger menu if necessary, then select "**Logs**" and "**Log Groups**". If you have many log groups you can search for `/fis-workshop/asg-access-log`

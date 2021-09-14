@@ -1,10 +1,11 @@
-+++
-title = "Amazon EKS"
-chapter = false
-weight = 10
-+++
+---
+title: "Amazon EKS"
+chapter: false
+weight: 10
+services: true
+---
 
-In this section we will cover working with containers running on [Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (Amazon EKS). For this setup we'll be using the following test architecture:
+In this section we will cover working with containers running on [Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (EKS). For this setup we'll be using the following test architecture:
 
 {{< img "EKSCluster-with-user.png" "Image of architecture to be injected with chaos" >}}
 

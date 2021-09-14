@@ -1,9 +1,10 @@
-+++
-title = "Databases"
-weight = 50
-+++
+---
+title: "Databases"
+weight: 50
+services: true
+---
 
-In this section we will cover working with databases. For this setup we are adding RDS MySQL and Aurora for MySQL to our test architecture:
+In this section we will cover working with databases. For this setup we are adding Amazon Relational Database Service (RDS) MySQL and Amazon Aurora (Aurora) for MySQL to our test architecture:
 
 {{< img "ASG-RDS-with-user.png" "Image of architecture to be injected with chaos" >}}
 
@@ -14,4 +15,4 @@ Since these are different products they have slightly different failover pattern
 * For RDS MySQL your dashboard will show "Instances" which may have "Replicas" attached for failover.
 * For Aurora MySQL your dashboard will show "Clusters" with "Writers" and "Readers". 
 
-For this workshop we are using a similar configuration that replicates data across two AZs for resilience.
+For this workshop we are using a similar configuration that replicates data across two Availability Zones (AZs) for resilience.

@@ -1,8 +1,9 @@
-+++
-title = "Observe the system"
-chapter = false
-weight = 20
-+++
+---
+title: "Observe the system"
+chapter: false
+weight: 20
+services: true
+---
 
 ## Review results
 

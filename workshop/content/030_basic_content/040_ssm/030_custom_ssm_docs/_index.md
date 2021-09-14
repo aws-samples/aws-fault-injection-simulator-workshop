@@ -1,7 +1,8 @@
-+++
-title = "Working with SSM documents"
-weight = 30
-+++
+---
+title: "Working with SSM documents"
+weight: 30
+services: true
+---
 
 ## Pre-configured SSM documents
 

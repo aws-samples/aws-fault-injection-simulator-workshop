@@ -1,7 +1,8 @@
-+++
-title = "Configuring Permissions"
-weight = 10
-+++
+---
+title: "Configuring Permissions"
+weight: 10
+services: true
+---
 
 The AWS FIS security model uses two IAM roles. The first IAM role, the one you used to log into the console, controls access to AWS FIS service. It governs whether you are able to see, modify, and run AWS FIS experiments.
 

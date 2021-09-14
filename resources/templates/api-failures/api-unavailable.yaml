@@ -12,14 +12,25 @@ Parameters:
   LambdaFunctionName:
     Type: String
     AllowedPattern: "[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+"
-    Default: fis-workshop-api-errors
+    Default: fis-workshop-api-errors-unavailable
   ErrorQueue:
     Type: String
     AllowedPattern: "[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+"
-    Default: fis-workshop-api-queue
+    Default: fis-workshop-api-queue-unavailable
   LatestAmiId:
     Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
     Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+  SubnetId:
+   Description: Subnet in which to instantiate VM - needed if no Default VPC was configured
+   # Can't use Type: AWS::EC2::Subnet::Id because it checks the default before the condition
+   Type: String
+   AllowedPattern: "subnet-[a-z0-9]+"
+   Default: "subnet-000000"
+Conditions:
+  UseDefaultVpc:
+    !Equals
+      - !Ref SubnetId
+      - "subnet-000000"
 
 Resources:
   Instance:
@@ -27,6 +38,7 @@ Resources:
     Properties:
       ImageId: !Ref LatestAmiId
       InstanceType: t3.micro
+      SubnetId: !If [UseDefaultVpc, !Ref "AWS::NoValue", !Ref SubnetId]
   apiGateway:
     Type: AWS::ApiGateway::RestApi
     Properties:

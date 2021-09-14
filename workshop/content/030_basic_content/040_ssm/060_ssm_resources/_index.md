@@ -1,9 +1,10 @@
-+++
-title = "SSM Additional resources"
-weight = 60
-+++
+---
+title: "SSM Additional resources"
+weight: 60
+servides: true
+---
 
-For additional SSM automation resources see:
+For additional AWS Systems Manager (SSM) automation resources see:
 
 * [**SSM Workshop**](https://workshop.aws-management.tools/ssm/)
 * [**SSM Chaos Documents**](https://github.com/adhorn/chaos-ssm-documents)
