@@ -2,6 +2,7 @@
 title: "AWS Workshop Portal"
 chapter: false
 weight: 10
+services: true
 ---
 
 ### Login to AWS Workshop Portal

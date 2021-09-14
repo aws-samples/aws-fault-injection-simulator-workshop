@@ -1,9 +1,10 @@
-+++
-title = "Background"
-weight = 10
-+++
+---
+title: "Background"
+weight: 10
+services: true
+---
 
-Before attempting to simulate an AZ failure it's worth considering what we mean by "AZ failure". 
+Before attempting to simulate an Avaliability Zone (AZ) failure it's worth considering what we mean by "AZ failure". 
 
 ## AZ vs. datacenter
 

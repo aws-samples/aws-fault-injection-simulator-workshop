@@ -1,8 +1,9 @@
-+++
-title = "Improve & Repeat"
-chapter = false
-weight = 30
-+++
+---
+title: "Improve & Repeat"
+chapter: false
+weight: 30
+services: true
+---
 
 ## Learning and Improving
 
@@ -59,4 +60,7 @@ In this workshop we used manual scaling of both worker nodes and pods. In a prod
 * a [Horizontal Pod Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/horizontal-pod-autoscaler.html) to dynamically manage the number of pods .
 * a [Vertical Pod Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/vertical-pod-autoscaler.html) to dynamically manage CPU and memory allocation on your pods.
 
+## EKS further learning
+
 For more on EKS configurations see the [EKS workshop](https://www.eksworkshop.com/). 
+

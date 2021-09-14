@@ -2,6 +2,7 @@
 title: "Provision AWS resources"
 chapter: false
 weight: 50
+servcies: true
 ---
 
 {{% notice warning %}}

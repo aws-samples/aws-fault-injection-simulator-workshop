@@ -1,11 +1,12 @@
 ---
-title: "Optional: Setup for DevOps Guru"
+title: "Optional: Setup for Amazon DevOps Guru"
 chapter: false
 weight: 60
+services: true
 ---
 
 {{% notice warning %}}
-Only complete this section if you are planning to explore the DevOps Guru section at the end of the workshop. If you are planning to explore DevOps Guru in this way please allow sufficient time for DevOps Guru to perform initial resource discovery and baselining. Depending on the number of resources in the account/region you select this may take from 2-24h.
+Only complete this section if you are planning to explore the Amazon DevOps Guru (DevOps Guru) section at the end of the workshop. If you are planning to explore DevOps Guru in this way please allow sufficient time for DevOps Guru to perform initial resource discovery and baselining. Depending on the number of resources in the account/region you select this may take from 2-24h.
 {{% /notice %}}
 
 Navigate to the [**DevOps Guru console**](https://console.aws.amazon.com/devops-guru/home?#/home) and select the **"Get Started"** button:
@@ -16,7 +17,7 @@ For "Amazon DevOps Guru analysis coverage" select **"Choose later"** if you will
 
 {{< img "coverage.en.png" "Select coverage range">}}
 
-During this workshop we will not be exploring SNS notifications and thus don't need to specify an SNS topic. 
+During this workshop we will not be exploring Amazon Simple Notification Service (SNS) notifications and thus don't need to specify an SNS topic. 
 
 Select **"Enable"**.
 

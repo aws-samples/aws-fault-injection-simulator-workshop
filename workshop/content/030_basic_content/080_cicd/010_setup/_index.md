@@ -1,7 +1,8 @@
-+++
-title = "Setup"
-weight = 10
-+++
+---
+title: "Setup"
+weight: 10
+services: true
+---
 
 In this section, we will integrate an AWS Fault Injection Simulator experiment with a CI/CD pipeline.
 
@@ -9,7 +10,7 @@ In this section, we will integrate an AWS Fault Injection Simulator experiment w
 
 We will use the AWS CDK to provision our CI/CD pipeline.  
 
-If you have not done so yet, in your cloud9 terminal clone the repository for the workshop.
+If you have not done so yet, in your Cloud9 terminal clone the repository for the workshop.
 
 ```bash
 cd ~/environment

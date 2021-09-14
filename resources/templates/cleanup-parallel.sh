@@ -78,6 +78,38 @@ else
     echo "CPU stress stack not found"
 fi
 
+# Fault stacks added as CFN
+STACK_NAME=$( aws cloudformation list-stacks --query "StackSummaries[?(StackName=='FisApiFailureUnavailable')&&(StackStatus!='DELETE_COMPLETE')].StackName" --output text )
+if [ -n "${STACK_NAME}" ]; then
+    echo "Deleting API faulrt injections stack FisApiFailureUnavailable"
+    (
+        # Delete CloudFormation stack
+        aws cloudformation delete-stack \
+        --stack-name FisApiFailureUnavailable
+        aws cloudformation wait stack-delete-complete \
+        --stack-name FisApiFailureUnavailable
+    ) > cleanup-output.api-unavailable.txt 2>&1 &
+else
+    echo "API fault injection stack FisApiFailureUnavailable not found"
+fi
+
+STACK_NAME=$( aws cloudformation list-stacks --query "StackSummaries[?(StackName=='FisApiFailureThrottling')&&(StackStatus!='DELETE_COMPLETE')].StackName" --output text )
+if [ -n "${STACK_NAME}" ]; then
+    echo "Deleting API faulrt injections stack FisApiFailureThrottling"
+
+    (    # Delete CloudFormation stack
+        aws cloudformation delete-stack \
+        --stack-name FisApiFailureThrottling
+        aws cloudformation wait stack-delete-complete \
+        --stack-name FisApiFailureThrottling
+    )  > cleanup-output.api-throttling.txt 2>&1 &
+else
+    echo "API fault injection stack FisApiFailureThrottling not found"
+fi
+
+
+
+
 # ECS using CDK
 echo "Deleting ECS..."
 (

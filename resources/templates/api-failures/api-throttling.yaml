@@ -12,7 +12,7 @@ Parameters:
   LambdaFunctionName:
     Type: String
     AllowedPattern: "[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+"
-    Default: fis-workshop-api-errors
+    Default: fis-workshop-api-errors-throttling
 Resources:
   apiGateway:
     Type: AWS::ApiGateway::RestApi

@@ -103,6 +103,29 @@ echo "Provisioning CPU stress instances"
     --capabilities CAPABILITY_IAM
 ) > deploy-output.stress.txt 2>&1 &
 
+# API failures are plain CFN
+echo "Provisioning API failure stacks"
+(
+    cd api-failures
+    # Query public subnet from VPC stack
+    SUBNET_ID=$( aws ec2 describe-subnets --query "Subnets[?Tags[?(Key=='aws-cdk:subnet-name') && (Value=='FisPub') ]] | [0].SubnetId" --output text )
+
+    # Launch CloudFormation stack
+    aws cloudformation ${MODE}-stack \
+    --stack-name FisApiFailureThrottling \
+    --template-body file://api-throttling.yaml  \
+    --capabilities CAPABILITY_IAM
+
+    aws cloudformation ${MODE}-stack \
+    --stack-name FisApiFailureUnavailable \
+    --template-body file://api-unavailable.yaml  \
+    --parameters \
+        ParameterKey=SubnetId,ParameterValue=${SUBNET_ID} \
+    --capabilities CAPABILITY_IAM
+
+) > deploy-output.api.txt 2>&1 &
+
+
 # Wait for everything to finish
 wait
 

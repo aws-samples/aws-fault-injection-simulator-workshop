@@ -2,10 +2,11 @@
 title: "DevOps Guru"
 chapter: false
 weight: 10
+services: true
 ---
 
 {{% notice warning %}}
-This section requires that you followed the [setup instructions]({{< ref "/020_starting_workshop/060_devops_guru" >}}) at the beginning of the workshop and allowed enough time for DevOps Guru to establish a baseline. This section also presumes that you followed the load generating steps in the **Synthetic user experience** section.
+This section requires that you followed the [**setup instructions**]({{< ref "/020_starting_workshop/060_devops_guru" >}}) at the beginning of the workshop and allowed enough time for Amazon DevOps Guru to establish a baseline. This section also presumes that you followed the load generating steps in the **Synthetic user experience** section.
 {{% /notice %}}
 
 ## Dashboard overview
@@ -40,7 +41,7 @@ Examining the example above we see that during the event
 In addition to the expected direct impact of more connections, we also see unusual responses being sent:
 
 * the number of HTTP 5xx errors increased at the load balancer,
-* specifically the number of [HTTP 502](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502) error increased at the load balancer,
+* specifically the number of [**HTTP 502**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502) error increased at the load balancer,
 * the number of HTTP 5xx errors originated at the load balancer target, i.e. our web servers.
 
 Switching to the "Graphed Anomalies" view shows the more detailed time data for each anomalous metric:
@@ -69,4 +70,4 @@ Finally DevOps Guru provides "Recommendations", links to relevant articles to he
 
 ## Further reading
 
-To learn more about DevOps Guru, see the [documentation](https://docs.aws.amazon.com/devops-guru/latest/userguide/welcome.html), and explore using [DevOps guru on serverless infrastructure](https://aws.amazon.com/blogs/devops/gaining-operational-insights-with-aiops-using-amazon-devops-guru/) as well as [larger deployment strategies](https://aws.amazon.com/blogs/devops/configure-devops-guru-multiple-accounts-regions-using-cfn-stacksets/).
+To learn more about DevOps Guru, see the [**documentation**](https://docs.aws.amazon.com/devops-guru/latest/userguide/welcome.html), and explore using [**DevOps guru on serverless infrastructure**](https://aws.amazon.com/blogs/devops/gaining-operational-insights-with-aiops-using-amazon-devops-guru/) as well as [**larger deployment strategies**](https://aws.amazon.com/blogs/devops/configure-devops-guru-multiple-accounts-regions-using-cfn-stacksets/).

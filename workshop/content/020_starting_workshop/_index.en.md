@@ -1,8 +1,8 @@
 ---
 title: "Start the workshop"
-pre: "<b>   </b>"
 chapter: true
 weight: 20
+services: true
 ---
 
 To start the workshop, follow one of the following links:

@@ -1,7 +1,8 @@
-+++
-title = "Aurora Cluster Failover"
-weight = 20
-+++
+---
+title: "Aurora Cluster Failover"
+weight: 20
+services: true
+---
 
 ## Experiment idea
 
@@ -35,7 +36,7 @@ Leave the default “Target” `Clusters-Target-1` and select **“Save”**.
 
 ### Target selection
 
-For this action we need to select our Aurora "Cluster". For this we will need to know the instance resource ID. To find this ID open a new browser window and navigate to the [**RDS console**](https://console.aws.amazon.com/rds/home?#databases:)). Note the "DB identifier" for the target cluster, the one with "Engine" type "Aurora MySQL" and "Role" "Regional Cluster".
+For this action we need to select our Amazon Aurora "Cluster". For this we will need to know the instance resource ID. To find this ID open a new browser window and navigate to the [**RDS console**](https://console.aws.amazon.com/rds/home?#databases:)). Note the "DB identifier" for the target cluster, the one with "Engine" type "Aurora MySQL" and "Role" "Regional Cluster".
 
 {{< img "rds-check-resource-id.en.png" "Edit FIS target" >}}
 
