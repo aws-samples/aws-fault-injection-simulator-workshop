@@ -2,10 +2,11 @@
 title: "Create an AWS account"
 chapter: false
 weight: 10
+services: true
 ---
 
 {{% notice warning %}}
-Your account must have the ability to create new IAM roles and scope other IAM permissions.
+Your account must have the ability to create new AWS Identity and Access Management (IAM) roles and scope other IAM permissions.
 {{% /notice %}}
 
 1. If you don't already have an AWS account with **"Administrator"** access: [**Create

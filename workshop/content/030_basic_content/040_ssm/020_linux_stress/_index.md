@@ -1,7 +1,8 @@
-+++
-title = "Linux CPU Stress Experiment"
-weight = 20
-+++
+---
+title: "Linux CPU Stress Experiment"
+weight: 20
+services: true
+---
 
 ## Experiment idea
 

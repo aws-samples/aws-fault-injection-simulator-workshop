@@ -1,13 +1,14 @@
-+++
-title = "Experiment (CloudFormation)"
-weight = 40
-+++
+---
+title: "Experiment (CloudFormation)"
+weight: 40
+services: true
+---
 
 In this section we will cover how to define and update experiment templates using [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-fis-experimenttemplate.html).
 
 ## CFN template format
 
-The AWS CloudFormation template uses the same format as the API but capitalizes the first letter of section names. As such the FIS experiment template from the previous section would become:
+The AWS CloudFormation template uses the same format as the API but capitalizes the first letter of section names. As such the AWS FIS experiment template from the previous section would become:
 
 ```json
 {

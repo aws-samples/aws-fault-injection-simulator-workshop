@@ -1,8 +1,9 @@
-+++
-title = "Hypothesis & Experiment"
-chapter = false
-weight = 10
-+++
+---
+title: "Hypothesis & Experiment"
+chapter: false
+weight: 10
+services: true
+---
 
 ## Experiment idea
 

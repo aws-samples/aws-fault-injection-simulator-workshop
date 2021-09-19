@@ -1,7 +1,8 @@
-+++
-title = "Review the Pipeline"
-weight = 20
-+++
+---
+title: "Review the Pipeline"
+weight: 20
+services: true
+---
 
 Lets review the components our previous section created. 
 
@@ -32,8 +33,8 @@ To review, click on the pipeline name.
 This pipeline has 3 stages. 
 
 1) **Source**: This stage will trigger the pipeline when a commit occurs in our repository.
-1) **Infrastructure_Provisioning**: This stage use an AWS Cloud Formation template from our repo to create our test infrastructure and create our experiment templates.
-1) **FIS**: This stage will use the AWS Code Build project to make an API call to run our experiment and monitor the results. 
+1) **Infrastructure_Provisioning**: This stage use an AWS CloudFormation template from our repo to create our test infrastructure and create our experiment templates.
+1) **FIS**: This stage will use the AWS CodeBuild project to make an API call to run our experiment and monitor the results. 
 
 {{< img "codepipelinedetails1.png" "AWS CodePipeline source stage" >}}
 

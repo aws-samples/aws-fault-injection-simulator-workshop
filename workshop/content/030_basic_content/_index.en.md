@@ -1,8 +1,9 @@
-+++
-title = "Workshop"
-chapter = true
-weight = 30
-+++
+---
+title: "Workshop"
+chapter: true
+weight: 30
+services: true
+---
 
 This workshop is broken into multiple chapters. The chapters are designed to be done in sequence with each chapter assuming familiarity with some concepts from previous chapters and focusing on new learnings. We include refresher links to relevant prior sections to help you skip over materials you are already familiar with.
 
@@ -21,7 +22,7 @@ You can click on these images to enlarge them.
 
 {{% expand "Click to expand if you are hosting a demo" %}}
 
-If you are hosting a demo you should start generating load now. This will pull the relevant variables from CloudFormation:
+If you are hosting a demo you should start generating load now. This will pull the relevant variables from AWS CloudFormation:
 
 ```bash
 export LAMBDA_ARN=$( aws cloudformation describe-stacks --stack-name FisStackLoadGen --query "Stacks[*].Outputs[?OutputKey=='LoadGenArn'].OutputValue" --output text )

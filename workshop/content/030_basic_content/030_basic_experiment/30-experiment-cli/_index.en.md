@@ -1,7 +1,8 @@
-+++
-title = "Experiment (CLI)"
-weight = 30
-+++
+---
+title: "Experiment (CLI)"
+weight: 30
+services: true
+---
 
 In this section we will show you how to create an experiment using AWS FIS templates. For clarity, we will replicate the same experiment as we previously did via the AWS console.
 

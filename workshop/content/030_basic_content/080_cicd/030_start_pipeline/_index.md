@@ -1,7 +1,8 @@
-+++
-title = "Start the Pipeline"
-weight = 30
-+++
+---
+title: "Start the Pipeline"
+weight: 30
+services: true
+---
 
 The pipeline is configured to run every time new code is committed to our AWS CodeCommit repository. To start our pipeline we need to commit files to our repository.  
 
@@ -19,13 +20,14 @@ Adding files to our repository is a 3-step process:
 
 ### Clone
 
-Open the [AWS Code Commit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home). Click the `HTTPS` link next to the `FIS_Workshop` repository name to copy the URL to the clipboard. 
+Open the [**AWS CodeCommit Console**](https://console.aws.amazon.com/codesuite/codecommit/home?#Home). Click the `HTTPS` link next to the `FIS_Workshop` repository name to copy the URL to the clipboard. 
 
 In your Cloud9 terminal clone the repository (replace the URL in the example by pasting from the clipboard):
 
 ```bash
+GIT_URL=$( aws codecommit get-repository --repository-name FIS_Workshop --query "repositoryMetadata.cloneUrlHttp" --output text )
 cd ~/environment
-git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/FIS_Workshop
+git clone ${GIT_URL}
 cd FIS_Workshop
 ```
 

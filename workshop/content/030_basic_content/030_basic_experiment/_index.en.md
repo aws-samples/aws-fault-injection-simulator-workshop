@@ -1,7 +1,7 @@
-+++
-title = "First Experiment"
-weight = 30
-+++
+---
+title: "First Experiment"
+weight: 30
+---
 
 In this section, we will cover the setup required for using AWS FIS to run our first fault injection experiment
 

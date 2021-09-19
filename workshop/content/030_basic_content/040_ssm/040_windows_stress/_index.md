@@ -1,10 +1,11 @@
-+++
-title = "Windows CPU Stress Experiment"
-weight = 40
-+++
+---
+title: "Windows CPU Stress Experiment"
+weight: 40
+services: true
+---
 
 {{% notice warning %}}
-This section requires that you have an RDP client on your local machine. This section cannot be performed from a cloud9 instance. 
+This section requires that you have a Remote Desktop Protocol (RDP) client on your local machine. This section cannot be performed from a Cloud9 instance. 
 {{% /notice %}}
 
 ## Experiment idea

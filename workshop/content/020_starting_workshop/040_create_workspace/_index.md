@@ -2,14 +2,15 @@
 title: "Create a Workspace"
 chapter: false
 weight: 40
+services: true
 ---
 
 {{% notice info %}}
-A list of supported browsers for AWS Cloud9 is found [here]( https://docs.aws.amazon.com/cloud9/latest/user-guide/browsers.html).
+A list of supported browsers for AWS Cloud9 (Cloud9) is found [here]( https://docs.aws.amazon.com/cloud9/latest/user-guide/browsers.html).
 {{% /notice %}}
 
 {{% notice tip %}}
-Ad blockers, javascript disablers, and tracking blockers should be disabled for the cloud9 domain, or connecting to the workspace might be impacted. Cloud9 requires third-party-cookies. You can whitelist specific domains by following [**these instructions**]( https://docs.aws.amazon.com/cloud9/latest/user-guide/troubleshooting.html#troubleshooting-env-loading).
+Ad blockers, javascript disablers, and tracking blockers should be disabled for the Cloud9 domain, or connecting to the workspace might be impacted. Cloud9 requires third-party-cookies. You can whitelist specific domains by following [**these instructions**]( https://docs.aws.amazon.com/cloud9/latest/user-guide/troubleshooting.html#troubleshooting-env-loading).
 {{% /notice %}}
 
 ### Launch Cloud9 in the region selected previously
@@ -36,11 +37,11 @@ Your workspace should now look like this
 ### Increase the disk size on the Cloud9 instance
 
 {{% notice info %}}
-Some commands in this workshop require more than the default disk allocation on an AWS Cloud9 workspace. The following command adds more disk space to the root volume of the EC2 instance that Cloud9 runs on. 
+Some commands in this workshop require more than the default disk allocation on a Cloud9 workspace. The following command adds more disk space to the root volume of the Amazon EC2 (EC2) instance that Cloud9 runs on. 
 {{% /notice %}}
 
 Copy/Paste the following code in your Cloud9 terminal (you can paste the whole block at once).  
-Once the command completes, we reboot the instance and it could take a minute or two for the IDE to come back online.
+Once the command completes, we reboot the instance and it could take a minute or two for the Integrated Development Environment (IDE) to come back online.
 
 ```bash
 # Ensure we have newest boto3 installed
@@ -84,10 +85,10 @@ fi
 ### Update tools and dependencies
 
 {{% notice info %}}
-The instructions in this workshop assume you are using a bash shell in a linux-like environment. They also rely on a number of tools. Follow these instructions to install the required tools in a Cloud9 workspace:
+The instructions in this workshop assume you are using a bash shell in a linux-like environment. They also rely on a number of tools. Follow these instructions to install the required tools in an AWS Cloud9 workspace:
 {{% /notice %}}
 
-Copy/Paste the following code in your cloud9 terminal (you can paste the whole block at once).
+Copy/Paste the following code in your Cloud9 terminal (you can paste the whole block at once).
 
 ```bash
 # Update to the latest stable release of npm and nodejs.

@@ -1,7 +1,8 @@
-+++
-title = "Baselining and Monitoring"
-weight = 10
-+++
+---
+title: "Baselining and Monitoring"
+weight: 10
+services: true
+---
 
 Before we start injecting faults into our system we should consider the following thought experiment:
 
@@ -13,7 +14,7 @@ For the purpose of our fault injection experiments we can rephrase this in two w
 
 > _"If part of our system is disrupted and sysops isn't alerted, did anything break?"_
 
-Think about this for a second. There is a distinct difference between those two statements because users and ops have very different experiences.
+Think about this for a second. There is a distinct difference between those two statements because users and Ops teams have very different experiences.
 
 ### What the users see
 
@@ -21,7 +22,7 @@ What the users see is immediate, e.g. the website not loading or loading slowly.
 
 ### What sysops sees
 
-Typically, what sysops see is a wealth of individual health and performance indicators. These often grow organically over time and especially after outages. Even where dashboards have been built with overall system health in mind, the metrics are delayed against the user experience and aggregate over the experience of many users, requiring extra effort to notice poor experiences specific to a subset of users.
+Typically, what SysOps see is a wealth of individual health and performance indicators. These often grow organically over time and especially after outages. Even where dashboards have been built with overall system health in mind, the metrics are delayed against the user experience and aggregate over the experience of many users, requiring extra effort to notice poor experiences specific to a subset of users.
 
 ### Setting up for fault injection
 

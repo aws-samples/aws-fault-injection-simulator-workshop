@@ -1,9 +1,14 @@
-+++
-title = "FIS SSM Start Automation Setup"
-weight = 50
-+++
+---
+title: "FIS SSM Start Automation Setup"
+weight: 50
+servides: true
+---
 
-In the previous sections we used FIS actions to directly interact with AWS APIs to terminate EC2 instances, and the [**SSM SendCommand**](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_SendCommand.html) option to execute code directly on our virtual machines. 
+{{% notice warning %}}
+This feature is rolling out starting September 13, 2021 and may initially only be availabe in some regions initially. Reach out to your SA for more information.
+{{% /notice %}}
+
+In the previous sections we used AWS FIS actions to directly interact with AWS APIs to terminate EC2 instances, and the [**SSM SendCommand**](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_SendCommand.html) option to execute code directly on our virtual machines. 
 
 In this section we will cover how to execute additional actions against AWS APIs that are not yet supported by FIS by using [**SSM Runbooks**](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-documents.html).
 
@@ -274,7 +279,7 @@ Finally we have to create the FIS experiment template to call the SSM document. 
             "parameters": {
                 "documentArn": "DOCUMENT_ARN",
                 "documentParameters": "{\"AvailabilityZone\": \"AZ_NAME\", \"AutoscalingGroupName\": \"ASG_NAME\", \"AutomationAssumeRole\": \"SSM_ROLE_ARN\"}",
-                "duration": "PT3M"
+                "maxDuration": "PT3M"
             },
             "targets": {
             }
@@ -316,7 +321,7 @@ If you run into issues with your FIS experiment failing check the following:
 
 * Experiment fails with "Unable to start SSM automation. A required parameter for the document is missing, or an undefined parameter was provided." - make sure that you properly replaced all the document parameters. You can check this by editing the experiment template. This can also be caused by a role misconfiguration that prevents SSM from assuming the execution role. You can search the **"Event history"** in the [**CloudTrail console**](https://console.aws.amazon.com/cloudtrail/home?#/events?EventName=StartAutomationExecution) for "Event name" `StartAutomationExecution`. Note that events can take up to 15min to appear in CloudTrail.
 
-* Experiment fails with "Automation execution completed with status: Failed." - this can be caused by insufficient privileges on the role passed to SSM for execution. This can also happen if there are no instances found in the selected AZ. You can examine the history and output of SSM automation runs by navigating to the [**Systems Manager console**](https://console.aws.amazon.com/systems-manager/automation/executions) and selecting **"Automation"** in the burger menu on the left. Then click on the automation run associated with your failed experiment and examine the output of the individual steps for more detail.
+* Experiment fails with "Automation execution completed with status: Failed." - this can be caused by insufficient privileges on the role passed to SSM for execution. This can also happen if there are no instances found in the selected AZ. You can examine the history and output of SSM automation runs by navigating to the [**AWS Systems Manager console**](https://console.aws.amazon.com/systems-manager/automation/executions) and selecting **"Automation"** in the burger menu on the left. Then click on the automation run associated with your failed experiment and examine the output of the individual steps for more detail.
 
 * Experiment succeeds but SSM automation status shows "Cancelled" steps. This can happen if you set the "Duration" in the FIS action to be shorter than the time it takes for the SSM document to finish. In this situation FIS will call the `onCancel` action on the SSM document (see the end of the [**Working with SSM documents**]({{< ref "030_basic_content/040_ssm/030_custom_ssm_docs" >}}) section). Edit the FIS template and ensure that you allow enough time in FIS for the SSM document to finish.
 

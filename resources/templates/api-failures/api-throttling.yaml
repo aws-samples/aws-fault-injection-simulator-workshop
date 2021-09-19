@@ -1,0 +1,137 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: FIS ApiGateway
+Parameters:
+  apiGatewayName:
+    Type: String
+    Default: fis-workshop
+  apiGatewayStageName:
+    Type: String
+    AllowedPattern: "[a-z0-9]+"
+    Default: v1
+  LambdaFunctionName:
+    Type: String
+    AllowedPattern: "[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+"
+    Default: fis-workshop-api-errors-throttling
+Resources:
+  apiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Description: Example API Gateway
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: !Ref apiGatewayName
+
+  apiGatewayGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations
+          - lambdaArn: !GetAtt apiFailureFunction.Arn
+      ResourceId: !GetAtt apiGateway.RootResourceId
+      RestApiId: !Ref apiGateway
+
+  apiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - apiGatewayGetMethod
+    Properties:
+      RestApiId: !Ref apiGateway
+      StageName: !Ref apiGatewayStageName
+
+  apiFailureFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          import boto3
+
+          ec2 = boto3.client('ec2')
+
+          def describe_instances():
+            resp = ec2.describe_instances(
+                            Filters=[{
+                'Name': 'instance-state-name',
+                'Values': ['running']
+              }]
+            )
+            instance_ids = [ i['Instances'][0].get('InstanceId') for i in resp['Reservations']]
+            return {
+              "InstanceIds": instance_ids,
+              "RetryAttempts": resp['ResponseMetadata'].get('RetryAttempts')
+            }
+
+          def handler(event,context):
+            return {
+              "body": f"{describe_instances()}\n",
+              "headers": {
+                "Content-Type": "text/plain"
+              },
+              'statusCode': 200
+            }
+      Description: FIS Workshop
+      FunctionName: !Ref LambdaFunctionName
+      Handler: index.handler
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt lambdaIAMRole.Arn
+      Runtime: python3.8
+
+  lambdaThrottleInvoke:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt apiFailureFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGateway}/${apiGatewayStageName}/*/
+
+  lambdaIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource:
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${LambdaFunctionName}:*
+          PolicyName: lambda
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - ec2:DescribeInstances
+                Effect: Allow
+                Resource: "*"
+          PolicyName: DescribeInstances
+
+  lambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${LambdaFunctionName}
+      RetentionInDays: 90
+
+Outputs:
+  apiGatewayInvokeURL:
+    Value: !Sub https://${apiGateway}.execute-api.${AWS::Region}.amazonaws.com/${apiGatewayStageName}
+  iamRole:
+    Value: !Ref lambdaIAMRole
