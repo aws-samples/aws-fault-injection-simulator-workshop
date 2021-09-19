@@ -138,4 +138,6 @@ The learnings here should be the same as for the console section:
 * Carefully choose the resource to affect and how to select them. If we had originally chosen to terminate a single instance (`COUNT`) rather than a fraction (`PERCENT`), we would have severely affected our service.
 * Spinning up instances takes time. To achieve resilience, ASGs should be set to have at least two instances running at all times
 
+As mentioned in the previous section, it is valuable to version control the contents of experiment templates for consistency and automation by using AWS CLI scripting. Using CloudFormation goes one step further and allows you to version control the creation of experiment templates in addition to the template content.
+
 In the next section we will explore more fault injection optioms.

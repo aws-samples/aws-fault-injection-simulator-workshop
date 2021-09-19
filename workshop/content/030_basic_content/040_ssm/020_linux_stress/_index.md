@@ -23,7 +23,7 @@ We are assuming that you know how to set up a basic FIS experiment and will focu
 ### General template setup
 
 * Create a new experiment template
-  * Add `Name` tag of `LinuxBurnCPUviaSSM`
+  * Add a name for the template using a Tag with key as `Name` and value as `LinuxBurnCPUviaSSM` (located at bottom of page)
   * Add `Description` of `Inject CPU stress on Linux`
   * Select `FisCpuStress-FISRole` as execution role
 
