@@ -16,15 +16,27 @@ For the purpose of our fault injection experiments we can rephrase this in two w
 
 Think about this for a second. There is a distinct difference between those two statements because users and Ops teams have very different experiences.
 
-### What the users see
+## What the users see
 
 What the users see is immediate, e.g. the website not loading or loading slowly. What the users see is also an end-to-end test of all system components, and not all components of the system are in your purview, e.g. you cannot see the speed of the users' network connection or the state of their DNS caches. Finally an individual user can have an experience entirely different from all other users. For this workshop, this is particularly important for a particular edge case: developers and ops typically have better system configurations and better experiences than the average user but tend to rely on the anecdotal evidence of "it worked for me".
 
-### What sysops sees
+## What sysops sees
 
 Typically, what SysOps see is a wealth of individual health and performance indicators. These often grow organically over time and especially after outages. Even where dashboards have been built with overall system health in mind, the metrics are delayed against the user experience and aggregate over the experience of many users, requiring extra effort to notice poor experiences specific to a subset of users.
 
-### Setting up for fault injection
+## To disrupt production - or not 
+
+Chaos engineering was popularized by Netflix who famously ran it in production. This view of chaos engineering being a production practice is so entrenched that is is even spelled out in the [wikipedia definition](https://en.wikipedia.org/wiki/Chaos_engineering)
+
+> _Chaos engineering is the discipline of experimenting on a software system **in production** in order to build confidence in the system's capability to withstand turbulent and unexpected conditions._
+
+This is so counterintutive that Gene Kim used to have a section in his presentations where he would spell this out to immediate audience laughter:
+
+> _One of the things people don't tell you about chaos engineering: before you do it in production, do it in dev/test._
+
+Once you stop laughing, stop to think: if _you_ ran a chaos experiment in dev/test, would you have the same monitoring and alerting? Would you know if anything broke?
+
+## Setting up for fault injection
 
 Before starting our first fault injection experiment, let's take a look at our most basic infrastructure:
 
