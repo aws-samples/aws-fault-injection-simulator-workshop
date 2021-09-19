@@ -4,10 +4,6 @@ weight: 20
 services: true
 ---
 
-{{% notice warning %}}
-This feature is rolling out starting September 13, 2021 and may initially only be availabe in some regions initially. Reach out to your SA for more information.
-{{% /notice %}}
-
 This section covers approaches to simulating AZ issues for EC2 instances and Auto Scaling groups. 
 
 {{% notice warning %}}
