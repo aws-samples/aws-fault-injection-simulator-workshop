@@ -4,10 +4,6 @@ weight: 50
 servides: true
 ---
 
-{{% notice warning %}}
-This feature is rolling out starting September 13, 2021 and may initially only be availabe in some regions initially. Reach out to your SA for more information.
-{{% /notice %}}
-
 In the previous sections we used AWS FIS actions to directly interact with AWS APIs to terminate EC2 instances, and the [**SSM SendCommand**](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_SendCommand.html) option to execute code directly on our virtual machines. 
 
 In this section we will cover how to execute additional actions against AWS APIs that are not yet supported by FIS by using [**SSM Runbooks**](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-documents.html).
@@ -62,6 +58,9 @@ Since SSM needs to be able to assume this role for running an SSM document we al
 To create a role, save the two JSON blocks above into files named `iam-ec2-demo-policy.json` and `iam-ec2-demo-trust.json` and run the following CLI commands to create a role named `FisWorkshopSsmEc2DemoRole`
 
 ```bash
+cd ~/environment/aws-fault-injection-simulator-workshop
+cd workshop/content/030_basic_content/040_ssm/050_direct_automation
+
 ROLE_NAME=FisWorkshopSsmEc2DemoRole
 
 aws iam create-role \
@@ -131,7 +130,7 @@ If the policy editor shows errors, check that you have separated blocks with com
 
 ## Create SSM document
 
-For this section we will replicate the FIS terminate instance action using SSM. Copy the YAML below into a file named `ssm-terminate-instances-asg-az.yaml`
+For this section we will replicate the FIS terminate instance action using SSM. This has no real value in and of itself but is a starting point for the advanced SSM documents in the [**Common Scenarios**]({{< ref "030_basic_content/090_scenarios" >}}) section. Copy the YAML below into a file named `ssm-terminate-instances-asg-az.yaml`
 
 ```yaml
 ---
@@ -232,6 +231,9 @@ outputs:
 Use the following CLI command to create the SSM document and export the document ARN:
 
 ```bash
+cd ~/environment/aws-fault-injection-simulator-workshop
+cd workshop/content/030_basic_content/040_ssm/050_direct_automation
+
 SSM_DOCUMENT_NAME=TerminateAsgInstancesWithSsm
 
 # Create SSM document
