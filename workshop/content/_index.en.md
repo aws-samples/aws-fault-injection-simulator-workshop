@@ -5,6 +5,8 @@ weight: 1
 services: true
 ---
 
-Please use the orange arrows or the side menu to navigate the workshop.
+{{< img "FIS_Overview.png" "FIS overview">}}
 
-{{< img "fis-white.png" "FIS icon">}}
+{{% notice note %}}
+Please use the orange arrows or the side menu to navigate the workshop.
+{{% /notice %}}
