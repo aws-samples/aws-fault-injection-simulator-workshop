@@ -26,7 +26,7 @@ Typically, what SysOps see is a wealth of individual health and performance indi
 
 ## To disrupt production - or not 
 
-Chaos engineering was popularized by Netflix who famously ran it in production. This view of chaos engineering being a production practice is so entrenched that is is even spelled out in the [wikipedia definition](https://en.wikipedia.org/wiki/Chaos_engineering)
+Chaos engineering was popularized by Netflix who famously ran it in production. This view of chaos engineering being a production practice is so entrenched that it was even spelt out in the [wikipedia definition](https://en.wikipedia.org/wiki/Chaos_engineering).
 
 > _Chaos engineering is the discipline of experimenting on a software system **in production** in order to build confidence in the system's capability to withstand turbulent and unexpected conditions._
 
