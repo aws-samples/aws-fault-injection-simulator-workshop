@@ -58,7 +58,8 @@ Since SSM needs to be able to assume this role for running an SSM document we al
 To create a role, save the two JSON blocks above into files named `iam-ec2-demo-policy.json` and `iam-ec2-demo-trust.json` and run the following CLI commands to create a role named `FisWorkshopSsmEc2DemoRole`
 
 ```bash
-cd ~/environment/workshop/content/030_basic_content/040_ssm/050_direct_automation
+cd ~/environment/aws-fault-injection-simulator-workshop
+cd workshop/content/030_basic_content/040_ssm/050_direct_automation
 
 ROLE_NAME=FisWorkshopSsmEc2DemoRole
 
@@ -230,7 +231,8 @@ outputs:
 Use the following CLI command to create the SSM document and export the document ARN:
 
 ```bash
-cd ~/environment/workshop/content/030_basic_content/040_ssm/050_direct_automation
+cd ~/environment/aws-fault-injection-simulator-workshop
+cd workshop/content/030_basic_content/040_ssm/050_direct_automation
 
 SSM_DOCUMENT_NAME=TerminateAsgInstancesWithSsm
 
