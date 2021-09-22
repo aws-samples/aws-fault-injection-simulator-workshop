@@ -4,6 +4,11 @@ weight: 50
 servides: true
 ---
 
+{{% notice warning %}}
+The automation in this section creates and modifies IAM roles. With the current workshop descripttion this will not work in Cloud9. Please either perform the role creation on the console or use [**AWS CloudShell**](https://console.aws.amazon.com/cloudshell/home). If you use CloudShell, you will need to check out the GitHub repository in CloudShell as described in [**Provision AWS resources**]({{< ref "020_starting_workshop/050_create_stack" >}}).
+{{% /notice %}}
+
+
 In the previous sections we used AWS FIS actions to directly interact with AWS APIs to terminate EC2 instances, and the [**SSM SendCommand**](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_SendCommand.html) option to execute code directly on our virtual machines. 
 
 In this section we will cover how to execute additional actions against AWS APIs that are not yet supported by FIS by using [**SSM Runbooks**](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-documents.html).
