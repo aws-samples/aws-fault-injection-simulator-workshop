@@ -4,7 +4,11 @@ weight: 20
 services: true
 ---
 
-To gain insights from our fault injection experiments, we want to correlate user-experience with the sysops view from the previous section. In production, we could instrument the clients to send telemetry back to us, but in non-production we don't usually have sufficient load to do this.  _You_ also probably have better things to do than sit there clicking reload on a browser page while your experiment is running.
+In the previous section we showed you a typical configuration to collect sysops data but without visibility into the actual user experience. To gain end-to-end insights from our fault injection experiments, we want to correlate user-experience with the sysops view from the previous section. In production, we could instrument the clients to send telemetry back to us, but in non-production we don't usually have sufficient load to do this.  _You_ also probably have better things to do than sit there clicking reload on a browser page while your experiment is running. 
+
+In this section we will show you how to generate and record synthetic load to reflect the user experience:
+
+{{< img "BasicASG-with-user-and-synthetics.png" "Image of architecture to be injected with chaos" >}}
 
 ## Generating load against our website
 
