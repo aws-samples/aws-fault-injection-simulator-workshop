@@ -1,6 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as iam from '@aws-cdk/aws-iam';
+import * as logs from '@aws-cdk/aws-logs';
 
 export class GoadCdkTestStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -38,7 +39,8 @@ export class GoadCdkTestStack extends cdk.Stack {
         USE_LOG_METRICS: 'false'        
       },
       timeout: cdk.Duration.minutes(15),
-      memorySize: 1024
+      memorySize: 1024,
+      logRetention: logs.RetentionDays.THREE_MONTHS
 
     });
     goadLambda.role?.addToPrincipalPolicy(new iam.PolicyStatement({
