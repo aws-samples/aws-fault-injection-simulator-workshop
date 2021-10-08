@@ -2,6 +2,22 @@ import * as cdk from '@aws-cdk/core';
 import ec2 = require("@aws-cdk/aws-ec2");
 import eks = require('@aws-cdk/aws-eks');
 import iam = require('@aws-cdk/aws-iam');
+import lambda = require('@aws-cdk/aws-lambda');
+import logs = require('@aws-cdk/aws-logs');
+
+class CWLogRetCreator implements cdk.IAspect {
+    public visit(node: cdk.IConstruct): void {
+        if (node instanceof lambda.Function) {
+            let fn = (node as lambda.Function);
+
+            new logs.LogGroup(node.stack, `${node.node.id}LogGroup`, {
+                logGroupName: `/aws/lambda/${fn.functionName}`,
+                retention: logs.RetentionDays.THREE_MONTHS,
+                removalPolicy: cdk.RemovalPolicy.DESTROY
+            });
+        }
+    }
+}
 
 export class EksStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -66,6 +82,9 @@ export class EksStack extends cdk.Stack {
     };
 
     eksCluster.addManifest('hello-kub', service, deployment);
+
+    //Walk the tree and set retention on all lambda functions
+    cdk.Aspects.of(eksCluster).add(new CWLogRetCreator);
 
     const eksUrl = new cdk.CfnOutput(this, 'FisEksUrl', {
       value: 'http://' + eksCluster.getServiceLoadBalancerAddress("hello-kubernetes")
