@@ -11,9 +11,12 @@ export class GoadCdkTestStack extends cdk.Stack {
       runtime: lambda.Runtime.GO_1_X,
       code: lambda.Code.fromAsset('load-gen',{
         bundling: {
+          // lambci/lambda:build-go1.x
           image: lambda.Runtime.GO_1_X.bundlingImage,
           command: [
             'bash', '-xc', [
+              // looks like the ca certs are a bit too old by default
+              'yum install -y ca-certificates',
               'pwd',
               'ls /',
               // 'export GOPATH=/asset-output',
