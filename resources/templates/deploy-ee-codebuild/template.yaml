@@ -9,6 +9,12 @@ Resources:
       Environment:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
+        # By default codebuild doesn't allow docker in docker
+        # There seems to be an option of running docker in docker
+        # but is that a good idea ... ?
+        # https://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker-custom-image.html
+        PrivilegedMode: True
+        #
         # Image: aws/codebuild/ubuntu-base:14.04
         Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
         # EnvironmentVariables:
@@ -51,8 +57,11 @@ Resources:
                 - env
                 - pwd
                 - time git clone https://github.com/aws-samples/aws-fault-injection-simulator-workshop.git
-                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh'
-                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
+                - df -h
+                - docker ps
+                - '# cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh'
+                - '# cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
+
         
 
 
