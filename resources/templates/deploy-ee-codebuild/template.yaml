@@ -1,0 +1,118 @@
+Resources:
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        # Type: CODEPIPELINE
+        Type: NO_ARTIFACTS
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        # Image: aws/codebuild/ubuntu-base:14.04
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        # EnvironmentVariables:
+        #   - Name: varName1
+        #     Value: varValue1
+        #   - Name: varName2
+        #     Value: varValue2
+        #     Type: PLAINTEXT
+        #   - Name: varName3
+        #     Value: /CodeBuild/testParameter
+        #     Type: PARAMETER_STORE
+      Source:
+        # Type: CODEPIPELINE
+        Type: NO_SOURCE
+        BuildSpec: |
+          version: 0.2
+          phases:
+            install:
+              commands:
+                - echo $SHELL
+                - yum install -y sudo jq
+                - touch ~/.bashrc
+                # Node
+                # https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html
+                - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+                - export NVM_DIR="$HOME/.nvm"
+                - '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
+                - '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"'
+                # CDK support stuffs
+                - npm install -g typescript
+                - npm install -g aws-cdk
+            build:
+              commands:
+                - echo "Hello world"
+                - echo pwd
+                - cdk --version
+                - python --version
+                - pip install --upgrade awscli
+                - aws --version
+                - env
+                - pwd
+                - time git clone https://github.com/aws-samples/aws-fault-injection-simulator-workshop.git
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh'
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
+        
+
+
+
+      TimeoutInMinutes: 60
+      # VpcConfig:
+      #   VpcId: !Ref CodeBuildVPC
+      #   Subnets: [!Ref CodeBuildSubnet]
+      #   SecurityGroupIds: [!Ref CodeBuildSecurityGroup]
+      # Cache:
+      #   Type: S3
+      #   Location: mybucket/prefix
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [codebuild.amazonaws.com]
+        Version: '2012-10-17'
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+      # Policies:
+      #   - PolicyName: CodeBuildAccess
+      #     PolicyDocument:
+      #       Version: '2012-10-17'
+      #       Statement:
+      #         - Action:
+      #           - 'logs:*'
+      #           - 'ec2:CreateNetworkInterface'
+      #           - 'ec2:DescribeNetworkInterfaces'
+      #           - 'ec2:DeleteNetworkInterface'
+      #           - 'ec2:DescribeSubnets'
+      #           - 'ec2:DescribeSecurityGroups'
+      #           - 'ec2:DescribeDhcpOptions'
+      #           - 'ec2:DescribeVpcs'
+      #           - 'ec2:CreateNetworkInterfacePermission'
+      #           Effect: Allow
+      #           Resource: '*'
+  # CodeBuildVPC:
+  #   Type: AWS::EC2::VPC
+  #   Properties:
+  #     CidrBlock: 10.0.0.0/16
+  #     EnableDnsSupport: 'true'
+  #     EnableDnsHostnames: 'true'
+  #     Tags:
+  #       - Key: name
+  #         Value: codebuild
+  # CodeBuildSubnet:
+  #   Type: AWS::EC2::Subnet
+  #   Properties:
+  #     VpcId:
+  #       Ref: CodeBuildVPC
+  #     CidrBlock: 10.0.1.0/24
+  # CodeBuildSecurityGroup:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupName: Codebuild Internet Group
+  #     GroupDescription: 'CodeBuild SecurityGroup'
+  #     VpcId: !Ref CodeBuildVPC
