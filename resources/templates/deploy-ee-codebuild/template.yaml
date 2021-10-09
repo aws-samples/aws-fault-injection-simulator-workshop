@@ -1,4 +1,54 @@
 Resources:
+  # FisWorkshopBuilderCustomResource:
+  MyCustomResource:
+    Type: 'Custom::CdkInstallWrapper'
+    Properties:
+      ServiceToken: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${CustomResourceLambda}"
+      CodeBuildProjectName: !Ref CodeBuildProject
+      ForceUpdateParam: 1
+  CustomResourceLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: nodejs12.x
+      Role: !GetAtt CustomLambdaRole.Arn
+      Handler: index.handler
+      Code:
+        ZipFile: |
+          var aws = require('aws-sdk')
+          var response = require('cfn-response')
+          exports.handler = function(event, context) {
+              console.log("REQUEST RECEIVED:\n" + JSON.stringify(event))
+
+              // For Delete requests, immediately send a SUCCESS response.\
+              if (event.RequestType == "Delete") {
+                  response.send(event, context, "SUCCESS")
+                  return
+              }
+
+              // FIXME: this kicks off the codebuild but can't wait to finish because max lambda runtime is 15min. Maybe this should be wrapped into step functions?
+              var codebuild = new aws.CodeBuild();
+              var params={
+                projectName: event.ResourceProperties.CodeBuildProjectName,
+                environmentVariablesOverride: [
+                {
+                  name: 'CUSTOM_RESOURCE_REQUEST',
+                  value: event.RequestType.toLowerCase()
+                },
+                /* more items */
+              ],
+
+              };
+              codebuild.startBuild(params, function(err, data) {
+                if (err) console.log(err, err.stack); // an error occurred
+                else     console.log(data);           // successful response
+              });
+
+              response.send(event, context, "SUCCESS")
+              return
+          }
+      Description: Invoke codebuild for custom resource
+      TracingConfig:
+        Mode: Active
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -34,38 +84,36 @@ Resources:
           phases:
             install:
               commands:
-                - echo $SHELL
+                # Install sudo and jq for our installers
                 - yum install -y sudo jq
-                - touch ~/.bashrc
-                # Node
+                # Update AWS CLI just in case
+                - pip install --upgrade awscli
+                ## - touch ~/.bashrc
+                # Install / update node for CDK
                 # https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html
                 - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
                 - export NVM_DIR="$HOME/.nvm"
                 - '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
                 - '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"'
-                # CDK support stuffs
+                # CDK stuffs
                 - npm install -g typescript
                 - npm install -g aws-cdk
             build:
               commands:
-                - echo "Hello world"
-                - echo pwd
-                - cdk --version
-                - python --version
-                - pip install --upgrade awscli
-                - aws --version
+                # Some debugging info 
                 - env
                 - pwd
-                - time git clone https://github.com/aws-samples/aws-fault-injection-simulator-workshop.git
                 - df -h
-                - docker ps
-                - '# cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh'
-                - '# cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
-
-        
-
-
-
+                - cdk --version
+                - python --version
+                - aws --version
+                # Pull source - right now straight from github
+                # For EE we may want to update this to use the S3 bucket to avoid performance issues
+                - time git clone https://github.com/aws-samples/aws-fault-injection-simulator-workshop.git
+                # Build and deploy via CDK
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh $CUSTOM_RESOURCE_REQUEST'
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
+  
       TimeoutInMinutes: 60
       # VpcConfig:
       #   VpcId: !Ref CodeBuildVPC
@@ -74,6 +122,19 @@ Resources:
       # Cache:
       #   Type: S3
       #   Location: mybucket/prefix
+  CustomLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [lambda.amazonaws.com]
+        Version: '2012-10-17'
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
   CodeBuildRole:
     Type: AWS::IAM::Role
     Properties:
