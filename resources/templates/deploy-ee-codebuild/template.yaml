@@ -30,20 +30,48 @@ Resources:
               var params={
                 projectName: event.ResourceProperties.CodeBuildProjectName,
                 environmentVariablesOverride: [
-                {
-                  name: 'CUSTOM_RESOURCE_REQUEST',
-                  value: event.RequestType.toLowerCase()
-                },
-                /* more items */
-              ],
-
+                  {
+                    name: 'CUSTOM_RESOURCE_REQUEST',
+                    value: event.RequestType.toLowerCase()
+                  },
+                  {
+                    name: 'CUSTOM_RESOURCE_PHYSICAL_RESOURCE_ID',
+                    value: event.PhysicalResourceId || context.logStreamName,
+                  },
+                  {
+                    name: 'CUSTOM_RESOURCE_STACK_ID',
+                    value: event.StackId
+                  },
+                  {
+                    name: 'CUSTOM_RESOURCE_REQUEST_ID',
+                    value: event.RequestId
+                  },
+                  {
+                    name: 'CUSTOM_RESOURCE_LOGICAL_RESOURCE_ID',
+                    value: event.LogicalResourceId
+                  },
+                  {
+                    name: 'CUSTOM_RESOURCE_RESPONSE_URL',
+                    value: event.ResponseURL
+                  },
+                  /* more items */
+                ],
               };
+              console.log("Parameters: " + JSON.stringify(params))
               codebuild.startBuild(params, function(err, data) {
-                if (err) console.log(err, err.stack); // an error occurred
-                else     console.log(data);           // successful response
+                if (err) {
+                  // an error occurred - tell CFN immediately
+                  console.log(err, err.stack); 
+                  response.send(event, context, "FAILED");
+                } else {
+                    // successfully started codpipeline
+                    // success signal will come from CodeBuild job
+                    console.log(data);           
+                }
               });
 
-              response.send(event, context, "SUCCESS")
+              // Remove this ... we close the loop in CodeBuild
+              //response.send(event, context, "SUCCESS")
               return
           }
       Description: Invoke codebuild for custom resource
@@ -100,8 +128,11 @@ Resources:
                 - npm install -g aws-cdk
             build:
               commands:
+                # Default outcome of build is FAILED
+                - export CUSTOM_RESOURCE_STATUS=FAILED
                 # Some debugging info 
                 - env
+                - env | grep CUSTOM_RESOURCE_
                 - pwd
                 - df -h
                 - cdk --version
@@ -113,6 +144,13 @@ Resources:
                 # Build and deploy via CDK
                 - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh $CUSTOM_RESOURCE_REQUEST'
                 - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
+                # We didn't fail so reset build outcome to SUCCESS
+                - export CUSTOM_RESOURCE_STATUS=SUCCESS
+                - echo DONE
+              finally:
+                - echo DONE
+                - "echo Returning build status to custom resource: $CUSTOM_RESOURCE_STATUS"
+                - "curl  -H 'Content-Type: ''' -X PUT -d '{ \"Status\": \"'${CUSTOM_RESOURCE_STATUS}'\", \"PhysicalResourceId\": \"'${CUSTOM_RESOURCE_PHYSICAL_RESOURCE_ID}'\", \"StackId\": \"'${CUSTOM_RESOURCE_STACK_ID}'\", \"RequestId\": \"'${CUSTOM_RESOURCE_REQUEST_ID}'\", \"LogicalResourceId\": \"'${CUSTOM_RESOURCE_LOGICAL_RESOURCE_ID}'\" }' ${CUSTOM_RESOURCE_RESPONSE_URL}"
   
       TimeoutInMinutes: 60
       # VpcConfig:
