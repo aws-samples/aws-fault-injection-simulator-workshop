@@ -1,0 +1,188 @@
+Resources:
+  # FisWorkshopBuilderCustomResource:
+  MyCustomResource:
+    Type: 'Custom::CdkInstallWrapper'
+    Properties:
+      ServiceToken: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${CustomResourceLambda}"
+      CodeBuildProjectName: !Ref CodeBuildProject
+      ForceUpdateParam: 1
+  CustomResourceLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: nodejs12.x
+      Role: !GetAtt CustomLambdaRole.Arn
+      Handler: index.handler
+      Code:
+        ZipFile: |
+          var aws = require('aws-sdk')
+          var response = require('cfn-response')
+          exports.handler = function(event, context) {
+              console.log("REQUEST RECEIVED:\n" + JSON.stringify(event))
+
+              // For Delete requests, immediately send a SUCCESS response.\
+              if (event.RequestType == "Delete") {
+                  response.send(event, context, "SUCCESS")
+                  return
+              }
+
+              // FIXME: this kicks off the codebuild but can't wait to finish because max lambda runtime is 15min. Maybe this should be wrapped into step functions?
+              var codebuild = new aws.CodeBuild();
+              var params={
+                projectName: event.ResourceProperties.CodeBuildProjectName,
+                environmentVariablesOverride: [
+                {
+                  name: 'CUSTOM_RESOURCE_REQUEST',
+                  value: event.RequestType.toLowerCase()
+                },
+                /* more items */
+              ],
+
+              };
+              codebuild.startBuild(params, function(err, data) {
+                if (err) console.log(err, err.stack); // an error occurred
+                else     console.log(data);           // successful response
+              });
+
+              response.send(event, context, "SUCCESS")
+              return
+          }
+      Description: Invoke codebuild for custom resource
+      TracingConfig:
+        Mode: Active
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        # Type: CODEPIPELINE
+        Type: NO_ARTIFACTS
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        # By default codebuild doesn't allow docker in docker
+        # There seems to be an option of running docker in docker
+        # but is that a good idea ... ?
+        # https://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker-custom-image.html
+        PrivilegedMode: True
+        #
+        # Image: aws/codebuild/ubuntu-base:14.04
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        # EnvironmentVariables:
+        #   - Name: varName1
+        #     Value: varValue1
+        #   - Name: varName2
+        #     Value: varValue2
+        #     Type: PLAINTEXT
+        #   - Name: varName3
+        #     Value: /CodeBuild/testParameter
+        #     Type: PARAMETER_STORE
+      Source:
+        # Type: CODEPIPELINE
+        Type: NO_SOURCE
+        BuildSpec: |
+          version: 0.2
+          phases:
+            install:
+              commands:
+                # Install sudo and jq for our installers
+                - yum install -y sudo jq
+                # Update AWS CLI just in case
+                - pip install --upgrade awscli
+                ## - touch ~/.bashrc
+                # Install / update node for CDK
+                # https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html
+                - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+                - export NVM_DIR="$HOME/.nvm"
+                - '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
+                - '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"'
+                # CDK stuffs
+                - npm install -g typescript
+                - npm install -g aws-cdk
+            build:
+              commands:
+                # Some debugging info 
+                - env
+                - pwd
+                - df -h
+                - cdk --version
+                - python --version
+                - aws --version
+                # Pull source - right now straight from github
+                # For EE we may want to update this to use the S3 bucket to avoid performance issues
+                - time git clone https://github.com/aws-samples/aws-fault-injection-simulator-workshop.git
+                # Build and deploy via CDK
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh $CUSTOM_RESOURCE_REQUEST'
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
+  
+      TimeoutInMinutes: 60
+      # VpcConfig:
+      #   VpcId: !Ref CodeBuildVPC
+      #   Subnets: [!Ref CodeBuildSubnet]
+      #   SecurityGroupIds: [!Ref CodeBuildSecurityGroup]
+      # Cache:
+      #   Type: S3
+      #   Location: mybucket/prefix
+  CustomLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [lambda.amazonaws.com]
+        Version: '2012-10-17'
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [codebuild.amazonaws.com]
+        Version: '2012-10-17'
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+      # Policies:
+      #   - PolicyName: CodeBuildAccess
+      #     PolicyDocument:
+      #       Version: '2012-10-17'
+      #       Statement:
+      #         - Action:
+      #           - 'logs:*'
+      #           - 'ec2:CreateNetworkInterface'
+      #           - 'ec2:DescribeNetworkInterfaces'
+      #           - 'ec2:DeleteNetworkInterface'
+      #           - 'ec2:DescribeSubnets'
+      #           - 'ec2:DescribeSecurityGroups'
+      #           - 'ec2:DescribeDhcpOptions'
+      #           - 'ec2:DescribeVpcs'
+      #           - 'ec2:CreateNetworkInterfacePermission'
+      #           Effect: Allow
+      #           Resource: '*'
+  # CodeBuildVPC:
+  #   Type: AWS::EC2::VPC
+  #   Properties:
+  #     CidrBlock: 10.0.0.0/16
+  #     EnableDnsSupport: 'true'
+  #     EnableDnsHostnames: 'true'
+  #     Tags:
+  #       - Key: name
+  #         Value: codebuild
+  # CodeBuildSubnet:
+  #   Type: AWS::EC2::Subnet
+  #   Properties:
+  #     VpcId:
+  #       Ref: CodeBuildVPC
+  #     CidrBlock: 10.0.1.0/24
+  # CodeBuildSecurityGroup:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupName: Codebuild Internet Group
+  #     GroupDescription: 'CodeBuild SecurityGroup'
+  #     VpcId: !Ref CodeBuildVPC
