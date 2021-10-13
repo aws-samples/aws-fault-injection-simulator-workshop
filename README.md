@@ -2,9 +2,13 @@
 
 This is the source repo for both code and instructions for the [AWS chaos engineering workshop](https://chaos-engineering.workshop.aws/). 
 
-## I want to do the workshop hands-on
+## I want to do the workshop hands-on in my own account
 
 Start from the [workshop site](https://chaos-engineering.workshop.aws/). It will guide you through setting up an AWS account, cloning this repo and learning more about chaos engineering.
+
+## I am an Amazon employee preparing to run this workshop for customers
+
+Navigate to this [Amazon internal web page](https://w.amazon.com/bin/view/Users/rudpot/fis-workshop/) for more information.
 
 ## I want to contribute to the workshop
 
