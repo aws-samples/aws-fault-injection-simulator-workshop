@@ -10,5 +10,5 @@ For this section we will use Linux and Windows instances created specifically fo
 
 
 {{% notice info %}}
-The resources above have been created as part of the [**Start the workshop**]({{< ref "020_starting_workshop/050_create_stack" >}}) section.  If you would like to examine how these resources were defined you can examine the [**AWS Cloud Formation template**](https://github.com/aws-samples/aws-fault-injection-simulator-workshop/blob/main/resources/templates/cpu-stress/CPUStressInstances.yaml). 
+The resources above have been created as part of the account setup or in the [**Start the workshop**]({{< ref "020_starting_workshop/010_self_paced/050_create_stack" >}}) section.  If you would like to examine how these resources were defined you can examine the [**AWS Cloud Formation template**](https://github.com/aws-samples/aws-fault-injection-simulator-workshop/blob/main/resources/templates/cpu-stress/CPUStressInstances.yaml). 
 {{% /notice %}}

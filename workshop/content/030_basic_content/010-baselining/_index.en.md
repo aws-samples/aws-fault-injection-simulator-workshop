@@ -44,7 +44,7 @@ Before starting our first fault injection experiment, let's take a look at our m
 
 We have a user trying to access a website running on AWS. We have designed it for high availability. We used EC2 instances with an Auto Scaling group and a load balancer to ensure that users can always reach our website even under heavy load or if an instance suddenly fails.
 
-Once you've created the resources as described in [**Provision AWS resources**]({{< ref "020_starting_workshop/050_create_stack" >}}) you can navigate to [**CloudFormation**](https://console.aws.amazon.com/cloudformation/home), select the `FisStackAsg` stack and select the **"Outputs"** tab which will show you the server URL:
+Once you've created the resources as described in [**Provision AWS resources**]({{< ref "020_starting_workshop/010_self_paced/050_create_stack" >}}) you can navigate to [**CloudFormation**](https://console.aws.amazon.com/cloudformation/home), select the `FisStackAsg` stack and select the **"Outputs"** tab which will show you the server URL:
 
 {{< img "cloudformation.en.png" "Auto Scaling group URL" >}}
 
