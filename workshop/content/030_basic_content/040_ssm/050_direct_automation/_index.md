@@ -5,7 +5,9 @@ servides: true
 ---
 
 {{% notice warning %}}
-The automation in this section creates and modifies IAM roles. With the current workshop description this will not work in Cloud9. Please either perform the role creation on the console or use [**AWS CloudShell**](https://console.aws.amazon.com/cloudshell/home). If you use CloudShell, you will need to check out the GitHub repository in CloudShell as described in [**Provision AWS resources**]({{< ref "020_starting_workshop/050_create_stack" >}}).
+The automation in this section creates and modifies IAM roles. With the current workshop description this will not work in Cloud9. Please either perform the role creation on the console or follow the instructions in 
+[**Configure AWS CloudShell**]({{< ref "020_starting_workshop/020_aws_event/cloudshell.html" >}})
+to use [**AWS CloudShell**](https://console.aws.amazon.com/cloudshell/home). If you use CloudShell, you will need to check out the GitHub repository in CloudShell as described in [**Provision AWS resources**]({{< ref "020_starting_workshop/010_self_paced/050_create_stack" >}}).
 {{% /notice %}}
 
 
