@@ -104,20 +104,25 @@ As [**previously discussed**]({{< ref "030_basic_content/010-baselining" >}}), w
 However, for this experiment we will manually trigger load generation on the system before starting the experiment, similar to what we did in the previous section. Here we have increased the run time to 5 minutes by setting `ExperimentDurationSeconds` to `300`:
 
 ```bash
-# Please ensure that LAMBDA_ARN and URL_HOME are still set from previous section
-aws lambda invoke \
-  --function-name ${LAMBDA_ARN} \
-  --payload "{
-        \"ConnectionTargetUrl\": \"${URL_HOME}\",
-        \"ExperimentDurationSeconds\": 300,
-        \"ConnectionsPerSecond\": 1000,
-        \"ReportingMilliseconds\": 1000,
-        \"ConnectionTimeoutMilliseconds\": 2000,
-        \"TlsTimeoutMilliseconds\": 2000,
-        \"TotalTimeoutMilliseconds\": 2000
-    }" \
-  --invocation-type Event \
-  invoke.txt
+# Please ensure that LAMBDA_ARN, URL_HOME, and FIX_CLI_PARAM are still set from previous section
+
+# Run load for 5min, 3x in parallel because max per lambda is 1000
+for ii in 1 2 3; do
+  aws lambda invoke \
+    --function-name ${LAMBDA_ARN} \
+    --payload "{
+          \"ConnectionTargetUrl\": \"${URL_PHP}\", 
+          \"ExperimentDurationSeconds\": 300,
+          \"ConnectionsPerSecond\": 1000,
+          \"ReportingMilliseconds\": 1000,
+          \"ConnectionTimeoutMilliseconds\": 2000,
+          \"TlsTimeoutMilliseconds\": 2000,
+          \"TotalTimeoutMilliseconds\": 2000
+      }" \
+    $FIX_CLI_PARAM \
+    --invocation-type Event \
+    invoke-${ii}.txt 
+done
 ```
 
 {{% notice warning %}}

@@ -131,6 +131,10 @@ aws cloudformation update-stack --stack-name FisWorkshopExperimentTemplate --tem
 
 This should update the name of your experiment template in the FIS console. Obviously this is most useful if you make actual changes to the template itself too.
 
+## Validation and running FIS experiment
+
+The steps so far created an experiment template to run an experiment and validate outcomes you can follow the procedures outlined in the previous [**Experiment (Console)**]({{< ref "030_basic_content/030_basic_experiment/20-experiment-console" >}}) or [**Experiment (CLI)**]({{< ref "030_basic_content/030_basic_experiment/30-experiment-cli" >}}) sections.
+
 ## Findings and next steps
 
 The learnings here should be the same as for the console section:
@@ -140,4 +144,4 @@ The learnings here should be the same as for the console section:
 
 As mentioned in the previous section, it is valuable to version control the contents of experiment templates for consistency and automation by using AWS CLI scripting. Using CloudFormation goes one step further and allows you to version control the creation of experiment templates in addition to the template content.
 
-In the next section we will explore more fault injection optioms.
+In the next section we will explore more fault injection options.

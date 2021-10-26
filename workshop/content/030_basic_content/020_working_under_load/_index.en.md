@@ -31,6 +31,11 @@ export LAMBDA_ARN=[PASTE ARN HERE]
 Finally, invoke the Lambda function using the AWS CLI: 
 
 ```bash
+# Workaround for AWS CLI v1/v2 compatibility issues
+CLI_MAJOR_VERSION=$( aws --version | grep '^aws-cli' | cut -d/ -f2 | cut -d. -f1 )
+if [ "$CLI_MAJOR_VERSION" == "2" ]; then FIX_CLI_PARAM="--cli-binary-format raw-in-base64-out"; else unset FIX_CLI_PARAM; fi
+
+# Run load for 3min
 aws lambda invoke \
   --function-name ${LAMBDA_ARN} \
   --payload "{
@@ -42,12 +47,13 @@ aws lambda invoke \
         \"TlsTimeoutMilliseconds\": 2000,
         \"TotalTimeoutMilliseconds\": 2000
     }" \
+  $FIX_CLI_PARAM \
   --invocation-type Event \
   invoke.txt 
 ```
 
-{{% notice warning %}}
-If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-format raw-in-base64-out` or you'll get the error "Invalid base64" when sending the payload.
+{{% notice info %}}
+If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-format raw-in-base64-out` or you'll get the error "Invalid base64" when sending the payload. This notice is for troubleshooting, the code above should work for both CLI versions.
 {{% /notice %}}
 
 
@@ -90,6 +96,11 @@ Clearly, hitting a static page isn't a good test to validate our Auto Scaling co
 ```bash
 export URL_PHP=${URL_HOME}/phpinfo.php
 
+# Workaround for AWS CLI v1/v2 compatibility issues
+CLI_MAJOR_VERSION=$( aws --version | grep '^aws-cli' | cut -d/ -f2 | cut -d. -f1 )
+if [ "$CLI_MAJOR_VERSION" == "2" ]; then FIX_CLI_PARAM="--cli-binary-format raw-in-base64-out"; else unset FIX_CLI_PARAM; fi
+
+# Run load for 5min, 3x in parallel because max per lambda is 1000
 for ii in 1 2 3; do
   aws lambda invoke \
     --function-name ${LAMBDA_ARN} \
@@ -102,12 +113,13 @@ for ii in 1 2 3; do
           \"TlsTimeoutMilliseconds\": 2000,
           \"TotalTimeoutMilliseconds\": 2000
       }" \
+    $FIX_CLI_PARAM \
     --invocation-type Event \
     invoke-${ii}.txt 
 done
 ```
-{{% notice warning %}}
-If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-format raw-in-base64-out` or you'll get the error "Invalid base64" when sending the payload.
+{{% notice info %}}
+If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-format raw-in-base64-out` or you'll get the error "Invalid base64" when sending the payload. This notice is for troubleshooting, the code above should work for both CLI versions.
 {{% /notice %}}
 
 While this is executing, we encourage you to explore CloudWatch logs and create some dashboard views of your own.
