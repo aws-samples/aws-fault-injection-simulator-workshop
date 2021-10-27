@@ -226,7 +226,39 @@ You will note that the result is wrapped into an `experimentTemplate: {}` block.
 aws fis get-experiment-template --id $EXPERIMENT_TEMPLATE_ID | jq '.experimentTemplate | del( .id) | del(.creationTime) | del(.lastUpdateTime)' 
 ```
 
-### Running the experiment
+## Validation procedure
+
+Like in the previous section we will be using the AWS CloudWatch dashboard from the previous sections for validation, no additional setup required.
+
+## Run FIS experiment
+
+Like in the previous section we will generate some load:
+
+```bash
+# Please ensure that LAMBDA_ARN, URL_HOME, and FIX_CLI_PARAM are still set from previous section
+
+# Run load for 5min, 3x in parallel because max per lambda is 1000
+for ii in 1 2 3; do
+  aws lambda invoke \
+    --function-name ${LAMBDA_ARN} \
+    --payload "{
+          \"ConnectionTargetUrl\": \"${URL_PHP}\", 
+          \"ExperimentDurationSeconds\": 300,
+          \"ConnectionsPerSecond\": 1000,
+          \"ReportingMilliseconds\": 1000,
+          \"ConnectionTimeoutMilliseconds\": 2000,
+          \"TlsTimeoutMilliseconds\": 2000,
+          \"TotalTimeoutMilliseconds\": 2000
+      }" \
+    $FIX_CLI_PARAM \
+    --invocation-type Event \
+    invoke-${ii}.txt 
+done
+```
+
+{{% notice warning %}}
+If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-format raw-in-base64-out` or you'll get the error "Invalid base64" when sending the payload.
+{{% /notice %}}
 
 Finally we want to run the experiment:
 

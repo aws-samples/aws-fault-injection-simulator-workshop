@@ -22,9 +22,16 @@ You can click on these images to enlarge them.
 
 {{% expand "Click to expand if you are hosting a demo" %}}
 
-If you are hosting a demo you should start generating load now. This will pull the relevant variables from AWS CloudFormation:
+If you are hosting a demo you should start generating load now. This will pull the relevant variables from AWS CloudFormation, run 
+"light" load for 15min (900s), and run additional "heavy" load for 5min (300s) after 5min of "light" load.
+
+{{% notice info %}}
+If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-format raw-in-base64-out` or you'll get the error "Invalid base64" when sending the payload. This notice is for troubleshooting, the code below should work for both CLI versions.
+{{% /notice %}}
+
 
 ```bash
+# Get resource information
 export LAMBDA_ARN=$( aws cloudformation describe-stacks --stack-name FisStackLoadGen --query "Stacks[*].Outputs[?OutputKey=='LoadGenArn'].OutputValue" --output text )
 export URL_HOME=$( aws cloudformation describe-stacks --stack-name FisStackAsg --query "Stacks[*].Outputs[?OutputKey=='FisAsgUrl'].OutputValue" --output text )
 export URL_PHP=${URL_HOME}/phpinfo.php
@@ -32,11 +39,11 @@ export URL_PHP=${URL_HOME}/phpinfo.php
 echo $LAMBDA_ARN
 echo $URL_HOME
 echo $URL_PHP
-```
 
-For convenience here is the light load snippet expanded for 900s runs:
+# Workaround for AWS CLI v1/v2 compatibility issues
+CLI_MAJOR_VERSION=$( aws --version | grep '^aws-cli' | cut -d/ -f2 | cut -d. -f1 )
+if [ "$CLI_MAJOR_VERSION" == "2" ]; then FIX_CLI_PARAM="--cli-binary-format raw-in-base64-out"; else unset FIX_CLI_PARAM; fi
 
-```bash
 # Run light load for 15min (max single lambda execution time)
 aws lambda invoke \
   --function-name ${LAMBDA_ARN} \
@@ -49,18 +56,14 @@ aws lambda invoke \
         \"TlsTimeoutMilliseconds\": 2000,
         \"TotalTimeoutMilliseconds\": 2000
     }" \
+  $FIX_CLI_PARAM \
   --invocation-type Event \
-  invoke.txt 
-```
+  invoke.txt
 
-{{% notice warning %}}
-If you are running AWS CLI v2, you need to pass the parameter `--cli-binary-format raw-in-base64-out` or you'll get the error "Invalid base64" when sending the payload.
-{{% /notice %}}
+# Wait for 5min before starting additional heavy load
+sleep 300
 
-
-For convenience is here the heavy load snippet:
-
-```bash
+# Run heavy load for 5min
 for ii in 1 2 3; do
   aws lambda invoke \
     --function-name ${LAMBDA_ARN} \
@@ -74,6 +77,7 @@ for ii in 1 2 3; do
           \"TotalTimeoutMilliseconds\": 2000
       }" \
     --invocation-type Event \
+    $FIX_CLI_PARAM \
     invoke-${ii}.txt 
 done
 ```
