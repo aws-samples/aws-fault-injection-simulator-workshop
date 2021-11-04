@@ -1,0 +1,12 @@
+EOT
+yum install -y jq
+pip3 install boto3
+cat >/home/ec2-user/send_metrics <<EOT
+#!/bin/bash
+export AWS_DEFAULT_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+python3 /home/ec2-user/send_metrics.py 2>&1 >> /var/log/send_metrics.log
+EOT
+chmod 755 /home/ec2-user/send_metrics
+touch /var/log/send_metrics.log
+chmod 666 /var/log/send_metrics.log
+bash /home/ec2-user/send_metrics
