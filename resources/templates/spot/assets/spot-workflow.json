@@ -1,0 +1,119 @@
+{
+    "Comment": "A description of my state machine",
+    "StartAt": "GetExecutionId",
+    "States": {
+      "GetExecutionId": {
+        "Type": "Pass",
+        "Comment": "KMS random number",
+        "Next": "CreateDynamoDB",
+        "Result": {
+          "Plaintext": "someid"
+        },
+        "ResultPath": "$.GetExecutionId"
+      },
+      "CreateDynamoDB": {
+        "Type": "Pass",
+        "Comment": "If not exists - use catch",
+        "Next": "SetExecutionPercentageToZero",
+        "ResultPath": "$.CreateDynamoDB",
+        "Result": {
+          "Dummy": "Stuff"
+        }
+      },
+      "SetExecutionPercentageToZero": {
+        "Type": "Pass",
+        "Comment": "DDB put item",
+        "Next": "WriteSSMParameter",
+        "ResultPath": "$.SetExecutionPercentageToZero",
+        "Result": {
+          "Dummy": "Stuff"
+        }
+      },
+      "WriteSSMParameter": {
+        "Type": "Pass",
+        "Next": "RequestSpot",
+        "Comment": "Save startpercentage! duration? Save DDB table name?",
+        "Result": {
+          "Dummy": "Stuff"
+        },
+        "ResultPath": "$.WriteSSMParameter"
+      },
+      "RequestSpot": {
+        "Type": "Pass",
+        "Next": "ErrorHandling?",
+        "Result": {
+          "Dummy": "Stuff"
+        },
+        "ResultPath": "$.RequestSpot"
+      },
+      "ErrorHandling?": {
+        "Type": "Pass",
+        "Next": "GetSpotInfo",
+        "Result": {
+          "Dummy": "Stuff"
+        },
+        "ResultPath": "$.SpotRequestErrorHandling"
+      },
+      "GetSpotInfo": {
+        "Type": "Pass",
+        "Comment": "See if we have an instance ID yet",
+        "Next": "CheckForInstanceId",
+        "Result": {
+          "SpotInstanceRequestId": "asdf"
+        },
+        "ResultPath": "$.GetSpotInfo"
+      },
+      "CheckForInstanceId": {
+        "Type": "Choice",
+        "Choices": [
+          {
+            "Variable": "$.GetSpotInfo.InstanceId",
+            "IsPresent": true,
+            "Next": "WaitForJobFinish"
+          }
+        ],
+        "Default": "WaitForInstanceId"
+      },
+      "WaitForJobFinish": {
+        "Type": "Pass",
+        "Next": "IsFinished?",
+        "Result": {
+          "JobFinished": true
+        },
+        "Comment": "Lambda wait with heartbeat",
+        "ResultPath": "$.WaitForJobFinish"
+      },
+      "IsFinished?": {
+        "Type": "Choice",
+        "Default": "WriteSSMParameter",
+        "Choices": [
+          {
+            "Variable": "$.WaitForJobFinish.JobFinished",
+            "BooleanEquals": true,
+            "Next": "CleanDDB?"
+          }
+        ]
+      },
+      "CleanDDB?": {
+        "Type": "Pass",
+        "Next": "KillInstances?"
+      },
+      "KillInstances?": {
+        "Type": "Pass",
+        "End": true
+      },
+      "WaitForInstanceId": {
+        "Type": "Wait",
+        "Seconds": 5,
+        "Next": "FakeGetSpotInfoSuccess"
+      },
+      "FakeGetSpotInfoSuccess": {
+        "Type": "Pass",
+        "Next": "CheckForInstanceId",
+        "Result": {
+          "InstanceId": "asdf"
+        },
+        "ResultPath": "$.GetSpotInfo"
+      }
+    }
+  }
