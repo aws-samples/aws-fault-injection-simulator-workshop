@@ -1,0 +1,212 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Template for step-functions-workshop
+
+Resources:
+  SpotChaosStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: assets/spot-workflow.json
+      Role: !GetAtt SpotChaosStateMachineRole.Arn
+      # Insert "${VARIABLE}" in statemachine code
+      # DefinitionSubstitutions:
+      #   DataCheckingFunctionArn: !GetAtt DataCheckingFunction.Arn
+      #   FlagApplicationFunctionName: !Ref FlagApplicationFunction
+      #   ApproveApplicationFunctionArn: !GetAtt ApproveApplicationFunction.Arn
+      #   RejectApplicationFunctionArn: !GetAtt RejectApplicationFunction.Arn
+      # This is confusing but looks like policy mappings in step functions
+      # Policies:
+      #   - LambdaInvokePolicy:
+      #       FunctionName: !Ref DataCheckingFunction
+      #   - LambdaInvokePolicy:
+      #       FunctionName: !Ref FlagApplicationFunction
+      #   - LambdaInvokePolicy:
+      #       FunctionName: !Ref ApproveApplicationFunction
+      #   - LambdaInvokePolicy:
+      #       FunctionName: !Ref RejectApplicationFunction
+
+  SpotChaosStateMachineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - states.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: AllowXrayTracing
+                Effect: Allow
+                Action: 
+                  - xray:PutTraceSegments
+                  - xray:PutTelemetryRecords
+                  - xray:GetSamplingRules
+                  - xray:GetSamplingTargets
+                Resource: '*'
+              - Sid: AllowKmsRandomNumber
+                Effect: Allow
+                Action: 'kms:GenerateRandom'
+                Resource: '*'
+              # Fix this if we generate a DDB
+              - Sid: AllowDdbAll
+                Effect: Allow
+                Action: 'dynamodb:*'
+                Resource: '*'
+
+
+
+  # ApproveApplicationFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     FunctionName: sfn-workshop-ApproveApplication
+  #     CodeUri: functions/account-applications/
+  #     Handler: approve.handler
+  #     Runtime: nodejs12.x
+  #     Environment:
+  #       Variables:
+  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
+  #     Policies:
+  #       - DynamoDBCrudPolicy:
+  #           TableName: !Ref ApplicationsTable
+
+  # DataCheckingFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     FunctionName: sfn-workshop-DataChecking
+  #     CodeUri: functions/data-checking/
+  #     Handler: data-checking.handler
+  #     Runtime: nodejs12.x
+
+  # FindApplicationsFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     FunctionName: sfn-workshop-FindApplications
+  #     CodeUri: functions/account-applications/
+  #     Handler: find.handler
+  #     Runtime: nodejs12.x
+  #     Environment:
+  #       Variables:
+  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
+  #     Policies:
+  #       - DynamoDBCrudPolicy:
+  #           TableName: !Ref ApplicationsTable
+
+  # FlagApplicationFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     FunctionName: sfn-workshop-FlagApplication
+  #     CodeUri: functions/account-applications/
+  #     Handler: flag.handler
+  #     Runtime: nodejs12.x
+  #     Environment:
+  #       Variables:
+  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
+  #     Policies:
+  #       - DynamoDBCrudPolicy:
+  #           TableName: !Ref ApplicationsTable
+
+  # RejectApplicationFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     FunctionName: sfn-workshop-RejectApplication
+  #     CodeUri: functions/account-applications/
+  #     Handler: reject.handler
+  #     Runtime: nodejs12.x
+  #     Environment:
+  #       Variables:
+  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
+  #     Policies:
+  #       - DynamoDBCrudPolicy:
+  #           TableName: !Ref ApplicationsTable
+
+  # ReviewApplicationFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     FunctionName: sfn-workshop-ReviewApplication
+  #     CodeUri: functions/account-applications/
+  #     Handler: review.handler
+  #     Runtime: nodejs12.x
+  #     Environment:
+  #       Variables:
+  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
+  #     Policies:
+  #       - DynamoDBCrudPolicy:
+  #           TableName: !Ref ApplicationsTable
+  #       - Statement:
+  #         - Sid: AllowCallbacksToStateMachinePolicy
+  #           Effect: "Allow"
+  #           Action:
+  #             - "states:SendTaskSuccess"
+  #             - "states:SendTaskFailure"
+  #           Resource: !Ref ApplicationProcessingStateMachine
+
+  # SubmitApplicationFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     FunctionName: sfn-workshop-SubmitApplication
+  #     CodeUri: functions/account-applications/
+  #     Handler: submit.handler
+  #     Runtime: nodejs12.x
+  #     Environment:
+  #       Variables:
+  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
+  #         APPLICATION_PROCESSING_STEP_FUNCTION_ARN: !Ref ApplicationProcessingStateMachine
+  #     Policies:
+  #       - DynamoDBCrudPolicy:
+  #           TableName: !Ref ApplicationsTable
+  #       - StepFunctionsExecutionPolicy:
+  #           StateMachineName: !GetAtt ApplicationProcessingStateMachine.Name
+
+  # # Might add this but for not building in workflow
+  # ApplicationsTable:
+  #   Type: 'AWS::DynamoDB::Table'
+  #   Properties:
+  #     TableName: !Sub StepFunctionWorkshop-AccountApplications-${AWS::StackName}
+  #     AttributeDefinitions:
+  #       -
+  #         AttributeName: id
+  #         AttributeType: S
+  #       -
+  #         AttributeName: state
+  #         AttributeType: S
+  #     KeySchema:
+  #       -
+  #         AttributeName: id
+  #         KeyType: HASH
+  #     BillingMode: PAY_PER_REQUEST
+  #     GlobalSecondaryIndexes:
+  #         -
+  #             IndexName: state
+  #             KeySchema:
+  #                 -
+  #                     AttributeName: state
+  #                     KeyType: HASH
+  #             Projection:
+  #                 ProjectionType: ALL
+# Outputs:
+#   SubmitApplicationFunctionArn:
+#     Description: "Submit Application Function ARN"
+#     Value: !GetAtt SubmitApplicationFunction.Arn
+#   FlagApplicationFunctionArn:
+#     Description: "Flag Application Function ARN"
+#     Value: !GetAtt FlagApplicationFunction.Arn
+#   FindApplicationsFunctionArn:
+#     Description: "Find Applications Function ARN"
+#     Value: !GetAtt FindApplicationsFunction.Arn
+#   ApproveApplicationFunctionArn:
+#     Description: "Approve Application Function ARN"
+#     Value: !GetAtt ApproveApplicationFunction.Arn
+#   RejectApplicationFunctionArn:
+#     Description: "Reject Application Function ARN"
+#     Value: !GetAtt RejectApplicationFunction.Arn
+#   DataCheckingFunctionArn:
+#     Description: "Data Checking Function ARN"
+#     Value: !GetAtt DataCheckingFunction.Arn
+
