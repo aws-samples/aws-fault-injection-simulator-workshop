@@ -168,10 +168,20 @@
             "Type": "Task",
             "Next": "KillInstances?",
             "Parameters": {
-                "InstanceIds.$": "States.Array(States.Format('${SpotChaosInstanceArnPrefix}{}',$.GetSpotInfo.SpotInstanceRequests[0].InstanceId))"
+                "InstanceIds.$": "States.Array($.GetSpotInfo.SpotInstanceRequests[0].InstanceId)"
             },
             "Resource": "arn:aws:states:::aws-sdk:ec2:terminateInstances",
-            "Comment": "If instance is still running after 15min something went wrong"
+            "Catch": [
+                {
+                    "ErrorEquals": [
+                        "States.ALL"
+                    ],
+                    "ResultPath": "$.TerminateInstanceIfStillRunning",
+                    "Next": "KillInstances?"
+                }
+            ],
+            "Comment": "If instance is still running after 15min something went wrong",
+            "ResultPath": "$.TerminateInstanceIfStillRunning"
         },
         "KillInstances?": {
             "Type": "Pass",
