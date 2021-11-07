@@ -4,12 +4,15 @@ import boto3
 import time
 import sys
 import signal
+import urllib.request
 
 checkpoint_saved_percentage = 0
 
 def signal_handler(sig,frame):
     print(signal.Signals(sig))
     print("Graceful exit - reporting final metrics - checkpointed %f" % checkpoint_saved_percentage)
+    # # Do not suicide instance - we assume the termination notice is guaranteed
+    # terminate_self_instances(ec2_client)
     sys.exit(0)
 
 catchable_sigs = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP, signal.SIGCHLD}
@@ -50,12 +53,18 @@ def put_cloudwatch_percentages(client,saved_percentage,unsaved_percentage):
         Namespace='fisworkshop'
     )
 
+def terminate_self_instance(client):
+    instance_id = urllib.request.urlopen('http://169.254.169.254/latest/meta-data/instance-id').read().decode()    
+    client.terminate_instances(
+        InstanceIds = [ instance_id ]
+    )
+    print("Successfully sent instance termination request for %s" % instance_id)
+
 try:
     ssm_client = boto3.client('ssm')
     cw_client = boto3.client('cloudwatch')
+    ec2_client = boto3.client('ec2')
 except:
-    ssm_client = None
-    cw_client = None
     print("Could not connect to AWS, did you set credentials?")
     sys.exit(1)
 
@@ -90,3 +99,5 @@ for ii in range(100):
 
 put_cloudwatch_percentages(cw_client,100,100)
 
+# At completion suicide instance
+terminate_self_instance(ec2_client)

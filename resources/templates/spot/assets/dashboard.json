@@ -1,0 +1,25 @@
+{
+    "widgets": [
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 0,
+            "width": 24,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "fisworkshop", "checkpointed", { "color": "#2ca02c" } ],
+                    [ ".", "unsaved", { "color": "#d62728" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "us-west-2",
+                "stat": "Average",
+                "period": 1,
+                "start": "-PT15M",
+                "end": "P0D",
+                "title": "SpotMetrics"
+            }
+        }
+    ]
+}

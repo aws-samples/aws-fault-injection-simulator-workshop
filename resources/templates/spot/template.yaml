@@ -8,7 +8,6 @@ Parameters:
     Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-ebs
   SubnetId:
     Type: AWS::EC2::Subnet::Id
-    Default: subnet-00e36a47c007ede0b
   # # Max 4k parameter size makes this a poor choice  
   # UserData:
   #   Type: String
@@ -19,23 +18,23 @@ Parameters:
     Default: t3.small
 
 Resources:
-  # SpotChaosParameterCheckpointDuration:
-  #   Type: AWS::SSM::Parameter
-  #   Properties:
-  #     Name: FisWorkshopSpotCheckpointDuration
-  #     Type: String
-  #     Value: 2
-  #     Description: Duration between checkopints in minutes (float)
-  #     AllowedPattern: "^[0-9]+(\.[0-9]+)?$"
+  SpotChaosParameterCheckpointDuration:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: FisWorkshopSpotCheckpointDuration
+      Type: String
+      Value: "2"
+      Description: Duration between checkopints in minutes (float)
+      AllowedPattern: ^[0-9]+(\.[0-9]+)?$
 
-  # SpotChaosParameterJobDuration:
-  #   Type: AWS::SSM::Parameter
-  #   Properties:
-  #     Name: FisWorkshopSpotJobDuration
-  #     Type: String
-  #     Value: 6
-  #     Description: Total job runtime in minutes (float)
-  #     AllowedPattern: "^[0-9]+(\.[0-9]+)?$"
+  SpotChaosParameterJobDuration:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: FisWorkshopSpotJobDuration
+      Type: String
+      Value: "6"
+      Description: Total job runtime in minutes (float)
+      AllowedPattern: ^[0-9]+(\.[0-9]+)?$
 
 
   SpotChaosStateMachine:
@@ -104,11 +103,16 @@ Resources:
                   - 'ec2:RequestSpotInstances'
                   - 'ec2:DescribeSpotInstanceRequests'
                 Resource: '*'
-              # Create the role here and pass that instead of hardcoding
+              - Sid: AllowCreateServiceLinkedRole
+                Effect: Allow
+                Action: 
+                  - 'iam:CreateServiceLinkedRole'
+                Resource: '*'
               - Sid: AllowPassRole
                 Effect: Allow
                 Action: 
                   - 'iam:PassRole'
+                  - 'iam:CreateServiceLinkedRole'
                 Resource: 
                   # - 'arn:aws:iam::238810465798:role/FisStackAsg-FisInstanceRole21B642B7-10792LIF89MS0'
                   - !GetAtt SpotChaosInstanceRole.Arn
@@ -150,19 +154,20 @@ Resources:
                 Action: 
                   - secretsmanager:GetSecretValue
                 Resource: '*'
+              - Sid: AllowSelfTerminate
+                Effect: Allow
+                Action:
+                  - ec2:terminateInstances
+                Resource: "*"
+                Condition:
+                  StringEquals: 
+                    ec2:ResourceTag/Name: "Fis/Spot"
 
-    #   assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
-    #   managedPolicies: [
-    #     iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'),
-    #     iam.ManagedPolicy.fromAwsManagedPolicyName('CloudWatchAgentServerPolicy')
-    #   ],
-    # });
-    # instanceRole.addToPrincipalPolicy(new iam.PolicyStatement({
-    #   resources: ['*'], // TODO find a way to query this 
-    #   actions: ['secretsmanager:GetSecretValue'],
-    #   effect: iam.Effect.ALLOW
-    # }));
-
+  SpotDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties: 
+      DashboardName: !Sub "FisSpot-${AWS::Region}"
+      DashboardBody: !Sub '{"widgets":[{"type":"metric","x":0,"y":0,"width":24,"height":6,"properties":{"metrics":[["fisworkshop","checkpointed",{"color":"#2ca02c"}],[".","unsaved",{"color":"#d62728"}]],"view":"timeSeries","stacked":false,"region":"${AWS::Region}","stat":"Average","period":1,"start":"-PT15M","end":"P0D","title":"SpotMetrics"}}]}'
 
   # ApproveApplicationFunction:
   #   Type: AWS::Serverless::Function
