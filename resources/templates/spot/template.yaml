@@ -122,6 +122,15 @@ Resources:
                   - 'tag:TagResources'
                   - 'ec2:CreateTags'
                 Resource: '*'
+              - Sid: AllowInstanceTermination
+                Effect: Allow
+                Action:
+                  - ec2:terminateInstances
+                Resource: "*"
+                Condition:
+                  StringEquals: 
+                    ec2:ResourceTag/Name: "Fis/Spot"
+
                 
   SpotChaosInstanceProfile:
     Type: "AWS::IAM::InstanceProfile"
