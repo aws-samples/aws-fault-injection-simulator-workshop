@@ -5,11 +5,17 @@ import time
 import sys
 import signal
 
+checkpoint_saved_percentage = 0
+
 def signal_handler(sig,frame):
+    print(signal.Signals(sig))
     print("Graceful exit - reporting final metrics - checkpointed %f" % checkpoint_saved_percentage)
     sys.exit(0)
 
-signal.signal(signal.SIGINT, signal_handler)
+catchable_sigs = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP, signal.SIGCHLD}
+for sig in catchable_sigs:
+    print("handle %s" % sig)
+    signal.signal(sig, signal_handler)
 
 def get_ssm_parameter(client,name,default_setting=5):
     try:
@@ -31,12 +37,14 @@ def put_cloudwatch_percentages(client,saved_percentage,unsaved_percentage):
             {
                 'MetricName': "unsaved",
                 'Unit': 'Percent',
-                'Value': unsaved_percentage
+                'Value': unsaved_percentage,
+                'StorageResolution': 1
             },
             {
                 'MetricName': "checkpointed",
                 'Unit': 'Percent',
-                'Value': saved_percentage
+                'Value': saved_percentage,
+                'StorageResolution': 1
             },
         ],
         Namespace='fisworkshop'
@@ -60,7 +68,6 @@ checkpoint_interval_minutes = get_ssm_parameter(ssm_client,'FisWorkshopSpotCheck
 
 sleep_duration_seconds = 60.0 * job_duration_minutes / 100.0
 checkpoint_counter_seconds = 0.0
-checkpoint_saved_percentage = 0
 
 print("Starting job (duration %f min / checkpoint %f min)" % (
     job_duration_minutes,

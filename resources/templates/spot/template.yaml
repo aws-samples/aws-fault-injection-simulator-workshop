@@ -2,18 +2,56 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Template for step-functions-workshop
 
+Parameters:
+  ImageId:
+    Type: AWS::EC2::Image::Id
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-ebs
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-00e36a47c007ede0b
+  # # Max 4k parameter size makes this a poor choice  
+  # UserData:
+  #   Type: String
+  #   Default: IyEvYmluL2Jhc2gKY2F0ID4vaG9tZS9lYzItdXNlci9zZW5kX21ldHJpY3MucHkgPDxFT1QKIyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwoKaW1wb3J0IGJvdG8zCmltcG9ydCB0aW1lCmltcG9ydCBzeXMKaW1wb3J0IHNpZ25hbAoKZGVmIHNpZ25hbF9oYW5kbGVyKHNpZyxmcmFtZSk6CiAgICBwcmludCgiR3JhY2VmdWwgZXhpdCAtIHJlcG9ydGluZyBmaW5hbCBtZXRyaWNzIC0gY2hlY2twb2ludGVkICVmIiAlIGNoZWNrcG9pbnRfc2F2ZWRfcGVyY2VudGFnZSkKICAgIHN5cy5leGl0KDApCgpzaWduYWwuc2lnbmFsKHNpZ25hbC5TSUdJTlQsIHNpZ25hbF9oYW5kbGVyKQoKZGVmIGdldF9zc21fcGFyYW1ldGVyKGNsaWVudCxuYW1lLGRlZmF1bHRfc2V0dGluZz01KToKICAgIHRyeToKICAgICAgICByZXNwb25zZSA9IGNsaWVudC5nZXRfcGFyYW1ldGVyKAogICAgICAgICAgICBOYW1lPW5hbWUsCiAgICAgICAgICAgIFdpdGhEZWNyeXB0aW9uPVRydWUKICAgICAgICApCiAgICAgICAgIyBwcmludChyZXNwb25zZSkKICAgICAgICB2YWx1ZSA9IGZsb2F0KHJlc3BvbnNlLmdldCgiUGFyYW1ldGVyIix7fSkuZ2V0KCJWYWx1ZSIsc3RyKGRlZmF1bHRfc2V0dGluZykpKSAKICAgICAgICAjIHByaW50KCJWYWx1ZSByZXRyaWV2ZWQ6ICVzPSVmIiAlIChuYW1lLHZhbHVlKSkKICAgICAgICByZXR1cm4gdmFsdWUKICAgIGV4Y2VwdDoKICAgICAgICBwcmludCgiQ291bGRuJ3QgcmVhZCBwYXJhbWV0ZXIgJXMsIHVzaW5nIGRlZmF1bHQgQ2hlY2tQb2ludCBkdXJhdGlvbiIgJSBuYW1lKQogICAgcmV0dXJuIGRlZmF1bHRfc2V0dGluZwoKZGVmIHB1dF9jbG91ZHdhdGNoX3BlcmNlbnRhZ2VzKGNsaWVudCxzYXZlZF9wZXJjZW50YWdlLHVuc2F2ZWRfcGVyY2VudGFnZSk6CiAgICBjbGllbnQucHV0X21ldHJpY19kYXRhKAogICAgICAgIE1ldHJpY0RhdGE9WwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAnTWV0cmljTmFtZSc6ICJ1bnNhdmVkIiwKICAgICAgICAgICAgICAgICdVbml0JzogJ1BlcmNlbnQnLAogICAgICAgICAgICAgICAgJ1ZhbHVlJzogdW5zYXZlZF9wZXJjZW50YWdlLAogICAgICAgICAgICAgICAgJ1N0b3JhZ2VSZXNvbHV0aW9uJzogMQogICAgICAgICAgICB9LAogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAnTWV0cmljTmFtZSc6ICJjaGVja3BvaW50ZWQiLAogICAgICAgICAgICAgICAgJ1VuaXQnOiAnUGVyY2VudCcsCiAgICAgICAgICAgICAgICAnVmFsdWUnOiBzYXZlZF9wZXJjZW50YWdlLAogICAgICAgICAgICAgICAgJ1N0b3JhZ2VSZXNvbHV0aW9uJzogMQogICAgICAgICAgICB9LAogICAgICAgIF0sCiAgICAgICAgTmFtZXNwYWNlPSdmaXN3b3Jrc2hvcCcKICAgICkKCnRyeToKICAgIHNzbV9jbGllbnQgPSBib3RvMy5jbGllbnQoJ3NzbScpCiAgICBjd19jbGllbnQgPSBib3RvMy5jbGllbnQoJ2Nsb3Vkd2F0Y2gnKQpleGNlcHQ6CiAgICBzc21fY2xpZW50ID0gTm9uZQogICAgY3dfY2xpZW50ID0gTm9uZQogICAgcHJpbnQoIkNvdWxkIG5vdCBjb25uZWN0IHRvIEFXUywgZGlkIHlvdSBzZXQgY3JlZGVudGlhbHM/IikKICAgIHN5cy5leGl0KDEpCgojIER1cmF0aW9uIHVudGlsIGpvYiBjb21wbGV0aW9uIGluIG1pbnV0ZXMgKHNob3VsZCBiZSAyIDwgeCA8IDE1KQpqb2JfZHVyYXRpb25fbWludXRlcyA9IGdldF9zc21fcGFyYW1ldGVyKHNzbV9jbGllbnQsJ0Zpc1dvcmtzaG9wU3BvdEpvYkR1cmF0aW9uJyw1KSAKCiMgVGltZSBiZXR3ZWVuIGNoZWNrcG9pbnRzCmNoZWNrcG9pbnRfaW50ZXJ2YWxfbWludXRlcyA9IGdldF9zc21fcGFyYW1ldGVyKHNzbV9jbGllbnQsJ0Zpc1dvcmtzaG9wU3BvdENoZWNrcG9pbnREdXJhdGlvbicsMC4yKQoKCnNsZWVwX2R1cmF0aW9uX3NlY29uZHMgPSA2MC4wICogam9iX2R1cmF0aW9uX21pbnV0ZXMgLyAxMDAuMApjaGVja3BvaW50X2NvdW50ZXJfc2Vjb25kcyA9IDAuMApjaGVja3BvaW50X3NhdmVkX3BlcmNlbnRhZ2UgPSAwCgpwcmludCgiU3RhcnRpbmcgam9iIChkdXJhdGlvbiAlZiBtaW4gLyBjaGVja3BvaW50ICVmIG1pbikiICUgKAogICAgam9iX2R1cmF0aW9uX21pbnV0ZXMsCiAgICBjaGVja3BvaW50X2ludGVydmFsX21pbnV0ZXMKKSkKcHV0X2Nsb3Vkd2F0Y2hfcGVyY2VudGFnZXMoY3dfY2xpZW50LDAsMCkKZm9yIGlpIGluIHJhbmdlKDEwMCk6CiAgICB0aW1lLnNsZWVwKHNsZWVwX2R1cmF0aW9uX3NlY29uZHMpCgogICAgIyByZWNvcmQgcHJvZ3Jlc3MgZGF0YSB0aGF0IGNhbiBiZSBsb3N0CiAgICBwdXRfY2xvdWR3YXRjaF9wZXJjZW50YWdlcyhjd19jbGllbnQsY2hlY2twb2ludF9zYXZlZF9wZXJjZW50YWdlLGlpKzEpCgogICAgY2hlY2twb2ludF9jb3VudGVyX3NlY29uZHMgKz0gc2xlZXBfZHVyYXRpb25fc2Vjb25kcwogICAgY2hlY2twb2ludF9mbGFnPSgoY2hlY2twb2ludF9jb3VudGVyX3NlY29uZHMvNjAuMCkgPiBjaGVja3BvaW50X2ludGVydmFsX21pbnV0ZXMpCiAgICBwcmludCgiJWYlJSBjb21wbGV0ZSAtIGNoZWNrcG9pbnQ9JXMiICUgKGlpKzEsY2hlY2twb2ludF9mbGFnKSkKICAgIGlmIGNoZWNrcG9pbnRfZmxhZzoKICAgICAgICBwcmludCgicmVzZXR0aW5nIGZsYWciKQogICAgICAgIGNoZWNrcG9pbnRfY291bnRlcl9zZWNvbmRzID0gMC4wCiAgICAgICAgY2hlY2twb2ludF9zYXZlZF9wZXJjZW50YWdlID0gaWkrMQoKcHV0X2Nsb3Vkd2F0Y2hfcGVyY2VudGFnZXMoY3dfY2xpZW50LDEwMCwxMDApCgpFT1QKeXVtIGluc3RhbGwgLXkganEKcGlwMyBpbnN0YWxsIGJvdG8zCmNhdCA+L2hvbWUvZWMyLXVzZXIvc2VuZF9tZXRyaWNzIDw8RU9UCiMhL2Jpbi9iYXNoCmV4cG9ydCBBV1NfREVGQVVMVF9SRUdJT049JChjdXJsIC1zIDE2OS4yNTQuMTY5LjI1NC9sYXRlc3QvZHluYW1pYy9pbnN0YW5jZS1pZGVudGl0eS9kb2N1bWVudCB8IGpxIC1yICcucmVnaW9uJykKcHl0aG9uMyAvaG9tZS9lYzItdXNlci9zZW5kX21ldHJpY3MucHkgMj4mMSA+PiAvdmFyL2xvZy9zZW5kX21ldHJpY3MubG9nCkVPVApjaG1vZCA3NTUgL2hvbWUvZWMyLXVzZXIvc2VuZF9tZXRyaWNzCnRvdWNoIC92YXIvbG9nL3NlbmRfbWV0cmljcy5sb2cKY2htb2QgNjY2IC92YXIvbG9nL3NlbmRfbWV0cmljcy5sb2cKYmFzaCAvaG9tZS9lYzItdXNlci9zZW5kX21ldHJpY3MK
+  #   Description: Base64 encoded script runner for autostart. Use merge.sh in source folder if you want to modify any of the components
+  InstanceType:
+    Type: String
+    Default: t3.small
+
 Resources:
+  # SpotChaosParameterCheckpointDuration:
+  #   Type: AWS::SSM::Parameter
+  #   Properties:
+  #     Name: FisWorkshopSpotCheckpointDuration
+  #     Type: String
+  #     Value: 2
+  #     Description: Duration between checkopints in minutes (float)
+  #     AllowedPattern: "^[0-9]+(\.[0-9]+)?$"
+
+  # SpotChaosParameterJobDuration:
+  #   Type: AWS::SSM::Parameter
+  #   Properties:
+  #     Name: FisWorkshopSpotJobDuration
+  #     Type: String
+  #     Value: 6
+  #     Description: Total job runtime in minutes (float)
+  #     AllowedPattern: "^[0-9]+(\.[0-9]+)?$"
+
+
   SpotChaosStateMachine:
     Type: AWS::Serverless::StateMachine
     Properties:
       DefinitionUri: assets/spot-workflow.json
       Role: !GetAtt SpotChaosStateMachineRole.Arn
       # Insert "${VARIABLE}" in statemachine code
-      # DefinitionSubstitutions:
-      #   DataCheckingFunctionArn: !GetAtt DataCheckingFunction.Arn
-      #   FlagApplicationFunctionName: !Ref FlagApplicationFunction
-      #   ApproveApplicationFunctionArn: !GetAtt ApproveApplicationFunction.Arn
-      #   RejectApplicationFunctionArn: !GetAtt RejectApplicationFunction.Arn
+      DefinitionSubstitutions:
+        SpotChaosInstanceProfileArn: !GetAtt SpotChaosInstanceProfile.Arn
+        SpotChaosInstanceArnPrefix: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/"
+        SpotChaosInstanceImageId: !Ref ImageId
+        SpotChaosInstanceSubnetId: !Ref SubnetId
+        # # Max 4k parameter size makes this a poor choice
+        # SpotChaosInstanceUserData: !Ref UserData
+        SpotChaosInstanceType: !Ref InstanceType
       # This is confusing but looks like policy mappings in step functions
       # Policies:
       #   - LambdaInvokePolicy:
@@ -59,7 +97,71 @@ Resources:
                 Effect: Allow
                 Action: 'dynamodb:*'
                 Resource: '*'
+              # Fix this to minimize permissions
+              - Sid: AllowSpot
+                Effect: Allow
+                Action: 
+                  - 'ec2:RequestSpotInstances'
+                  - 'ec2:DescribeSpotInstanceRequests'
+                Resource: '*'
+              # Create the role here and pass that instead of hardcoding
+              - Sid: AllowPassRole
+                Effect: Allow
+                Action: 
+                  - 'iam:PassRole'
+                Resource: 
+                  # - 'arn:aws:iam::238810465798:role/FisStackAsg-FisInstanceRole21B642B7-10792LIF89MS0'
+                  - !GetAtt SpotChaosInstanceRole.Arn
+              - Sid: AllowInstanceTagging
+                Effect: Allow
+                Action: 
+                  - 'tag:TagResources'
+                  - 'ec2:CreateTags'
+                Resource: '*'
+                
+  SpotChaosInstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties: 
+      Roles: 
+        - !Ref SpotChaosInstanceRole
 
+  SpotChaosInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: AllowXrayTracing
+                Effect: Allow
+                Action: 
+                  - secretsmanager:GetSecretValue
+                Resource: '*'
+
+    #   assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
+    #   managedPolicies: [
+    #     iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'),
+    #     iam.ManagedPolicy.fromAwsManagedPolicyName('CloudWatchAgentServerPolicy')
+    #   ],
+    # });
+    # instanceRole.addToPrincipalPolicy(new iam.PolicyStatement({
+    #   resources: ['*'], // TODO find a way to query this 
+    #   actions: ['secretsmanager:GetSecretValue'],
+    #   effect: iam.Effect.ALLOW
+    # }));
 
 
   # ApproveApplicationFunction:
