@@ -85,12 +85,12 @@ def put_ddb_saved_percentage(table,job_id,instance_id,percentage):
     res = table.update_item(
         Key={ "RunId": instance_id },
         UpdateExpression="set Percentage=:p",
-        ExpressionAttributeValues={ ':p': percentage }
+        ExpressionAttributeValues={ ':p': str(percentage) }
     )
     res = table.update_item(
         Key={ "RunId": job_id },
         UpdateExpression="set Percentage=:p",
-        ExpressionAttributeValues={ ':p': percentage }
+        ExpressionAttributeValues={ ':p': str(percentage) }
     )
 
 def get_instance_id():
@@ -158,7 +158,7 @@ def send_task_success(client,heartbeat_token,percentage):
     client.send_task_success(
         taskToken=heartbeat_token,
         output=json.dumps({
-            "Percentage": percentage,
+            "Percentage": str(percentage),
             "JobFinished": (percentage >= 100)
             })
     )
