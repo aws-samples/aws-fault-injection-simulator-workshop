@@ -119,3 +119,11 @@ State machine snippets
   }
 }
 ```
+
+```
+STATE_MACHINE_ARN=arn:aws:states:us-west-2:313373485031:stateMachine:SpotChaosStateMachine-wUBB6YJBMJAv
+
+aws stepfunctions start-execution \
+  --state-machine-arn ${STATE_MACHINE_ARN} \
+  --input '{ "JobDuration": "2", "CheckpointDuration": "0.2", "WaitForJobFinish": { "Percentage": 100 }}'
+```

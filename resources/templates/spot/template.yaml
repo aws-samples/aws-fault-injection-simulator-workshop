@@ -51,6 +51,7 @@ Resources:
         # # Max 4k parameter size makes this a poor choice
         # SpotChaosInstanceUserData: !Ref UserData
         SpotChaosInstanceType: !Ref InstanceType
+        SpotChaosLambdaWaiter: !GetAtt SpotHeartbeatHandler.Arn
       # This is confusing but looks like policy mappings in step functions
       # Policies:
       #   - LambdaInvokePolicy:
@@ -112,7 +113,6 @@ Resources:
                 Effect: Allow
                 Action: 
                   - 'iam:PassRole'
-                  - 'iam:CreateServiceLinkedRole'
                 Resource: 
                   # - 'arn:aws:iam::238810465798:role/FisStackAsg-FisInstanceRole21B642B7-10792LIF89MS0'
                   - !GetAtt SpotChaosInstanceRole.Arn
@@ -130,6 +130,13 @@ Resources:
                 Condition:
                   StringEquals: 
                     ec2:ResourceTag/Name: "Fis/Spot"
+              # Fix this to use the lambda ARN we generate
+              - Sid: AllowLambdaCallbacks
+                Effect: Allow
+                Action: 
+                  - 'lambda:InvokeFunction'
+                  - 'ec2:CreateTags'
+                Resource: '*'
 
                 
   SpotChaosInstanceProfile:
@@ -158,11 +165,23 @@ Resources:
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
-              - Sid: AllowXrayTracing
+              - Sid: SSMAccess
                 Effect: Allow
                 Action: 
                   - secretsmanager:GetSecretValue
                 Resource: '*'
+              - Sid: DDBAccess
+                Effect: Allow
+                Action: 
+                  - dynamodb:*
+                Resource: '*'
+              - Sid: SFNAccess
+                Effect: Allow
+                Action: 
+                  - states:SendTaskHeartbeat 
+                  - states:SendTaskSuccess
+                  - states:SendTaskFailure
+                Resource: '*'                
               - Sid: AllowSelfTerminate
                 Effect: Allow
                 Action:
@@ -177,6 +196,28 @@ Resources:
     Properties: 
       DashboardName: !Sub "FisSpot-${AWS::Region}"
       DashboardBody: !Sub '{"widgets":[{"type":"metric","x":0,"y":0,"width":24,"height":6,"properties":{"metrics":[["fisworkshop","checkpointed",{"color":"#2ca02c"}],[".","unsaved",{"color":"#d62728"}]],"view":"timeSeries","stacked":false,"region":"${AWS::Region}","stat":"Average","period":1,"start":"-PT15M","end":"P0D","title":"SpotMetrics"}}]}'
+
+  SpotHeartbeatHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: FisHeartbeatHandler
+      CodeUri: assets/
+      Handler: lambda_waiter.lambda_handler
+      Runtime: python3.9
+      # # Maybe we should pass dynamoDB table name here ... 
+      # Environment:
+      #   Variables:
+      #     APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
+      Policies:
+        - AWSLambdaExecute
+        - Version: "2012-10-17"
+          Statement:
+            # Lock this down a bit
+            - Sid: DDBAccess
+              Effect: Allow
+              Action: 
+                - dynamodb:*
+              Resource: '*'
 
   # ApproveApplicationFunction:
   #   Type: AWS::Serverless::Function
