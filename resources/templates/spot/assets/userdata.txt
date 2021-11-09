@@ -45,7 +45,7 @@ def get_ddb_configs(table,instance_id):
             "JobDuration",
             "CheckpointDuration",
             "HeartbeatToken",
-            "StartPercentage",
+            "Percentage",
         ]
     )
     return res.get("Item",{})
@@ -81,6 +81,18 @@ def put_cloudwatch_percentages(client,saved_percentage,unsaved_percentage):
             },
         ],
         Namespace='fisworkshop'
+    )
+
+def put_ddb_saved_percentage(table,job_id,instance_id,percentage):
+    res = table.update_item(
+        Key={ "RunId": instance_id },
+        UpdateExpression="set Percentage=:p",
+        ExpressionAttributeValues={ ':p': percentage }
+    )
+    res = table.update_item(
+        Key={ "RunId": job_id },
+        UpdateExpression="set Percentage=:p",
+        ExpressionAttributeValues={ ':p': percentage }
     )
 
 def get_instance_id():
@@ -160,9 +172,11 @@ for sig in catchable_sigs:
     print("handle %s" % sig)
     signal.signal(sig, signal_handler)
 
+instance_id = get_instance_id()
+
 # Get configs
 for ii in range(20):
-    configs = get_ddb_configs(ddb_table,get_instance_id())
+    configs = get_ddb_configs(ddb_table,instance_id)
     if "HeartbeatToken" in configs:
         break
     print("No configs in DynamoDB, waiting")
@@ -179,11 +193,9 @@ job_duration_minutes = float(configs["JobDuration"])
 # Time between checkpoints
 checkpoint_interval_minutes = float(configs["CheckpointDuration"])
 
-# Job ID
 job_id = configs["JobId"]
-
-# Heartbeat token
 heartbeat_token = configs["HeartbeatToken"]
+start_percentage = int(configs["Percentage"])
 
 sleep_duration_seconds = 60.0 * job_duration_minutes / 100.0
 checkpoint_counter_seconds = 0.0
@@ -193,7 +205,8 @@ print("Starting job (duration %f min / checkpoint %f min)" % (
     checkpoint_interval_minutes
 ))
 put_cloudwatch_percentages(cw_client,0,0)
-for ii in range(100):
+put_ddb_saved_percentage(ddb_table,job_id,instance_id,0)
+for ii in range(start_percentage,100):
     time.sleep(sleep_duration_seconds)
 
     # checkpoint on time or interrupt notice
@@ -207,16 +220,19 @@ for ii in range(100):
 
     # record progress data that can be lost
     put_cloudwatch_percentages(cw_client,checkpoint_saved_percentage,ii+1)
+    put_ddb_saved_percentage(ddb_table,job_id,instance_id,checkpoint_saved_percentage)
     send_task_hearbeat(sfn_client,heartbeat_token)
 
     # End on interrupt
     if check_interrupt_notice():
         checkpoint_saved_percentage = ii+1
         put_cloudwatch_percentages(cw_client,checkpoint_saved_percentage,ii+1)
+        put_ddb_saved_percentage(ddb_table,job_id,instance_id,checkpoint_saved_percentage)
         send_task_success(sfn_client,heartbeat_token,checkpoint_saved_percentage)
 
 # Write final data
 put_cloudwatch_percentages(cw_client,100,100)
+put_ddb_saved_percentage(ddb_table,job_id,instance_id,100)
 send_task_success(sfn_client,heartbeat_token,100)
 
 # At completion suicide instance

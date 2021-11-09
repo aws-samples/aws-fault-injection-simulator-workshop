@@ -16,6 +16,9 @@ Parameters:
   InstanceType:
     Type: String
     Default: t3.small
+  DdbTableName:
+    Type: String
+    Default: DDBTest1
 
 Resources:
   SpotChaosParameterCheckpointDuration:
@@ -52,6 +55,7 @@ Resources:
         # SpotChaosInstanceUserData: !Ref UserData
         SpotChaosInstanceType: !Ref InstanceType
         SpotChaosLambdaWaiter: !GetAtt SpotHeartbeatHandler.Arn
+        SpotChaosDynamoTableName: !Ref FisSpotStates
       # This is confusing but looks like policy mappings in step functions
       # Policies:
       #   - LambdaInvokePolicy:
@@ -96,7 +100,7 @@ Resources:
               - Sid: AllowDdbAll
                 Effect: Allow
                 Action: 'dynamodb:*'
-                Resource: '*'
+                Resource: !GetAtt FisSpotStates.Arn  
               # Fix this to minimize permissions
               - Sid: AllowSpot
                 Effect: Allow
@@ -174,7 +178,7 @@ Resources:
                 Effect: Allow
                 Action: 
                   - dynamodb:*
-                Resource: '*'
+                Resource: !GetAtt FisSpotStates.Arn
               - Sid: SFNAccess
                 Effect: Allow
                 Action: 
@@ -217,7 +221,7 @@ Resources:
               Effect: Allow
               Action: 
                 - dynamodb:*
-              Resource: '*'
+              Resource: !GetAtt FisSpotStates.Arn
 
   # ApproveApplicationFunction:
   #   Type: AWS::Serverless::Function
@@ -321,32 +325,29 @@ Resources:
   #       - StepFunctionsExecutionPolicy:
   #           StateMachineName: !GetAtt ApplicationProcessingStateMachine.Name
 
-  # # Might add this but for not building in workflow
-  # ApplicationsTable:
-  #   Type: 'AWS::DynamoDB::Table'
-  #   Properties:
-  #     TableName: !Sub StepFunctionWorkshop-AccountApplications-${AWS::StackName}
-  #     AttributeDefinitions:
-  #       -
-  #         AttributeName: id
-  #         AttributeType: S
-  #       -
-  #         AttributeName: state
-  #         AttributeType: S
-  #     KeySchema:
-  #       -
-  #         AttributeName: id
-  #         KeyType: HASH
-  #     BillingMode: PAY_PER_REQUEST
-  #     GlobalSecondaryIndexes:
-  #         -
-  #             IndexName: state
-  #             KeySchema:
-  #                 -
-  #                     AttributeName: state
-  #                     KeyType: HASH
-  #             Projection:
-  #                 ProjectionType: ALL
+  # Might add this but for not building in workflow
+  FisSpotStates:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: !Ref DdbTableName
+      AttributeDefinitions:
+        -
+          AttributeName: RunId
+          AttributeType: S
+      KeySchema:
+        -
+          AttributeName: RunId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      # GlobalSecondaryIndexes:
+      #     -
+      #         IndexName: state
+      #         KeySchema:
+      #             -
+      #                 AttributeName: state
+      #                 KeyType: HASH
+      #         Projection:
+      #             ProjectionType: ALL
 # Outputs:
 #   SubmitApplicationFunctionArn:
 #     Description: "Submit Application Function ARN"

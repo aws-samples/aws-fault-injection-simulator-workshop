@@ -16,7 +16,7 @@ def lambda_handler(event, context):
             'HeartbeatToken': event["HeartbeatToken"],
             "JobDuration": event["JobDuration"],
             "CheckpointDuration": event["CheckpointDuration"],
-            "StartPercentage": event["StartPercentage"],
+            "Percentage": event["Percentage"],
         }
     )
 
