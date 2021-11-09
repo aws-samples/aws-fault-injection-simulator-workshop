@@ -125,8 +125,9 @@ def check_interrupt_notice():
                 },
                 method="PUT")
             token = urllib.request.urlopen(req, timeout=1).read().decode()
-        except:
-            pass
+        except Exception as e:
+            print("Failed to get token to check spot interruption")
+            print(e)
 
     try:
         req = urllib.request.Request(
@@ -135,11 +136,12 @@ def check_interrupt_notice():
                 "X-aws-ec2-metadata-token": token
             },
             method="GET")
-        res = urllib.request.urlopen(req, tineout=1).read().decode()
+        res = urllib.request.urlopen(req, timeout=1).read().decode()
         print("Received interrupt notification: %s" % str(res))
         return True
-    except:
-        pass
+    except Exception as e:
+        print("No interrupt")
+        print(e) 
     return False
 
 def send_task_hearbeat(client,heartbeat_token):
@@ -194,6 +196,7 @@ checkpoint_interval_minutes = float(configs["CheckpointDuration"])
 job_id = configs["JobId"]
 heartbeat_token = configs["HeartbeatToken"]
 start_percentage = int(configs["Percentage"])
+checkpoint_saved_percentage = int(configs["Percentage"])
 
 sleep_duration_seconds = 60.0 * job_duration_minutes / 100.0
 checkpoint_counter_seconds = 0.0
@@ -202,8 +205,8 @@ print("Starting job (duration %f min / checkpoint %f min)" % (
     job_duration_minutes,
     checkpoint_interval_minutes
 ))
-put_cloudwatch_percentages(cw_client,0,0)
-put_ddb_saved_percentage(ddb_table,job_id,instance_id,0)
+put_cloudwatch_percentages(cw_client,start_percentage,start_percentage)
+put_ddb_saved_percentage(ddb_table,job_id,instance_id,start_percentage)
 for ii in range(start_percentage,100):
     time.sleep(sleep_duration_seconds)
 
