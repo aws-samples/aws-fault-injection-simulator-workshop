@@ -223,109 +223,6 @@ Resources:
                 - dynamodb:*
               Resource: !GetAtt FisSpotStates.Arn
 
-  # ApproveApplicationFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     FunctionName: sfn-workshop-ApproveApplication
-  #     CodeUri: functions/account-applications/
-  #     Handler: approve.handler
-  #     Runtime: nodejs12.x
-  #     Environment:
-  #       Variables:
-  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
-  #     Policies:
-  #       - DynamoDBCrudPolicy:
-  #           TableName: !Ref ApplicationsTable
-
-  # DataCheckingFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     FunctionName: sfn-workshop-DataChecking
-  #     CodeUri: functions/data-checking/
-  #     Handler: data-checking.handler
-  #     Runtime: nodejs12.x
-
-  # FindApplicationsFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     FunctionName: sfn-workshop-FindApplications
-  #     CodeUri: functions/account-applications/
-  #     Handler: find.handler
-  #     Runtime: nodejs12.x
-  #     Environment:
-  #       Variables:
-  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
-  #     Policies:
-  #       - DynamoDBCrudPolicy:
-  #           TableName: !Ref ApplicationsTable
-
-  # FlagApplicationFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     FunctionName: sfn-workshop-FlagApplication
-  #     CodeUri: functions/account-applications/
-  #     Handler: flag.handler
-  #     Runtime: nodejs12.x
-  #     Environment:
-  #       Variables:
-  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
-  #     Policies:
-  #       - DynamoDBCrudPolicy:
-  #           TableName: !Ref ApplicationsTable
-
-  # RejectApplicationFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     FunctionName: sfn-workshop-RejectApplication
-  #     CodeUri: functions/account-applications/
-  #     Handler: reject.handler
-  #     Runtime: nodejs12.x
-  #     Environment:
-  #       Variables:
-  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
-  #     Policies:
-  #       - DynamoDBCrudPolicy:
-  #           TableName: !Ref ApplicationsTable
-
-  # ReviewApplicationFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     FunctionName: sfn-workshop-ReviewApplication
-  #     CodeUri: functions/account-applications/
-  #     Handler: review.handler
-  #     Runtime: nodejs12.x
-  #     Environment:
-  #       Variables:
-  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
-  #     Policies:
-  #       - DynamoDBCrudPolicy:
-  #           TableName: !Ref ApplicationsTable
-  #       - Statement:
-  #         - Sid: AllowCallbacksToStateMachinePolicy
-  #           Effect: "Allow"
-  #           Action:
-  #             - "states:SendTaskSuccess"
-  #             - "states:SendTaskFailure"
-  #           Resource: !Ref ApplicationProcessingStateMachine
-
-  # SubmitApplicationFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     FunctionName: sfn-workshop-SubmitApplication
-  #     CodeUri: functions/account-applications/
-  #     Handler: submit.handler
-  #     Runtime: nodejs12.x
-  #     Environment:
-  #       Variables:
-  #         APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
-  #         APPLICATION_PROCESSING_STEP_FUNCTION_ARN: !Ref ApplicationProcessingStateMachine
-  #     Policies:
-  #       - DynamoDBCrudPolicy:
-  #           TableName: !Ref ApplicationsTable
-  #       - StepFunctionsExecutionPolicy:
-  #           StateMachineName: !GetAtt ApplicationProcessingStateMachine.Name
-
-  # Might add this but for not building in workflow
   FisSpotStates:
     Type: 'AWS::DynamoDB::Table'
     Properties:
@@ -339,15 +236,110 @@ Resources:
           AttributeName: RunId
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
-      # GlobalSecondaryIndexes:
-      #     -
-      #         IndexName: state
-      #         KeySchema:
-      #             -
-      #                 AttributeName: state
-      #                 KeyType: HASH
-      #         Projection:
-      #             ProjectionType: ALL
+
+  SpotFailureTest:
+    Type: AWS::FIS::ExperimentTemplate
+    Properties:
+      Description: Orchestrate spot failures
+      Tags:
+        Name: SpotFailureTest
+      Actions:
+        Wait1:
+          ActionId: aws:fis:wait
+          Parameters:
+            duration: PT1M
+        GracefulKill:
+          ActionId: aws:ec2:send-spot-instance-interruptions
+          Parameters:
+            durationBeforeInterruption: PT2M
+          Targets:
+            SpotInstances: AllFisSpotInstances
+          StartAfter:
+            - Wait1
+        Wait2:
+          ActionId: aws:fis:wait
+          Parameters:
+            duration: PT2M
+          StartAfter:
+            - GracefulKill
+        KillWithoutWarning:
+          ActionId: aws:ec2:terminate-instances
+          Parameters: {}
+          Targets:
+            Instances: AllSpotInstances2
+          StartAfter:
+            - Wait2
+      Targets:
+        AllFisSpotInstances:
+          ResourceType: aws:ec2:spot-instance
+          ResourceTags:
+            Name: Fis/Spot
+          Filters:
+            - Path: State.Name
+              Values:
+                - running
+          SelectionMode: ALL
+        AllSpotInstances2:
+          ResourceType: aws:ec2:instance
+          ResourceTags:
+            Name: Fis/Spot
+          Filters:
+            - Path: State.Name
+              Values:
+                - running
+          SelectionMode: ALL
+      StopConditions:
+        - Source: none
+      RoleArn: !GetAtt SpotChaosFisRole.Arn
+
+  SpotChaosFisRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - fis.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: AllowFISExperimentRoleReadOnly
+                Effect: Allow
+                Action:
+                  - ec2:DescribeInstances
+                  - ecs:DescribeClusters
+                  - ecs:ListContainerInstances
+                  - eks:DescribeNodegroup
+                  - iam:ListRoles
+                  - rds:DescribeDBInstances
+                  - rds:DescribeDbClusters
+                  - ssm:ListCommands
+                Resource: '*'
+              - Sid: AllowFISExperimentRoleEC2Actions
+                Effect: Allow
+                Action:
+                  - ec2:RebootInstances
+                  - ec2:StopInstances
+                  - ec2:StartInstances
+                  - ec2:TerminateInstances
+                Resource: arn:aws:ec2:*:*:instance/*
+              - Sid: AllowSpotActions
+                Effect: Allow
+                Action: 
+                  - 'ec2:RequestSpotInstances'
+                  - 'ec2:DescribeSpotInstanceRequests'
+                Resource: '*'
+
+
 # Outputs:
 #   SubmitApplicationFunctionArn:
 #     Description: "Submit Application Function ARN"
