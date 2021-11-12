@@ -96,7 +96,7 @@ We now need to connect to our EC2 Instance so we can observe the CPU being stres
 
     ```bash
     # This presumes you set TMP_INSTANCE (see above)
-    aws ssm start-session --target ${TMP_INSTANCE} --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["3389"],"localPortNumber":["56788"]}'
+    aws ssm start-session --target ${TMP_INSTANCE} --document-name AWS-StartPortForwardingSession --parameters "portNumber"=["3389"],"localPortNumber"=["56788"]
     ```
 
 3. Once the command says `waiting for connections` you can launch the RDP client and enter `localhost:56788` for the server name and login as `administrator` with the password you set in the previous section. 
