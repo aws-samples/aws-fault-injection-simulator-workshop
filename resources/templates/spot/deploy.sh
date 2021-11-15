@@ -11,5 +11,5 @@ sam deploy \
   --stack-name FisSpotTest \
   --resolve-s3 \
   --no-fail-on-empty-changeset \
-  --capabilities CAPABILITY_IAM \
+  --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides "SubnetId=${SUBNET_ID} ImageId=${AMI_ID}"

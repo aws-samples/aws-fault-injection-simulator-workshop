@@ -295,6 +295,7 @@ Resources:
   SpotChaosFisRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: FisWorkshopSpotRole
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -337,6 +338,7 @@ Resources:
                 Action: 
                   - 'ec2:RequestSpotInstances'
                   - 'ec2:DescribeSpotInstanceRequests'
+                  - 'ec2:SendSpotInstanceInterruptions'
                 Resource: '*'
 
 
