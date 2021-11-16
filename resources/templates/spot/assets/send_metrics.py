@@ -23,7 +23,7 @@ except Exception as e:
 # Global variables for tracking
 
 checkpoint_saved_percentage = 0
-token=None
+imsv2_token=None
 interrupt_latch=False
 
 # Functions
@@ -93,9 +93,35 @@ def put_ddb_saved_percentage(table,job_id,instance_id,percentage):
         ExpressionAttributeValues={ ':p': str(percentage) }
     )
 
-def get_instance_id():
+def get_imsv2_token():
+    global imsv2_token
+
     try:
-        instance_id = urllib.request.urlopen('http://169.254.169.254/latest/meta-data/instance-id', timeout=1).read().decode()    
+        req = urllib.request.Request(
+            'http://169.254.169.254/latest/api/token',
+            headers = {
+                "X-aws-ec2-metadata-token-ttl-seconds": 21600
+            },
+            method="PUT")
+        imsv2_token = urllib.request.urlopen(req, timeout=1).read().decode()
+    except Exception as e:
+        print("Failed to get token to check spot interruption")
+        print(e)
+        imsv2_token = None
+
+def get_instance_id():
+    global imsv2_token
+    if not imsv2_token:
+        get_imsv2_token()
+
+    try:
+        req = urllib.request.Request(
+            'http://169.254.169.254/latest/meta-data/instance-id',
+            headers = {
+                "X-aws-ec2-metadata-token": imsv2_token
+            },
+            method="GET")
+        instance_id = urllib.request.urlopen(req, timeout=1).read().decode()
     except:
         # No instance_id ... are we running in AWS
         instance_id = "i-manualtest"
@@ -109,31 +135,21 @@ def terminate_self_instance(client):
     print("Successfully sent instance termination request for %s" % instance_id)
 
 def check_interrupt_notice():
-    global token
+    global imsv2_token
     global interrupt_latch
 
     if interrupt_latch:
         print("Already latched interrupt")
         return True
 
-    if not token:
-        try:
-            req = urllib.request.Request(
-                'http://169.254.169.254/latest/api/token',
-                headers = {
-                    "X-aws-ec2-metadata-token-ttl-seconds": 21600
-                },
-                method="PUT")
-            token = urllib.request.urlopen(req, timeout=1).read().decode()
-        except Exception as e:
-            print("Failed to get token to check spot interruption")
-            print(e)
+    if not imsv2_token:
+        get_imsv2_token()
 
     try:
         req = urllib.request.Request(
             'http://169.254.169.254/latest/meta-data/spot/instance-action',
             headers = {
-                "X-aws-ec2-metadata-token": token
+                "X-aws-ec2-metadata-token": imsv2_token
             },
             method="GET")
         res = urllib.request.urlopen(req, timeout=1).read().decode()

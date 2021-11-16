@@ -4,7 +4,8 @@ pip3 install boto3
 cat >/home/ec2-user/send_metrics <<EOT
 #!/usr/bin/bash
 /usr/bin/date
-export AWS_DEFAULT_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+export AWS_IMSV2_TOKEN=$( curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" )
+export AWS_DEFAULT_REGION=$(curl -H "X-aws-ec2-metadata-token: $AWS_IMSV2_TOKEN" -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 /usr/bin/nohup /usr/bin/python3 /home/ec2-user/send_metrics.py 0<&- &>>/var/log/send_metrics.log &
 /usr/bin/date
 EOT

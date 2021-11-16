@@ -126,6 +126,11 @@ Resources:
                   - 'tag:TagResources'
                   - 'ec2:CreateTags'
                 Resource: '*'
+              - Sid: AllowInstanceMetadataChange
+                Effect: Allow
+                Action: 
+                  - 'ec2:ModifyInstanceMetadataOptions'
+                Resource: '*'
               - Sid: AllowInstanceTermination
                 Effect: Allow
                 Action:
