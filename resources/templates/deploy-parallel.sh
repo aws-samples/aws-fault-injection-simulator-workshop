@@ -141,6 +141,13 @@ echo "Provisioning API failure stacks"
     echo "OK" > deploy-status.txt
 ) > deploy-output.api.txt 2>&1 &
 
+# Provision spot resources
+(
+    cd spot
+    echo "FAIL" > deploy-status.txt
+    bash deploy.sh 
+    echo "OK" > deploy-status.txt
+) > deploy-output.spot.txt 2>&1 &
 
 # Wait for everything to finish
 wait
@@ -155,6 +162,7 @@ for substack in \
     ecs \
     cpu-stress \
     api-failures \
+    spot \
 ; do
     touch $substack/deploy-status.txt
     RES=$(cat $substack/deploy-status.txt)

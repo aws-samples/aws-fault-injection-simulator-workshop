@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Provisioning spot resources"
+
 # Use subnet from workshop deploy
 SUBNET_ID=$( aws ec2 describe-subnets --query "Subnets[?Tags[?(Key=='aws-cdk:subnet-name') && (Value=='FisPriv') ]] | [0].SubnetId" --output text )
 
