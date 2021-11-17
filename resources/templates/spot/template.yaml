@@ -1,0 +1,369 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Template for step-functions-workshop
+
+Parameters:
+  ImageId:
+    Type: AWS::EC2::Image::Id
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-ebs
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+  # # Max 4k parameter size makes this a poor choice  
+  # UserData:
+  #   Type: String
+  #   Default: IyEvYmluL2Jhc2gKY2F0ID4vaG9tZS9lYzItdXNlci9zZW5kX21ldHJpY3MucHkgPDxFT1QKIyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwoKaW1wb3J0IGJvdG8zCmltcG9ydCB0aW1lCmltcG9ydCBzeXMKaW1wb3J0IHNpZ25hbAoKZGVmIHNpZ25hbF9oYW5kbGVyKHNpZyxmcmFtZSk6CiAgICBwcmludCgiR3JhY2VmdWwgZXhpdCAtIHJlcG9ydGluZyBmaW5hbCBtZXRyaWNzIC0gY2hlY2twb2ludGVkICVmIiAlIGNoZWNrcG9pbnRfc2F2ZWRfcGVyY2VudGFnZSkKICAgIHN5cy5leGl0KDApCgpzaWduYWwuc2lnbmFsKHNpZ25hbC5TSUdJTlQsIHNpZ25hbF9oYW5kbGVyKQoKZGVmIGdldF9zc21fcGFyYW1ldGVyKGNsaWVudCxuYW1lLGRlZmF1bHRfc2V0dGluZz01KToKICAgIHRyeToKICAgICAgICByZXNwb25zZSA9IGNsaWVudC5nZXRfcGFyYW1ldGVyKAogICAgICAgICAgICBOYW1lPW5hbWUsCiAgICAgICAgICAgIFdpdGhEZWNyeXB0aW9uPVRydWUKICAgICAgICApCiAgICAgICAgIyBwcmludChyZXNwb25zZSkKICAgICAgICB2YWx1ZSA9IGZsb2F0KHJlc3BvbnNlLmdldCgiUGFyYW1ldGVyIix7fSkuZ2V0KCJWYWx1ZSIsc3RyKGRlZmF1bHRfc2V0dGluZykpKSAKICAgICAgICAjIHByaW50KCJWYWx1ZSByZXRyaWV2ZWQ6ICVzPSVmIiAlIChuYW1lLHZhbHVlKSkKICAgICAgICByZXR1cm4gdmFsdWUKICAgIGV4Y2VwdDoKICAgICAgICBwcmludCgiQ291bGRuJ3QgcmVhZCBwYXJhbWV0ZXIgJXMsIHVzaW5nIGRlZmF1bHQgQ2hlY2tQb2ludCBkdXJhdGlvbiIgJSBuYW1lKQogICAgcmV0dXJuIGRlZmF1bHRfc2V0dGluZwoKZGVmIHB1dF9jbG91ZHdhdGNoX3BlcmNlbnRhZ2VzKGNsaWVudCxzYXZlZF9wZXJjZW50YWdlLHVuc2F2ZWRfcGVyY2VudGFnZSk6CiAgICBjbGllbnQucHV0X21ldHJpY19kYXRhKAogICAgICAgIE1ldHJpY0RhdGE9WwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAnTWV0cmljTmFtZSc6ICJ1bnNhdmVkIiwKICAgICAgICAgICAgICAgICdVbml0JzogJ1BlcmNlbnQnLAogICAgICAgICAgICAgICAgJ1ZhbHVlJzogdW5zYXZlZF9wZXJjZW50YWdlLAogICAgICAgICAgICAgICAgJ1N0b3JhZ2VSZXNvbHV0aW9uJzogMQogICAgICAgICAgICB9LAogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAnTWV0cmljTmFtZSc6ICJjaGVja3BvaW50ZWQiLAogICAgICAgICAgICAgICAgJ1VuaXQnOiAnUGVyY2VudCcsCiAgICAgICAgICAgICAgICAnVmFsdWUnOiBzYXZlZF9wZXJjZW50YWdlLAogICAgICAgICAgICAgICAgJ1N0b3JhZ2VSZXNvbHV0aW9uJzogMQogICAgICAgICAgICB9LAogICAgICAgIF0sCiAgICAgICAgTmFtZXNwYWNlPSdmaXN3b3Jrc2hvcCcKICAgICkKCnRyeToKICAgIHNzbV9jbGllbnQgPSBib3RvMy5jbGllbnQoJ3NzbScpCiAgICBjd19jbGllbnQgPSBib3RvMy5jbGllbnQoJ2Nsb3Vkd2F0Y2gnKQpleGNlcHQ6CiAgICBzc21fY2xpZW50ID0gTm9uZQogICAgY3dfY2xpZW50ID0gTm9uZQogICAgcHJpbnQoIkNvdWxkIG5vdCBjb25uZWN0IHRvIEFXUywgZGlkIHlvdSBzZXQgY3JlZGVudGlhbHM/IikKICAgIHN5cy5leGl0KDEpCgojIER1cmF0aW9uIHVudGlsIGpvYiBjb21wbGV0aW9uIGluIG1pbnV0ZXMgKHNob3VsZCBiZSAyIDwgeCA8IDE1KQpqb2JfZHVyYXRpb25fbWludXRlcyA9IGdldF9zc21fcGFyYW1ldGVyKHNzbV9jbGllbnQsJ0Zpc1dvcmtzaG9wU3BvdEpvYkR1cmF0aW9uJyw1KSAKCiMgVGltZSBiZXR3ZWVuIGNoZWNrcG9pbnRzCmNoZWNrcG9pbnRfaW50ZXJ2YWxfbWludXRlcyA9IGdldF9zc21fcGFyYW1ldGVyKHNzbV9jbGllbnQsJ0Zpc1dvcmtzaG9wU3BvdENoZWNrcG9pbnREdXJhdGlvbicsMC4yKQoKCnNsZWVwX2R1cmF0aW9uX3NlY29uZHMgPSA2MC4wICogam9iX2R1cmF0aW9uX21pbnV0ZXMgLyAxMDAuMApjaGVja3BvaW50X2NvdW50ZXJfc2Vjb25kcyA9IDAuMApjaGVja3BvaW50X3NhdmVkX3BlcmNlbnRhZ2UgPSAwCgpwcmludCgiU3RhcnRpbmcgam9iIChkdXJhdGlvbiAlZiBtaW4gLyBjaGVja3BvaW50ICVmIG1pbikiICUgKAogICAgam9iX2R1cmF0aW9uX21pbnV0ZXMsCiAgICBjaGVja3BvaW50X2ludGVydmFsX21pbnV0ZXMKKSkKcHV0X2Nsb3Vkd2F0Y2hfcGVyY2VudGFnZXMoY3dfY2xpZW50LDAsMCkKZm9yIGlpIGluIHJhbmdlKDEwMCk6CiAgICB0aW1lLnNsZWVwKHNsZWVwX2R1cmF0aW9uX3NlY29uZHMpCgogICAgIyByZWNvcmQgcHJvZ3Jlc3MgZGF0YSB0aGF0IGNhbiBiZSBsb3N0CiAgICBwdXRfY2xvdWR3YXRjaF9wZXJjZW50YWdlcyhjd19jbGllbnQsY2hlY2twb2ludF9zYXZlZF9wZXJjZW50YWdlLGlpKzEpCgogICAgY2hlY2twb2ludF9jb3VudGVyX3NlY29uZHMgKz0gc2xlZXBfZHVyYXRpb25fc2Vjb25kcwogICAgY2hlY2twb2ludF9mbGFnPSgoY2hlY2twb2ludF9jb3VudGVyX3NlY29uZHMvNjAuMCkgPiBjaGVja3BvaW50X2ludGVydmFsX21pbnV0ZXMpCiAgICBwcmludCgiJWYlJSBjb21wbGV0ZSAtIGNoZWNrcG9pbnQ9JXMiICUgKGlpKzEsY2hlY2twb2ludF9mbGFnKSkKICAgIGlmIGNoZWNrcG9pbnRfZmxhZzoKICAgICAgICBwcmludCgicmVzZXR0aW5nIGZsYWciKQogICAgICAgIGNoZWNrcG9pbnRfY291bnRlcl9zZWNvbmRzID0gMC4wCiAgICAgICAgY2hlY2twb2ludF9zYXZlZF9wZXJjZW50YWdlID0gaWkrMQoKcHV0X2Nsb3Vkd2F0Y2hfcGVyY2VudGFnZXMoY3dfY2xpZW50LDEwMCwxMDApCgpFT1QKeXVtIGluc3RhbGwgLXkganEKcGlwMyBpbnN0YWxsIGJvdG8zCmNhdCA+L2hvbWUvZWMyLXVzZXIvc2VuZF9tZXRyaWNzIDw8RU9UCiMhL2Jpbi9iYXNoCmV4cG9ydCBBV1NfREVGQVVMVF9SRUdJT049JChjdXJsIC1zIDE2OS4yNTQuMTY5LjI1NC9sYXRlc3QvZHluYW1pYy9pbnN0YW5jZS1pZGVudGl0eS9kb2N1bWVudCB8IGpxIC1yICcucmVnaW9uJykKcHl0aG9uMyAvaG9tZS9lYzItdXNlci9zZW5kX21ldHJpY3MucHkgMj4mMSA+PiAvdmFyL2xvZy9zZW5kX21ldHJpY3MubG9nCkVPVApjaG1vZCA3NTUgL2hvbWUvZWMyLXVzZXIvc2VuZF9tZXRyaWNzCnRvdWNoIC92YXIvbG9nL3NlbmRfbWV0cmljcy5sb2cKY2htb2QgNjY2IC92YXIvbG9nL3NlbmRfbWV0cmljcy5sb2cKYmFzaCAvaG9tZS9lYzItdXNlci9zZW5kX21ldHJpY3MK
+  #   Description: Base64 encoded script runner for autostart. Use merge.sh in source folder if you want to modify any of the components
+  InstanceType:
+    Type: String
+    Default: t3.small
+  DdbTableName:
+    Type: String
+    Default: DDBTest1
+
+Resources:
+  SpotChaosParameterCheckpointDuration:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: FisWorkshopSpotCheckpointDuration
+      Type: String
+      Value: "2"
+      Description: Duration between checkopints in minutes (float)
+      AllowedPattern: ^[0-9]+(\.[0-9]+)?$
+
+  SpotChaosParameterJobDuration:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: FisWorkshopSpotJobDuration
+      Type: String
+      Value: "6"
+      Description: Total job runtime in minutes (float)
+      AllowedPattern: ^[0-9]+(\.[0-9]+)?$
+
+
+  SpotChaosStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: assets/spot-workflow.json
+      Role: !GetAtt SpotChaosStateMachineRole.Arn
+      # Insert "${VARIABLE}" in statemachine code
+      DefinitionSubstitutions:
+        SpotChaosInstanceProfileArn: !GetAtt SpotChaosInstanceProfile.Arn
+        SpotChaosInstanceArnPrefix: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/"
+        SpotChaosInstanceImageId: !Ref ImageId
+        SpotChaosInstanceSubnetId: !Ref SubnetId
+        # # Max 4k parameter size makes this a poor choice
+        # SpotChaosInstanceUserData: !Ref UserData
+        SpotChaosInstanceType: !Ref InstanceType
+        SpotChaosLambdaWaiter: !GetAtt SpotHeartbeatHandler.Arn
+        SpotChaosDynamoTableName: !Ref FisSpotStates
+      # This is confusing but looks like policy mappings in step functions
+      # Policies:
+      #   - LambdaInvokePolicy:
+      #       FunctionName: !Ref DataCheckingFunction
+      #   - LambdaInvokePolicy:
+      #       FunctionName: !Ref FlagApplicationFunction
+      #   - LambdaInvokePolicy:
+      #       FunctionName: !Ref ApproveApplicationFunction
+      #   - LambdaInvokePolicy:
+      #       FunctionName: !Ref RejectApplicationFunction
+
+  SpotChaosStateMachineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - states.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: AllowXrayTracing
+                Effect: Allow
+                Action: 
+                  - xray:PutTraceSegments
+                  - xray:PutTelemetryRecords
+                  - xray:GetSamplingRules
+                  - xray:GetSamplingTargets
+                Resource: '*'
+              - Sid: AllowKmsRandomNumber
+                Effect: Allow
+                Action: 'kms:GenerateRandom'
+                Resource: '*'
+              # Fix this if we generate a DDB
+              - Sid: AllowDdbAll
+                Effect: Allow
+                Action: 'dynamodb:*'
+                Resource: !GetAtt FisSpotStates.Arn  
+              # Fix this to minimize permissions
+              - Sid: AllowSpot
+                Effect: Allow
+                Action: 
+                  - 'ec2:RequestSpotInstances'
+                  - 'ec2:DescribeSpotInstanceRequests'
+                Resource: '*'
+              - Sid: AllowCreateServiceLinkedRole
+                Effect: Allow
+                Action: 
+                  - 'iam:CreateServiceLinkedRole'
+                Resource: '*'
+              - Sid: AllowPassRole
+                Effect: Allow
+                Action: 
+                  - 'iam:PassRole'
+                Resource: 
+                  # - 'arn:aws:iam::238810465798:role/FisStackAsg-FisInstanceRole21B642B7-10792LIF89MS0'
+                  - !GetAtt SpotChaosInstanceRole.Arn
+              - Sid: AllowInstanceTagging
+                Effect: Allow
+                Action: 
+                  - 'tag:TagResources'
+                  - 'ec2:CreateTags'
+                Resource: '*'
+              - Sid: AllowInstanceMetadataChange
+                Effect: Allow
+                Action: 
+                  - 'ec2:ModifyInstanceMetadataOptions'
+                Resource: '*'
+              - Sid: AllowInstanceTermination
+                Effect: Allow
+                Action:
+                  - ec2:terminateInstances
+                Resource: "*"
+                Condition:
+                  StringEquals: 
+                    ec2:ResourceTag/Name: "Fis/Spot"
+              # Fix this to use the lambda ARN we generate
+              - Sid: AllowLambdaCallbacks
+                Effect: Allow
+                Action: 
+                  - 'lambda:InvokeFunction'
+                  - 'ec2:CreateTags'
+                Resource: '*'
+
+                
+  SpotChaosInstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties: 
+      Roles: 
+        - !Ref SpotChaosInstanceRole
+
+  SpotChaosInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: SSMAccess
+                Effect: Allow
+                Action: 
+                  - secretsmanager:GetSecretValue
+                Resource: '*'
+              - Sid: DDBAccess
+                Effect: Allow
+                Action: 
+                  - dynamodb:*
+                Resource: !GetAtt FisSpotStates.Arn
+              - Sid: SFNAccess
+                Effect: Allow
+                Action: 
+                  - states:SendTaskHeartbeat 
+                  - states:SendTaskSuccess
+                  - states:SendTaskFailure
+                Resource: '*'                
+              - Sid: AllowSelfTerminate
+                Effect: Allow
+                Action:
+                  - ec2:terminateInstances
+                Resource: "*"
+                Condition:
+                  StringEquals: 
+                    ec2:ResourceTag/Name: "Fis/Spot"
+
+  SpotDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties: 
+      DashboardName: !Sub "FisSpot-${AWS::Region}"
+      DashboardBody: !Sub '{"widgets":[{"type":"metric","x":0,"y":0,"width":24,"height":6,"properties":{"metrics":[["fisworkshop","checkpointed",{"color":"#2ca02c"}],[".","unsaved",{"color":"#d62728"}]],"view":"timeSeries","stacked":false,"region":"${AWS::Region}","stat":"Average","period":1,"start":"-PT15M","end":"P0D","title":"SpotMetrics"}}]}'
+
+  SpotHeartbeatHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: FisHeartbeatHandler
+      CodeUri: assets/
+      Handler: lambda_waiter.lambda_handler
+      Runtime: python3.9
+      # # Maybe we should pass dynamoDB table name here ... 
+      # Environment:
+      #   Variables:
+      #     APPLICATIONS_TABLE_NAME: !Ref ApplicationsTable
+      Policies:
+        - AWSLambdaExecute
+        - Version: "2012-10-17"
+          Statement:
+            # Lock this down a bit
+            - Sid: DDBAccess
+              Effect: Allow
+              Action: 
+                - dynamodb:*
+              Resource: !GetAtt FisSpotStates.Arn
+
+  FisSpotStates:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: !Ref DdbTableName
+      AttributeDefinitions:
+        -
+          AttributeName: RunId
+          AttributeType: S
+      KeySchema:
+        -
+          AttributeName: RunId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  SpotFailureTest:
+    Type: AWS::FIS::ExperimentTemplate
+    Properties:
+      Description: Orchestrate spot failures
+      Tags:
+        Name: SpotFailureTest
+      Actions:
+        Wait1:
+          ActionId: aws:fis:wait
+          Parameters:
+            duration: PT1M
+        GracefulKill:
+          ActionId: aws:ec2:send-spot-instance-interruptions
+          Parameters:
+            durationBeforeInterruption: PT2M
+          Targets:
+            SpotInstances: AllFisSpotInstances
+          StartAfter:
+            - Wait1
+        Wait2:
+          ActionId: aws:fis:wait
+          Parameters:
+            duration: PT2M
+          StartAfter:
+            - GracefulKill
+        KillWithoutWarning:
+          ActionId: aws:ec2:terminate-instances
+          Parameters: {}
+          Targets:
+            Instances: AllSpotInstances2
+          StartAfter:
+            - Wait2
+      Targets:
+        AllFisSpotInstances:
+          ResourceType: aws:ec2:spot-instance
+          ResourceTags:
+            Name: Fis/Spot
+          Filters:
+            - Path: State.Name
+              Values:
+                - running
+          SelectionMode: ALL
+        AllSpotInstances2:
+          ResourceType: aws:ec2:instance
+          ResourceTags:
+            Name: Fis/Spot
+          Filters:
+            - Path: State.Name
+              Values:
+                - running
+          SelectionMode: ALL
+      StopConditions:
+        - Source: none
+      RoleArn: !GetAtt SpotChaosFisRole.Arn
+
+  SpotChaosFisRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: FisWorkshopSpotRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - fis.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: AllowFISExperimentRoleReadOnly
+                Effect: Allow
+                Action:
+                  - ec2:DescribeInstances
+                  - ecs:DescribeClusters
+                  - ecs:ListContainerInstances
+                  - eks:DescribeNodegroup
+                  - iam:ListRoles
+                  - rds:DescribeDBInstances
+                  - rds:DescribeDbClusters
+                  - ssm:ListCommands
+                Resource: '*'
+              - Sid: AllowFISExperimentRoleEC2Actions
+                Effect: Allow
+                Action:
+                  - ec2:RebootInstances
+                  - ec2:StopInstances
+                  - ec2:StartInstances
+                  - ec2:TerminateInstances
+                Resource: arn:aws:ec2:*:*:instance/*
+              - Sid: AllowSpotActions
+                Effect: Allow
+                Action: 
+                  - 'ec2:RequestSpotInstances'
+                  - 'ec2:DescribeSpotInstanceRequests'
+                  - 'ec2:SendSpotInstanceInterruptions'
+                Resource: '*'
+
+
+# Outputs:
+#   SubmitApplicationFunctionArn:
+#     Description: "Submit Application Function ARN"
+#     Value: !GetAtt SubmitApplicationFunction.Arn
+#   FlagApplicationFunctionArn:
+#     Description: "Flag Application Function ARN"
+#     Value: !GetAtt FlagApplicationFunction.Arn
+#   FindApplicationsFunctionArn:
+#     Description: "Find Applications Function ARN"
+#     Value: !GetAtt FindApplicationsFunction.Arn
+#   ApproveApplicationFunctionArn:
+#     Description: "Approve Application Function ARN"
+#     Value: !GetAtt ApproveApplicationFunction.Arn
+#   RejectApplicationFunctionArn:
+#     Description: "Reject Application Function ARN"
+#     Value: !GetAtt RejectApplicationFunction.Arn
+#   DataCheckingFunctionArn:
+#     Description: "Data Checking Function ARN"
+#     Value: !GetAtt DataCheckingFunction.Arn
+

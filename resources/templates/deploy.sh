@@ -119,4 +119,7 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
     --capabilities CAPABILITY_IAM
 )
 
+# Provision spot resources
+bash spot/deploy.sh &
+
 echo Done.
