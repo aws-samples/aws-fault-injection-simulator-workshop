@@ -61,6 +61,18 @@ else
     echo "Optional CpuStress stack stack not found"
 fi
 
+# Spot stack added as SAM
+STACK_NAME=$( aws cloudformation list-stacks --query "StackSummaries[?(StackName=='FisSpotTest')&&(StackStatus!='DELETE_COMPLETE')].StackName" --output text )
+if [ -n "${STACK_NAME}" ]; then
+    echo "Deleting Spot stack"
+    (
+        cd spot
+        bash cleanup.sh
+    ) > cleanup-output.spot.txt 2>&1 &
+else
+    echo "Spot test stack not found"
+fi
+
 # Stress VM stack added as CFN
 STACK_NAME=$( aws cloudformation list-stacks --query "StackSummaries[?(StackName=='FisCpuStress')&&(StackStatus!='DELETE_COMPLETE')].StackName" --output text )
 if [ -n "${STACK_NAME}" ]; then

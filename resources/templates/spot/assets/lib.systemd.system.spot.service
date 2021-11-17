@@ -1,0 +1,6 @@
+[Unit]
+Description=Start fake spot calculation
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/bash -x /home/ec2-user/send_metrics
