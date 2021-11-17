@@ -20,9 +20,9 @@ Adding files to our repository is a 3-step process:
 
 ### Clone
 
-Open the [**AWS CodeCommit Console**](https://console.aws.amazon.com/codesuite/codecommit/home?#Home). Click the `HTTPS` link next to the `FIS_Workshop` repository name to copy the URL to the clipboard. 
+Open the [AWS Code Commit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home). Click the `HTTPS` link next to the `FIS_Workshop` repository name to examine the clone URL.
 
-In your Cloud9 terminal clone the repository (replace the URL in the example by pasting from the clipboard):
+In your Cloud9 terminal clone the repository (for convinence, the commands below show how to query the clone URL):
 
 ```bash
 GIT_URL=$( aws codecommit get-repository --repository-name FIS_Workshop --query "repositoryMetadata.cloneUrlHttp" --output text )
@@ -38,7 +38,7 @@ Copy the sample files from the resources section into the newly cloned repositor
 ```bash
 cp ~/environment/aws-fault-injection-simulator-workshop/resources/code/cdk/cicd/resources/* ~/environment/FIS_Workshop/
 ```
- 
+
 Since this is the first time working with code commit, we should setup our username and email for the commit history.
 Run the below commands, be sure to replace the details with your information.
 
@@ -48,7 +48,7 @@ git config --global user.email you@example.com
 ```
 
 Finally `add` all the files in the directory, and `commit` them as a new version with a label of `Uploading Workshop files`.
- 
+
 ```bash
 git add .
 git commit -am "Uploading Workshop files"
@@ -64,23 +64,23 @@ git push -u
 
 ## View Progress
 
-After you `push` the files, the pipeline will start. 
+After you `push` the files, the pipeline will start.
 Open the [**AWS CodePipeline Console**](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
 You should now see the `FIS_Workshop` pipeline is in progress.
 Click on the pipeline name to view the step details.
 
 {{< img "codepipelineinprogress.png" "AWS CodePipeline in progress" >}}
 
-The pipeline runs in sequence, first running the Wait for the "Infrastructure_Provisioning" step, and on success starting the "FIS" step. 
+The pipeline runs in sequence, first running the Wait for the "Infrastructure_Provisioning" step, and on success starting the "FIS" step.
 
-You can monitor the progress of our experiment either from the CodePipeline details page or from the AWS FIS console. 
+You can monitor the progress of our experiment either from the CodePipeline details page or from the AWS FIS console.
 
 Navigate to the [**FIS console**](https://console.aws.amazon.com/fis/home?#Experiments). Click on the "Experiment ID" of the running experiment.
-You should see the experiment in a running status: 
+You should see the experiment in a running status:
 
 {{< img "fisrunning.png" "Running Experiment" >}}
 
-If you expand the "instanceActions / aws:ec2:stop-instance" card (as shown above) you can see that the experiment stops the test instance, waits for 1minute, then restarts the instance. 
+If you expand the "instanceActions / aws:ec2:stop-instance" card (as shown above) you can see that the experiment stops the test instance, waits for 1minute, then restarts the instance.
 
 Wait a couple minutes for the instance to restart and the experiment to finish and refresh the page. You should see the experiment is completed successfully.
 
@@ -92,5 +92,5 @@ You should also see that your pipeline has completed successfully.
 {{< img "codepipelinesuccessfully.png" "Successful Pipeline" >}}
 
 Congratulations! You have successfully integrated a Fault Injection Simulator Experiment into a CI/CD pipeline.
-In this scenario, we completed a happy path to ensure that our infrastructure and experiment completed without error. 
-Continue on to the next section, where we will deploy a new version of our CloudFormation template and force our experiment (and pipeline) to fail. 
+In this scenario, we completed a happy path to ensure that our infrastructure and experiment completed without error.
+Continue on to the next section, where we will deploy a new version of our CloudFormation template and force our experiment (and pipeline) to fail.
