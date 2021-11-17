@@ -35,6 +35,9 @@ Resources:
                 Resource: 
                   - !Sub 'arn:aws:iam::${AWS::AccountId}:role/FisWorkshopServiceRole'
                   - !Sub 'arn:aws:iam::${AWS::AccountId}:role/FisWorkshopSpotRole'
+                Condition:
+                  StringEquals:
+                    "iam:PassedToService": "fis.amazonaws.com"
 
   FisAccessControlUser:
     Type: AWS::IAM::Role
@@ -76,6 +79,9 @@ Resources:
                 Resource: 
                   - !Sub 'arn:aws:iam::${AWS::AccountId}:role/FisWorkshopServiceRole'
                   - !Sub 'arn:aws:iam::${AWS::AccountId}:role/FisWorkshopSpotRole'
+                Condition:
+                  StringEquals:
+                    "iam:PassedToService": "fis.amazonaws.com"
 
   FisAccessControlNonUser:
     Type: AWS::IAM::Role
