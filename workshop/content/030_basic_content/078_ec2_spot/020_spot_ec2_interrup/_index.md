@@ -85,7 +85,7 @@ aws stepfunctions start-execution \
 ```
 
 {{% notice warning %}}
-Currently all target resolution is performed at the beginning of the experiment run. As such it is possible that the FIS experiment will fail target resolution if the spot instance is not running yet. If that happens 
+Currently all target resolution is performed at the beginning of the experiment run. As such it is possible that the FIS experiment will fail target resolution if the spot instance is not running yet. If that happens, wait a few seconds and restart the FIS experiment below.
 {{% /notice %}}
 
 Then start the experiment. If you named the template as described above this should work, otherwise adjust `EXPERIMENT_TEMPLATE_ID` as needed:
