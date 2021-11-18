@@ -2,7 +2,7 @@
 title: "Access control tags"
 weight: 20
 services: false
-draft: true
+draft: false
 ---
 
 In the previous section we saw how to use IAM roles and policies to control access to experiments and templates. In addition to fixed IAM policies it is also possible to use [**resource tags**](https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html) to add more granular access control. 

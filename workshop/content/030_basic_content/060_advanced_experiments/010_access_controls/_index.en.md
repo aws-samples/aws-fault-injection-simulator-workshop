@@ -2,7 +2,7 @@
 title: "Access controls"
 weight: 10
 services: false
-draft: true
+draft: false
 ---
 
 In the [**Configuring Permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section we showed how to limit the access of a running FIS experiment. In this section we will demonstrate how to control user access to AWS Fault Injection Simulator (FIS). 
