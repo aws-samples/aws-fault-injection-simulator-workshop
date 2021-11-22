@@ -1,13 +1,14 @@
 Resources:
-  # FisWorkshopBuilderCustomResource:
-  MyCustomResource:
+  WorkshopBuilderCustomResource:
     Type: 'Custom::CdkInstallWrapper'
+    DependsOn: CustomResourceLambda
     Properties:
       ServiceToken: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${CustomResourceLambda}"
       CodeBuildProjectName: !Ref CodeBuildProject
       ForceUpdateParam: 1
   CustomResourceLambda:
     Type: AWS::Lambda::Function
+    DependsOn: CodeBuildProject
     Properties:
       Runtime: nodejs12.x
       Role: !GetAtt CustomLambdaRole.Arn
@@ -19,14 +20,14 @@ Resources:
           exports.handler = function(event, context) {
               console.log("REQUEST RECEIVED:\n" + JSON.stringify(event))
 
-              // For Delete requests, immediately send a SUCCESS response.\
+              // For Delete requests, immediately send a SUCCESS response.
+              // We never try to "delete" the stacks / codebuild, we leave that to EE reapers
               if (event.RequestType == "Delete") {
                   response.send(event, context, "SUCCESS")
                   return
               }
 
-              // FIXME: this kicks off the codebuild but can't wait to finish because max lambda runtime is 15min. Maybe this should be wrapped into step functions?
-              var codebuild = new aws.CodeBuild();
+              // pass custom resource invocation params to codebuild
               var params={
                 projectName: event.ResourceProperties.CodeBuildProjectName,
                 environmentVariablesOverride: [
@@ -58,19 +59,26 @@ Resources:
                 ],
               };
               console.log("Parameters: " + JSON.stringify(params))
+
+              // Kick off codebuild. Note that this lambda will never
+              // return success because the codebuild time can 
+              // exceed 15min. Instead the loop will close with a 
+              // success message from codebuild or the 1h timeout
+              // for custom resources.
+              var codebuild = new aws.CodeBuild();
               codebuild.startBuild(params, function(err, data) {
                 if (err) {
                   // an error occurred - tell CFN immediately
                   console.log(err, err.stack); 
                   response.send(event, context, "FAILED");
                 } else {
-                    // successfully started codpipeline
-                    // success signal will come from CodeBuild job
-                    console.log(data);           
+                  // successfully started codpipeline
+                  // success signal will come from CodeBuild job
+                  console.log(data);           
                 }
               });
 
-              // Remove this ... we close the loop in CodeBuild
+              // Do NOT send success ... we close the loop in CodeBuild
               //response.send(event, context, "SUCCESS")
               return
           }
@@ -85,27 +93,15 @@ Resources:
         # Type: CODEPIPELINE
         Type: NO_ARTIFACTS
       Environment:
+        # Pick a container type and size
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
-        # By default codebuild doesn't allow docker in docker
-        # There seems to be an option of running docker in docker
-        # but is that a good idea ... ?
-        # https://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker-custom-image.html
-        PrivilegedMode: True
-        #
-        # Image: aws/codebuild/ubuntu-base:14.04
         Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
-        # EnvironmentVariables:
-        #   - Name: varName1
-        #     Value: varValue1
-        #   - Name: varName2
-        #     Value: varValue2
-        #     Type: PLAINTEXT
-        #   - Name: varName3
-        #     Value: /CodeBuild/testParameter
-        #     Type: PARAMETER_STORE
+        # Enable set this to true if you need docker in docker builds,
+        # e.g. for Golang lambda deployments from CDK
+        PrivilegedMode: True
       Source:
-        # Type: CODEPIPELINE
+        # We let the script pull code from GitHub or S3
         Type: NO_SOURCE
         BuildSpec: |
           version: 0.2
@@ -153,13 +149,6 @@ Resources:
                 - "curl  -H 'Content-Type: ''' -X PUT -d '{ \"Status\": \"'${CUSTOM_RESOURCE_STATUS}'\", \"PhysicalResourceId\": \"'${CUSTOM_RESOURCE_PHYSICAL_RESOURCE_ID}'\", \"StackId\": \"'${CUSTOM_RESOURCE_STACK_ID}'\", \"RequestId\": \"'${CUSTOM_RESOURCE_REQUEST_ID}'\", \"LogicalResourceId\": \"'${CUSTOM_RESOURCE_LOGICAL_RESOURCE_ID}'\" }' ${CUSTOM_RESOURCE_RESPONSE_URL}"
   
       TimeoutInMinutes: 60
-      # VpcConfig:
-      #   VpcId: !Ref CodeBuildVPC
-      #   Subnets: [!Ref CodeBuildSubnet]
-      #   SecurityGroupIds: [!Ref CodeBuildSecurityGroup]
-      # Cache:
-      #   Type: S3
-      #   Location: mybucket/prefix
   CustomLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -186,41 +175,3 @@ Resources:
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
-      # Policies:
-      #   - PolicyName: CodeBuildAccess
-      #     PolicyDocument:
-      #       Version: '2012-10-17'
-      #       Statement:
-      #         - Action:
-      #           - 'logs:*'
-      #           - 'ec2:CreateNetworkInterface'
-      #           - 'ec2:DescribeNetworkInterfaces'
-      #           - 'ec2:DeleteNetworkInterface'
-      #           - 'ec2:DescribeSubnets'
-      #           - 'ec2:DescribeSecurityGroups'
-      #           - 'ec2:DescribeDhcpOptions'
-      #           - 'ec2:DescribeVpcs'
-      #           - 'ec2:CreateNetworkInterfacePermission'
-      #           Effect: Allow
-      #           Resource: '*'
-  # CodeBuildVPC:
-  #   Type: AWS::EC2::VPC
-  #   Properties:
-  #     CidrBlock: 10.0.0.0/16
-  #     EnableDnsSupport: 'true'
-  #     EnableDnsHostnames: 'true'
-  #     Tags:
-  #       - Key: name
-  #         Value: codebuild
-  # CodeBuildSubnet:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     VpcId:
-  #       Ref: CodeBuildVPC
-  #     CidrBlock: 10.0.1.0/24
-  # CodeBuildSecurityGroup:
-  #   Type: AWS::EC2::SecurityGroup
-  #   Properties:
-  #     GroupName: Codebuild Internet Group
-  #     GroupDescription: 'CodeBuild SecurityGroup'
-  #     VpcId: !Ref CodeBuildVPC

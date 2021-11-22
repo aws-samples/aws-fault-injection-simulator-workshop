@@ -1,3 +1,4 @@
 deploy-output*
 cleanup-output*
 deploy-status.txt
+cleanup-status.txt
