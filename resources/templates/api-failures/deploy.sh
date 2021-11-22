@@ -12,6 +12,7 @@ echo "... FisApiFailureThrottling"
 aws cloudformation deploy \
     --stack-name FisApiFailureThrottling \
     --template-file api-throttling.yaml  \
+    --no-fail-on-empty-changeset \
     --capabilities CAPABILITY_IAM
 
 echo "... FisApiFailureUnavailable"
@@ -20,6 +21,7 @@ aws cloudformation deploy \
     --template-file api-unavailable.yaml  \
     --parameter-overrides \
         SubnetId=${SUBNET_ID} \
+    --no-fail-on-empty-changeset \
     --capabilities CAPABILITY_IAM
 
 echo "OK" > deploy-status.txt
