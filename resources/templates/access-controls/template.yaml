@@ -1,0 +1,163 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: FisWorkshopAccessControls
+
+Resources:
+
+  FisAccessControlSecurityAdmin:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: FisAccessControlSecurityAdmin
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Ref AWS::AccountId
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+      Policies:
+        - PolicyName: AllowFisFullAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: AllowAllFis
+                Effect: Allow
+                Action: 
+                  - fis:*
+                Resource: '*'
+              - Sid: AllowPassingExecutionRole
+                Condition:
+                  StringEquals:
+                    "iam:PassedToService": "fis.amazonaws.com"
+                Effect: Allow
+                Action: 
+                  - iam:PassRole
+                Resource: 
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/FisWorkshopServiceRole'
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/FisWorkshopSpotRole'
+
+  FisAccessControlAdmin:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: FisAccessControlAdmin
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Ref AWS::AccountId
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+      Policies:
+        - PolicyName: AllowFisFullAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: AllowAllFis
+                Effect: Allow
+                Action: 
+                  - fis:*
+                Resource: '*'
+              - Sid: DenyFisProdAccess
+                Condition:
+                  StringEquals:
+                    "aws:ResourceTag/Environment": "prod"
+                Effect: Deny
+                Action: 
+                  - fis:*
+                Resource: '*'
+              - Sid: AllowPassingExecutionRole
+                Condition:
+                  StringEquals:
+                    "iam:PassedToService": "fis.amazonaws.com"
+                Effect: Allow
+                Action: 
+                  - iam:PassRole
+                Resource: 
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/FisWorkshopServiceRole'
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/FisWorkshopSpotRole'
+
+  FisAccessControlUser:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: FisAccessControlUser
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Ref AWS::AccountId
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+      Policies:
+        - PolicyName: AllowFisUsageAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: AllowFisUsage
+                Effect: Allow
+                Action: 
+                  - fis:Get*
+                  - fis:List*
+                  - fis:StartExperiment
+                  - fis:StopExperiment
+                Resource: '*'
+              - Sid: AllowFisExperimentTagging
+                Effect: Allow
+                Action: 
+                  - fis:TagResource
+                Resource: !Sub 'arn:aws:fis:us-west-2:${AWS::AccountId}:experiment/*'
+              - Sid: DenyFisProdAccess
+                Condition:
+                  StringEquals:
+                    "aws:ResourceTag/Environment": "prod"
+                Effect: Deny
+                Action: 
+                  - fis:*
+                Resource: '*'
+              - Sid: AllowPassingExecutionRole
+                Effect: Allow
+                Action: 
+                  - iam:PassRole
+                Resource: 
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/FisWorkshopServiceRole'
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/FisWorkshopSpotRole'
+                Condition:
+                  StringEquals:
+                    "iam:PassedToService": "fis.amazonaws.com"
+
+  FisAccessControlNonUser:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: FisAccessControlNonUser
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Ref AWS::AccountId
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+      Policies:
+        - PolicyName: DenyFisAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: DenyAllFis
+                Effect: Deny
+                Action: 
+                  - fis:*
+                Resource: '*'
+
