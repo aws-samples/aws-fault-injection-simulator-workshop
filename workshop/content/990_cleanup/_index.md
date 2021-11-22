@@ -9,10 +9,10 @@ To ensure you don't incur any further costs after the workshop, please follow th
 ## Manually
 
 * If you created the CI/CD stack and ran the pipeline, first start by deleting the insfrastructure provisioned by the pipeline: 
-  * Navigate to the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=fisWorkshopDemo&viewNested=true&hideStacks=false) and find the stack named `fisWorkshopDemo` 
+  * Navigate to the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=CicdStack&viewNested=true&hideStacks=false) and find the stack named `CicdStack` 
   * Select the stack 
   * Select "Delete" 
-* Once, the `fisWorkshopDemo` is deleted, following the same procedure as above, delete the `CicdStack` stack
+* Once, the `CicdStack` is deleted, following the same procedure as above, delete the `CicdStack` stack
   {{< img "delete-cicd.en.png" "Delete stack visual">}}
 * Following the same procedure as above, delete the following stacks
   * `FisStackEks`

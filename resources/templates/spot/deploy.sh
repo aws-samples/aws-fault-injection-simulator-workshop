@@ -1,6 +1,12 @@
 #!/bin/bash
 
+set -e
+set -u
+set -o pipefail
+
 echo "Provisioning spot resources"
+
+echo "FAIL" > deploy-status.txt
 
 # Use subnet from workshop deploy
 SUBNET_ID=$( aws ec2 describe-subnets --query "Subnets[?Tags[?(Key=='aws-cdk:subnet-name') && (Value=='FisPriv') ]] | [0].SubnetId" --output text )
@@ -15,3 +21,5 @@ sam deploy \
   --no-fail-on-empty-changeset \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides "SubnetId=${SUBNET_ID} ImageId=${AMI_ID}"
+
+echo "OK" > deploy-status.txt

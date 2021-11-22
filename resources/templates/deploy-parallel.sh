@@ -5,23 +5,35 @@ set -u
 set -o pipefail
 
 #
-# This is a hack for development and assembly. Eventually there should be a single template 
-# to deploy
+# This is a hack for development and assembly if you must use stack-create / stack-update for some reason.
+# All current resources do not require this so it's commented out
 
-MODE=${1:-"create"}
-case $MODE in
-    create|update)
-        echo "Deploy mode: $MODE"
-        ;;
-    delete)
-        echo "Deleting all stacks not curently implemented"
-        exit 1
-        ;;
-    *)
-        echo "Please select one of create / update"
-        exit 1
-        ;;
-esac
+# MODE=${1:-"create"}
+# case $MODE in
+#     create|update)
+#         echo "Deploy mode: $MODE"
+#         ;;
+#     delete)
+#         echo "Deleting all stacks not curently implemented"
+#         exit 1
+#         ;;
+#     *)
+#         echo "Please select one of create / update"
+#         exit 1
+#         ;;
+# esac
+
+# Handler function to make the rest of the script more legible and consistent
+# Note that this fuction will background tasks so use wait where needed
+function call_deploy_script() {
+    INSTALLER_DIR=$1
+    INSTALLER_COMMENT=$2
+    echo "Deploying from ./${INSTALLER_DIR}/: ${INSTALLER_COMMENT}"
+    (
+        cd ${INSTALLER_DIR}
+        bash deploy.sh
+    ) > deploy-output.${INSTALLER_DIR}.txt 2>&1 &
+}
 
 REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
 ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
@@ -32,124 +44,60 @@ echo "Deploying to Region: ${REGION}"
 echo "Boostrapping account with CDK"
 cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
 
+# Clean up previous deploy record
+rm -f deploy-output.*.txt */deploy-status.txt
+
 # VPC stack uses CDK
-echo "Provisioning VPC..."
-(
-    cd vpc
-    echo "FAIL" > deploy-status.txt
-    npm install
-    npx cdk deploy FisStackVpc --require-approval never --outputs-file outputs.json
-    echo "OK" > deploy-status.txt
-) > deploy-output.vpc.txt 2>&1 
+call_deploy_script "vpc" "VPC stack" 
+
+# VPC is needed for everything else so wait for completion
+echo "Waiting for VPC stack to finish"
+wait
 
 # Goad stack moved to CDK
-echo "Provisioning Load Generator..."
-(
-    cd goad-cdk
-    echo "FAIL" > deploy-status.txt
-    npm install
-    npx cdk deploy FisStackLoadGen --require-approval never --outputs-file outputs.json
-    echo "OK" > deploy-status.txt
-) > deploy-output.goad.txt 2>&1 &
+call_deploy_script "goad-cdk" "Load generator stack" 
+
 
 # Need to sequence construction
 (
     # RDS/aurora stack uses CDK
     # ... depends on VPC
-    echo "Provisioning RDS..."
-    (
-        cd rds
-        echo "FAIL" > deploy-status.txt
-        npm install
-        npx cdk deploy FisStackRdsAurora --require-approval never --outputs-file outputs.json
-        echo "OK" > deploy-status.txt
-    ) > deploy-output.rds.txt 2>&1
+    call_deploy_script "rds" "RDS stack" 
+
+    # RDS secrets are needed for ASG so wait for completion
+    wait
 
     # ASG stack moved to CDK
     # ... depends on VPC
     # ... depends on RDS for secret
-    echo "Provisioning EC2 Autoscaling Group..."
-    (
-        cd asg-cdk
-        echo "FAIL" > deploy-status.txt
-        npm install
-        npx cdk deploy FisStackAsg --require-approval never --outputs-file outputs.json
-        echo "OK" > deploy-status.txt
-    ) > deploy-output.asg.txt 2>&1
+    call_deploy_script "asg-cdk" "ASG stack" 
+
+    # Need to wait here to make sure outer wait has something to wait on
+    wait
 ) &
 
 # EKS stack uses CDK
-echo "Provisioning EKS resources..."
-(
-    cd eks
-    echo "FAIL" > deploy-status.txt
-    npm install
-    npx cdk deploy FisStackEks --require-approval never --outputs-file outputs.json
-    echo "OK" > deploy-status.txt
-) > deploy-output.eks.txt 2>&1 &
+# ... depends on VPC
+call_deploy_script "eks" "EKS stack" 
 
 # ECS stack uses CDK
-echo "Provisioning ECS resources..."
-(
-    cd ecs
-    echo "FAIL" > deploy-status.txt
-    npm install
-    npx cdk deploy FisStackEcs --require-approval never --outputs-file outputs.json
-    echo "OK" > deploy-status.txt
-) > deploy-output.ecs.txt 2>&1 &
+# ... depends on VPC
+call_deploy_script "ecs" "ECS stack" 
 
 # Stress VM stack added as CFN
 # ... depends on VPC
-echo "Provisioning CPU stress instances"
-(
-    cd cpu-stress
-    echo "FAIL" > deploy-status.txt
-    # Query public subnet from VPC stack
-    SUBNET_ID=$( aws ec2 describe-subnets --query "Subnets[?Tags[?(Key=='aws-cdk:subnet-name') && (Value=='FisPub') ]] | [0].SubnetId" --output text )
-
-    # Launch CloudFormation stack
-    aws cloudformation ${MODE}-stack \
-    --stack-name FisCpuStress \
-    --template-body file://CPUStressInstances.yaml  \
-    --parameters \
-        ParameterKey=SubnetId,ParameterValue=${SUBNET_ID} \
-    --capabilities CAPABILITY_IAM
-    echo "OK" > deploy-status.txt
-) > deploy-output.stress.txt 2>&1 &
+call_deploy_script "cpu-stress" "CPU stress stack" 
 
 # API failures are plain CFN
-echo "Provisioning API failure stacks"
-(
-    cd api-failures
-    echo "FAIL" > deploy-status.txt
-    # Query public subnet from VPC stack
-    SUBNET_ID=$( aws ec2 describe-subnets --query "Subnets[?Tags[?(Key=='aws-cdk:subnet-name') && (Value=='FisPub') ]] | [0].SubnetId" --output text )
+# ... depends on VPC
+call_deploy_script "api-failures" "API failure stack" 
 
-    # Launch CloudFormation stack
-    aws cloudformation ${MODE}-stack \
-    --stack-name FisApiFailureThrottling \
-    --template-body file://api-throttling.yaml  \
-    --capabilities CAPABILITY_IAM
-
-    aws cloudformation ${MODE}-stack \
-    --stack-name FisApiFailureUnavailable \
-    --template-body file://api-unavailable.yaml  \
-    --parameters \
-        ParameterKey=SubnetId,ParameterValue=${SUBNET_ID} \
-    --capabilities CAPABILITY_IAM
-    
-    echo "OK" > deploy-status.txt
-) > deploy-output.api.txt 2>&1 &
-
-# Provision spot resources
-(
-    cd spot
-    echo "FAIL" > deploy-status.txt
-    bash deploy.sh 
-    echo "OK" > deploy-status.txt
-) > deploy-output.spot.txt 2>&1 &
+# CFN spot example using SAM
+# ... depends on VPC
+call_deploy_script "spot" "Spot instance stack" 
 
 # Wait for everything to finish
+echo "Waiting for remaining stacks and substacks to finish"
 wait
 
 EXIT_STATUS=0
@@ -174,5 +122,9 @@ for substack in \
     fi
 done
 
-echo Done.
+if [ ${EXIT_STATUS:=1} -eq 1 ]; then
+    echo "Overall install FAILED"
+else
+    echo "Overall install SUCCEEDED"
+fi
 exit $EXIT_STATUS
