@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -e
+set -u
+set -o pipefail
+
 echo "Provisioning CPU stress instances"
 echo "FAIL" > deploy-status.txt
 

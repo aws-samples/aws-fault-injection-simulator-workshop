@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -e
+set -u
+set -o pipefail
+
 echo "Provisioning API failure stacks"
 
 echo "FAIL" > deploy-status.txt
