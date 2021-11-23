@@ -52,8 +52,10 @@ call_cleanup_script "asg-cdk" "ASG stack"
 call_cleanup_script "rds" "RDS stack" 
 
 # Goad stack moved to CDK
+call_cleanup_script "access-controls" "Access controls stack" 
+
+# Goad stack moved to CDK
 call_cleanup_script "goad-cdk" "Load generator (goad) stack" 
-echo "Deleting Load Generator..."
 
 # Wait before deleting VPC
 echo "Waiting before starting VPC deletion"
@@ -92,6 +94,7 @@ for substack in \
     ../code/cdk/cicd \
     vpc \
     goad-cdk \
+    access-controls \
     rds \
     asg-cdk \
     eks \
