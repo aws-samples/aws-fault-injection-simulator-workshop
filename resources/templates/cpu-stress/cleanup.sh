@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -e
+set -u
+set -o pipefail
+
 echo "Cleaning up CPU stress resources"
 echo "FAIL" > cleanup-status.txt
 
