@@ -22,7 +22,14 @@ Adding files to our repository is a 3-step process:
 
 Open the [AWS Code Commit Console](https://console.aws.amazon.com/codesuite/codecommit/home?#Home). Click the `HTTPS` link next to the `FIS_Workshop` repository name to examine the clone URL.
 
-In your Cloud9 terminal clone the repository (for convinence, the commands below show how to query the clone URL):
+To use IAM credentials in Cloudshell/Cloud9 we will configure the git [**credential helper**](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-https-unixes.html#setting-up-https-unixes-credential-helper):
+
+```bash
+git config --global credential.helper '!aws codecommit credential-helper $@'
+git config --global credential.UseHttpPath true
+```
+
+In your CloudShell/Cloud9 terminal clone the repository (for convenience, the commands below show how to query the clone URL):
 
 ```bash
 GIT_URL=$( aws codecommit get-repository --repository-name FIS_Workshop --query "repositoryMetadata.cloneUrlHttp" --output text )
