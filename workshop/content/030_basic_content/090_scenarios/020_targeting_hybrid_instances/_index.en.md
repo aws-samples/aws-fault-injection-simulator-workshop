@@ -32,3 +32,10 @@ aws ssm update-document \
     { "Key": "ResourceType", "Values": [ "ManagedInstance" ] }
 ]
 ```
+
+```bash
+aws ssm start-automation-execution \
+  --document-name ${SSM_DOCUMENT_NAME} \
+  --parameters "AutomationAssumeRole=arn:aws:iam::238810465798:role/FisWorkshopSsmEc2DemoRole,DocumentName=AWSFIS-Run-CPU-Stress,DocumentParameters='{ \"DurationSeconds\": \"120\" }'"
+
+```

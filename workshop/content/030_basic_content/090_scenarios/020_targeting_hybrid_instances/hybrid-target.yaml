@@ -7,12 +7,12 @@ parameters:
     type: String
     description: "The ARN of the role that allows Automation to perform
       the actions on your behalf."
-  # DocumentName:
-  #   type: String
-  #   description: "SSM document name to run on hybrid instances"
-  # DocumentParameters:
-  #   type: MapList
-  #   description: "Parameters to pass to SSM document run on hybrid instances"
+  DocumentName:
+    type: String
+    description: "SSM document name to run on hybrid instances"
+  DocumentParameters:
+    type: StringMap
+    description: "Parameters to pass to SSM document run on hybrid instances"
   Filters:
     type: MapList
     description: '(Optional) Selector JSON for DescribeInstanceInformation as described in CLI/API docs. Default [{"Key":"PingStatus","Values":["Online"]},{"Key":"ResourceType","Values":["ManagedInstance"]}]'
@@ -23,16 +23,9 @@ parameters:
       - Key: ResourceType
         Values:
           - ManagedInstance
-  # AutomationAssumeRole:
-  #   type: String
-  #   description: "The ARN of the role that allows Automation to perform
-  #     the actions on your behalf."
 mainSteps:
-# Find all instances 
 - name: SelectHybridInstances
   action: aws:executeAwsApi
-  # onFailure: 'step:ExitReview'
-  # onCancel: 'step:ExitReview'
   timeoutSeconds: 60
   inputs:
     Service: ssm
@@ -42,79 +35,12 @@ mainSteps:
     - Name: InstanceIds
       Selector: "$..InstanceId"
       Type: StringList
-# - name: DoStuff
-#   action: 'aws:runCommand'
-#   inputs:
-#     DocumentName: {{ DocumentName }}
-#     InstanceIds:
-#       - '{{SelectHybridInstances.InstanceIds}}'
-#     Parameters: {{ DocumentParameters }}
 - name: DoStuff
   action: 'aws:runCommand'
   inputs:
-    DocumentName: AWSFIS-Run-CPU-Stress
+    DocumentName: "{{ DocumentName }}"
     InstanceIds:
       - '{{SelectHybridInstances.InstanceIds}}'
-    Parameters:
-      DurationSeconds: "120"
-      InstallDependencies: "True"
-# - name: DescribeInstances
-#   action: aws:executeAwsApi
-#   onFailure: 'step:ExitReview'
-#   onCancel: 'step:ExitReview'
-#   timeoutSeconds: 60
-#   inputs:
-#     Service: ec2
-#     Api: DescribeInstances
-#     Filters:
-#     - Name: "availability-zone"
-#       Values:
-#         - "{{ AvailabilityZone }}"
-#     - Name: "instance-id"
-#       Values: "{{ DescribeAutoscaling.InstanceIds }}"
-#   outputs:
-#      - Name: InstanceIds
-#        Selector: "$..InstanceId"
-#        Type: StringList
-# # Terminate 100% of selected instances       
-# - name: TerminateEc2Instances
-#   action: aws:changeInstanceState
-#   onFailure: 'step:ExitReview'
-#   onCancel: 'step:ExitReview'
-#   inputs:
-#     InstanceIds: "{{ DescribeInstances.InstanceIds }}"
-#     DesiredState:  terminated
-#     Force: true
-# # Wait for up to 90s to make sure instances have been terminated
-# - name: VerifyInstanceStateTerminated
-#   action: aws:waitForAwsResourceProperty
-#   onFailure: 'step:ExitReview'
-#   onCancel: 'step:ExitReview'
-#   timeoutSeconds: 90
-#   inputs:
-#     Service: ec2
-#     Api: DescribeInstanceStatus
-#     IncludeAllInstances: true
-#     InstanceIds: "{{ DescribeInstances.InstanceIds }}"
-#     PropertySelector: "$..InstanceState.Name"
-#     DesiredValues:
-#       - terminated
-# # On normal exit or failure list instances in ASG/AZ
-# - name: ExitReview
-#   action: aws:executeAwsApi
-#   timeoutSeconds: 60
-#   inputs:
-#     Service: ec2
-#     Api: DescribeInstances
-#     Filters:
-#     - Name: "availability-zone"
-#       Values:
-#         - "{{ AvailabilityZone }}"
-#     - Name: "instance-id"
-#       Values: "{{ DescribeAutoscaling.InstanceIds }}"
-#   outputs:
-#      - Name: InstanceIds
-#        Selector: "$..InstanceId"
-#        Type: StringList
+    Parameters: "{{ DocumentParameters}}"
 outputs:
 - SelectHybridInstances.InstanceIds
