@@ -27,5 +27,8 @@ aws ssm update-document \
 ```
 
 ```
-[ { "Key": "PingStatus", "Values": [ "Online" ] } ]
+[ 
+    { "Key": "PingStatus", "Values": [ "Online" ] },
+    { "Key": "ResourceType", "Values": [ "ManagedInstance" ] }
+]
 ```

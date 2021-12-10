@@ -7,9 +7,22 @@ parameters:
     type: String
     description: "The ARN of the role that allows Automation to perform
       the actions on your behalf."
+  # DocumentName:
+  #   type: String
+  #   description: "SSM document name to run on hybrid instances"
+  # DocumentParameters:
+  #   type: MapList
+  #   description: "Parameters to pass to SSM document run on hybrid instances"
   Filters:
     type: MapList
-    description: "(Required) Selector JSON for DescribeInstanceInformation as described in CLI/API docs"
+    description: '(Optional) Selector JSON for DescribeInstanceInformation as described in CLI/API docs. Default [{"Key":"PingStatus","Values":["Online"]},{"Key":"ResourceType","Values":["ManagedInstance"]}]'
+    default: 
+      - Key: PingStatus
+        Values:
+          - Online
+      - Key: ResourceType
+        Values:
+          - ManagedInstance
   # AutomationAssumeRole:
   #   type: String
   #   description: "The ARN of the role that allows Automation to perform
@@ -29,7 +42,22 @@ mainSteps:
     - Name: InstanceIds
       Selector: "$..InstanceId"
       Type: StringList
-# # Find all ASG instances in AZ
+# - name: DoStuff
+#   action: 'aws:runCommand'
+#   inputs:
+#     DocumentName: {{ DocumentName }}
+#     InstanceIds:
+#       - '{{SelectHybridInstances.InstanceIds}}'
+#     Parameters: {{ DocumentParameters }}
+- name: DoStuff
+  action: 'aws:runCommand'
+  inputs:
+    DocumentName: AWSFIS-Run-CPU-Stress
+    InstanceIds:
+      - '{{SelectHybridInstances.InstanceIds}}'
+    Parameters:
+      DurationSeconds: "120"
+      InstallDependencies: "True"
 # - name: DescribeInstances
 #   action: aws:executeAwsApi
 #   onFailure: 'step:ExitReview'
@@ -88,6 +116,5 @@ mainSteps:
 #      - Name: InstanceIds
 #        Selector: "$..InstanceId"
 #        Type: StringList
-# outputs:
-# - DescribeInstances.InstanceIds
-# - ExitReview.InstanceIds
+outputs:
+- SelectHybridInstances.InstanceIds
