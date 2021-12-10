@@ -1,0 +1,15 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "EnableAsgDocument",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:DescribeInstanceInformation",
+                "ssm:ListCommands",
+                "ssm:ListCommandInvocations",
+                "ssm:SendCommand"            ],
+            "Resource": "*"
+        }
+    ]
+}
