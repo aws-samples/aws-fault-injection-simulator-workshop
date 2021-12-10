@@ -1,0 +1,93 @@
+---
+description: Run SSM command on SSM hybrid instances
+schemaVersion: '0.3'
+assumeRole: "{{ AutomationAssumeRole }}"
+parameters:
+  AutomationAssumeRole:
+    type: String
+    description: "The ARN of the role that allows Automation to perform
+      the actions on your behalf."
+  Filters:
+    type: MapList
+    description: "(Required) Selector JSON for DescribeInstanceInformation as described in CLI/API docs"
+  # AutomationAssumeRole:
+  #   type: String
+  #   description: "The ARN of the role that allows Automation to perform
+  #     the actions on your behalf."
+mainSteps:
+# Find all instances 
+- name: SelectHybridInstances
+  action: aws:executeAwsApi
+  # onFailure: 'step:ExitReview'
+  # onCancel: 'step:ExitReview'
+  timeoutSeconds: 60
+  inputs:
+    Service: ssm
+    Api: DescribeInstanceInformation
+    Filters: "{{ Filters }}"
+  outputs:
+    - Name: InstanceIds
+      Selector: "$..InstanceId"
+      Type: StringList
+# # Find all ASG instances in AZ
+# - name: DescribeInstances
+#   action: aws:executeAwsApi
+#   onFailure: 'step:ExitReview'
+#   onCancel: 'step:ExitReview'
+#   timeoutSeconds: 60
+#   inputs:
+#     Service: ec2
+#     Api: DescribeInstances
+#     Filters:
+#     - Name: "availability-zone"
+#       Values:
+#         - "{{ AvailabilityZone }}"
+#     - Name: "instance-id"
+#       Values: "{{ DescribeAutoscaling.InstanceIds }}"
+#   outputs:
+#      - Name: InstanceIds
+#        Selector: "$..InstanceId"
+#        Type: StringList
+# # Terminate 100% of selected instances       
+# - name: TerminateEc2Instances
+#   action: aws:changeInstanceState
+#   onFailure: 'step:ExitReview'
+#   onCancel: 'step:ExitReview'
+#   inputs:
+#     InstanceIds: "{{ DescribeInstances.InstanceIds }}"
+#     DesiredState:  terminated
+#     Force: true
+# # Wait for up to 90s to make sure instances have been terminated
+# - name: VerifyInstanceStateTerminated
+#   action: aws:waitForAwsResourceProperty
+#   onFailure: 'step:ExitReview'
+#   onCancel: 'step:ExitReview'
+#   timeoutSeconds: 90
+#   inputs:
+#     Service: ec2
+#     Api: DescribeInstanceStatus
+#     IncludeAllInstances: true
+#     InstanceIds: "{{ DescribeInstances.InstanceIds }}"
+#     PropertySelector: "$..InstanceState.Name"
+#     DesiredValues:
+#       - terminated
+# # On normal exit or failure list instances in ASG/AZ
+# - name: ExitReview
+#   action: aws:executeAwsApi
+#   timeoutSeconds: 60
+#   inputs:
+#     Service: ec2
+#     Api: DescribeInstances
+#     Filters:
+#     - Name: "availability-zone"
+#       Values:
+#         - "{{ AvailabilityZone }}"
+#     - Name: "instance-id"
+#       Values: "{{ DescribeAutoscaling.InstanceIds }}"
+#   outputs:
+#      - Name: InstanceIds
+#        Selector: "$..InstanceId"
+#        Type: StringList
+# outputs:
+# - DescribeInstances.InstanceIds
+# - ExitReview.InstanceIds
