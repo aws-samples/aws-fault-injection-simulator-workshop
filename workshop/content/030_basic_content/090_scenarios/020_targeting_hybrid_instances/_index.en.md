@@ -239,13 +239,13 @@ aws fis create-experiment-template \
 
 ```bash
 aws ssm create-document \
-    --name ${SSM_DOCUMENT_NAME} \
+    --name ${HYBRID_DOCUMENT_NAME} \
     --document-format YAML \
     --document-type Automation \
     --content file://hybrid-target.yaml 
 
 aws ssm update-document \
-    --name ${SSM_DOCUMENT_NAME} \
+    --name ${HYBRID_DOCUMENT_NAME} \
     --document-format YAML \
     --content file://hybrid-target.yaml \
     --document-version '$LATEST'
@@ -262,11 +262,11 @@ aws ssm update-document \
 
 ```bash
 aws ssm start-automation-execution \
-  --document-name ${SSM_DOCUMENT_NAME} \
+  --document-name ${HYBRID_DOCUMENT_NAME} \
   --parameters "AutomationAssumeRole=arn:aws:iam::238810465798:role/FisWorkshopSsmEc2DemoRole,DocumentName=AWSFIS-Run-CPU-Stress,DocumentParameters='{ \"DurationSeconds\": \"120\" }'"
 
 aws ssm start-automation-execution \
-  --document-name ${SSM_DOCUMENT_NAME} \
+  --document-name ${HYBRID_DOCUMENT_NAME} \
   --parameters "AutomationAssumeRole=arn:aws:iam::238810465798:role/FisWorkshopSsmEc2DemoRole,DocumentName=AWSFIS-Run-CPU-Stress,DocumentParameters='{ \"DurationSeconds\": \"120\",\"Filters\": [ { \"Key\": \"PingStatus\", \"Values\": [ \"Online\" ] }, { \"Key\": \"ResourceType\", \"Values\": [ \"ManagedInstance\" ] }, {\"Key\":\"tag:OS\",\"Values\":[\"Raspbian\"]} ] }'"
 
 ```
@@ -296,4 +296,21 @@ aws ssm start-automation-execution \
   --document-version "\$DEFAULT" \
   --parameters '{"AutomationAssumeRole":["arn:aws:iam::238810465798:role/FisWorkshopSsmHybridDemoRole"],"DocumentName":["AWSFIS-Run-CPU-Stress"],"DocumentParameters":["{ \"DurationSeconds\": \"120\" }"],"Filters":["{\"Key\":\"PingStatus\",\"Values\":[\"Online\"]}","{\"Key\":\"ResourceType\",\"Values\":[\"ManagedInstance\"]}"]}' \
   --region us-west-2
+```
+
+---
+
+```bash
+aws ssm create-document \
+    --name ${HYBRID_DOCUMENT_NAME}-converted \
+    --document-format YAML \
+    --document-type Automation \
+    --content file://hybrid-target-stringconverter.yaml 
+
+aws ssm start-automation-execution \
+  --document-name ${HYBRID_DOCUMENT_NAME}-converted \
+  --document-version "\$DEFAULT" \
+  --parameters '{"AutomationAssumeRole":["arn:aws:iam::238810465798:role/FisWorkshopSsmHybridDemoRole"],"DocumentName":["AWSFIS-Run-CPU-Stress"],"DocumentParameters":["{ \"DurationSeconds\": \"120\" }"],"Filters":["[{\"Key\":\"tag:OS\",\"Values\":[\"Raspbian\"]}]"]}' \
+  --region us-west-2
+
 ```
