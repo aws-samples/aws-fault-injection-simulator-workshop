@@ -14,21 +14,18 @@ parameters:
     type: StringMap
     description: "Parameters to pass to SSM document run on hybrid instances (string to deal with FIS serialization bug)"
   Filters:
-    # MapList
+    # Normally this would be a MapList. 
+    # Currently passing as string and converting to deal with some serialization complexity.
     type: String
     description: '(Optional) Selector JSON for DescribeInstanceInformation as described in CLI/API docs. Default [{"Key":"PingStatus","Values":["Online"]},{"Key":"ResourceType","Values":["ManagedInstance"]}]'
-    # default: 
-    #   - Key: PingStatus
-    #     Values:
-    #       - Online
-    #   - Key: ResourceType
-    #     Values:
-    #       - ManagedInstance
+    default: "[{\"Key\":\"PingStatus\",\"Values\":[\"Online\"]},{\"Key\":\"ResourceType\",\"Values\":[\"ManagedInstance\"]}]" 
 mainSteps:
+# ------------------------------------------------------------------
+# Unpack a JSON string to JSON to deal with serialization complexity
 - name: FormatConverter
   action: aws:executeScript
-  # onFailure: 'step:ExitList'
-  # onCancel: 'step:ExitList'
+  onFailure: 'step:ExitHook'
+  onCancel: 'step:ExitHook'
   timeoutSeconds: 60
   inputs:
     Runtime: "python3.6"
@@ -43,8 +40,13 @@ mainSteps:
     - Name: Filters
       Selector: "$.Payload"
       Type: MapList
+# ------------------------------------------------------------------
+# Select managed instances. Note that you can filter EITHER on tags
+# OR on instance properties but not both. 
 - name: SelectHybridInstances
   action: aws:executeAwsApi
+  onFailure: 'step:ExitHook'
+  onCancel: 'step:ExitHook'
   timeoutSeconds: 60
   inputs:
     Service: ssm
@@ -54,6 +56,9 @@ mainSteps:
     - Name: InstanceIds
       Selector: "$..InstanceId"
       Type: StringList
+# ------------------------------------------------------------------
+# Execute the DocumentName / DocumentParameters from inputs on the 
+# instances selected in previous step.
 - name: DoStuff
   action: 'aws:runCommand'
   inputs:
@@ -61,5 +66,9 @@ mainSteps:
     InstanceIds:
       - '{{SelectHybridInstances.InstanceIds}}'
     Parameters: "{{ DocumentParameters}}"
-outputs:
-- SelectHybridInstances.InstanceIds
+# ------------------------------------------------------------------
+# NOOP exit point to allow skipping steps if selection fails
+- name: ExitHook
+  action: aws:sleep
+  inputs:
+    Duration: PT1S

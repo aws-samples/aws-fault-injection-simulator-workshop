@@ -17,9 +17,11 @@ Some aspects of using hybrid instances may require activation of "advanced" tier
 For this section we assume that you already have a hybrid instance setup. 
 {{% /notice %}}
 
-For illustration we will assume that you have a hybrid activation of an on-prem Raspberry Pi and the managed instance has been tagged in [**SSM FleetManager**](https://docs.aws.amazon.com/systems-manager/latest/userguide/tagging-managed-instances.html) with tag `OS` / value `Raspbian` and tag `Version` / value `4`:
+For illustration we will assume that you have a hybrid activation of two on-prem Raspberry Pi instances and the managed instances have been tagged in [**SSM FleetManager**](https://docs.aws.amazon.com/systems-manager/latest/userguide/tagging-managed-instances.html) with tag `OS` / value `Raspbian` and tag `Version` / value `2` and `4` respectively:
 
 {{< img "stresstest-with-runbook-hybrid.png" "Hybrid setup">}}
+
+## Setup
 
 To replicate the [**Linux CPU Stress Experiment**]({{< ref "030_basic_content/040_ssm/020_linux_stress" >}}) on the on-prem instance we will use a variation on the [**FIS SSM Start Automation Setup**]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}).
 
@@ -104,7 +106,7 @@ Update the `FisWorkshopServiceRole` as described in the [**FIS SSM Start Automat
 
 The core of this approach is to select managed instances targets using SSM and then execute runbooks against the selected instances. The following parameters help target instances and define the fault injection to run:
 
-* `Filters` - defines the filter parameter for the SSM [**DescribeInstanceInformation**](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_DescribeInstanceInformation.html) API. By default this is set to `[{"Key":"PingStatus","Values":["Online"]},{"Key":"ResourceType","Values":["ManagedInstance"]}]'`, which will target all running managed instances. Below we will show you how to target instances based on FleetManager tags by adding `{"Key":"tag:OS","Values":["Raspbian"]}`.
+* `Filters` - defines the filter parameter for the SSM [**DescribeInstanceInformation**](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_DescribeInstanceInformation.html) API. By default this is set to `[{"Key":"PingStatus","Values":["Online"]},{"Key":"ResourceType","Values":["ManagedInstance"]}]'`, which will target all running managed instances. Below we will show you how to instead target instances based on FleetManager tags by adding `{"Key":"tag:OS","Values":["Raspbian"]}`.
 
 * `DocumentName` - the name of an SSM runbook document to be called from this automation document after instance selection.
 
@@ -125,29 +127,53 @@ parameters:
     description: "SSM document name to run on hybrid instances"
   DocumentParameters:
     type: StringMap
-    description: "Parameters to pass to SSM document run on hybrid instances"
+    description: "Parameters to pass to SSM document run on hybrid instances (string to deal with FIS serialization bug)"
   Filters:
-    type: MapList
+    # Normally this would be a MapList. 
+    # Currently passing as string and converting to deal with some serialization complexity.
+    type: String
     description: '(Optional) Selector JSON for DescribeInstanceInformation as described in CLI/API docs. Default [{"Key":"PingStatus","Values":["Online"]},{"Key":"ResourceType","Values":["ManagedInstance"]}]'
-    default: 
-      - Key: PingStatus
-        Values:
-          - Online
-      - Key: ResourceType
-        Values:
-          - ManagedInstance
+    default: "[{\"Key\":\"PingStatus\",\"Values\":[\"Online\"]},{\"Key\":\"ResourceType\",\"Values\":[\"ManagedInstance\"]}]" 
 mainSteps:
+# ------------------------------------------------------------------
+# Unpack a JSON string to JSON to deal with serialization complexity
+- name: FormatConverter
+  action: aws:executeScript
+  onFailure: 'step:ExitHook'
+  onCancel: 'step:ExitHook'
+  timeoutSeconds: 60
+  inputs:
+    Runtime: "python3.6"
+    Handler: "script_handler"
+    InputPayload: 
+      JSONstring: "{{Filters}}"
+    Script: |
+      import json
+      def script_handler(events, context):
+          return json.loads(events.get("JSONstring","{}"))
+  outputs:
+    - Name: Filters
+      Selector: "$.Payload"
+      Type: MapList
+# ------------------------------------------------------------------
+# Select managed instances. Note that you can filter EITHER on tags
+# OR on instance properties but not both. 
 - name: SelectHybridInstances
   action: aws:executeAwsApi
+  onFailure: 'step:ExitHook'
+  onCancel: 'step:ExitHook'
   timeoutSeconds: 60
   inputs:
     Service: ssm
     Api: DescribeInstanceInformation
-    Filters: "{{ Filters }}"
+    Filters: "{{ FormatConverter.Filters }}"
   outputs:
     - Name: InstanceIds
       Selector: "$..InstanceId"
       Type: StringList
+# ------------------------------------------------------------------
+# Execute the DocumentName / DocumentParameters from inputs on the 
+# instances selected in previous step.
 - name: DoStuff
   action: 'aws:runCommand'
   inputs:
@@ -155,9 +181,12 @@ mainSteps:
     InstanceIds:
       - '{{SelectHybridInstances.InstanceIds}}'
     Parameters: "{{ DocumentParameters}}"
-outputs:
-- SelectHybridInstances.InstanceIds
-
+# ------------------------------------------------------------------
+# NOOP exit point to allow skipping steps if selection fails
+- name: ExitHook
+  action: aws:sleep
+  inputs:
+    Duration: PT1S
 ```
 
 Use the following CLI command to create the SSM document and export the document ARN:
@@ -182,7 +211,21 @@ HYBRID_DOCUMENT_ARN=arn:aws:ssm:${REGION}:${ACCOUNT_ID}:document/${HYBRID_DOCUME
 echo $HYBRID_DOCUMENT_ARN
 ```
 
+Assuming you have managed instances you can validate the SSM document by invoking it directly like this:
+
+```bash
+# This works
+aws ssm start-automation-execution \
+  --document-name "TargetHybridInstances" \
+  --parameters '{"AutomationAssumeRole":["'${HYBRID_ROLE_ARN}'"],"DocumentName":["AWSFIS-Run-CPU-Stress"],"DocumentParameters":["{ \"DurationSeconds\": \"120\" }"],"Filters":["{\"Key\":\"PingStatus\",\"Values\":[\"Online\"]}","{\"Key\":\"ResourceType\",\"Values\":[\"ManagedInstance\"]}"]}'
+```
+
+Once started you can examine the progress by navigating to the [**SSM Automation console**](https://us-west-2.console.aws.amazon.com/systems-manager/automation/executions?region=us-west-2) and selecting the execution ID from the invocation.
+
+
 ### Create FIS template
+
+As we saw in the **Create FIS Experiment Template** subsecton of [**FIS SSM Start Automation Setup**]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}), we need to substitute some ARN values into the FIS template. For convenience and to make the JSON string escaping easier we will do this with some shell substitutions. First we set the relevant environment variables:
 
 ```bash
 REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
@@ -191,6 +234,8 @@ FIS_WORKSHOP_ROLE_ARN=arn:aws:iam::${ACCOUNT_ID}:role/FisWorkshopServiceRole
 LINUX_STRESS_ARN=arn:aws:ssm:${REGION}::document/AWSFIS-Run-CPU-Stress
 
 ```
+
+The we use a bash trick to substitute them into our FIS template and write it to disk as `fis-hybrid-target.json`. Note: the 5 backslashes are escapes required for multiple evaluation steps. See the final FIS template for a more human readable result.
 
 ```bash
 cat > fis-hybrid-target.json <<EOT
@@ -222,19 +267,54 @@ EOT
 
 ```
 
-arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${WinStressDocument}
-
-
-'{"AutomationAssumeRole":["arn:aws:iam::238810465798:role/FisWorkshopSsmHybridDemoRole"],"DocumentName":["AWSFIS-Run-CPU-Stress"],"DocumentParameters":["{ \"DurationSeconds\": \"120\" }"],"Filters":["{\"Key\":\"PingStatus\",\"Values\":[\"Online\"]}","{\"Key\":\"ResourceType\",\"Values\":[\"ManagedInstance\"]}","{\"Key\":\"tag:OS\",\"Values\":[\"Raspbian\"]}"]}'
-
-
-Check the template content in `fis-hybrid-target.json` to confirm that the Role and Document ARNs have been filled in, then create the FIS experiment template
+Check the template content in `fis-hybrid-target.json` to confirm that the Role and Document ARNs have been filled in, then create the FIS experiment template:
 
 ```bash
 aws fis create-experiment-template \
    --cli-input-json file://fis-hybrid-target.json
 
 ```
+
+## Experiments
+
+### Targeting all running hybrid instances
+
+SSM allows targeting instances based on properties returned by the SSM [**DescribeInstanceInformation**](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_DescribeInstanceInformation.html) API. On prem instances are identified by a `ResourceType` of `ManagedInstance`. Additionally we might only want to include currently running instances identified by a `PingStatus` of `Online`.
+
+Navigate to the [**FIS experiment template console**](https://console.aws.amazon.com/fis/home?#ExperimentTemplates), select the experiment template ID created above, and edit the `"Filters"` statement in the `documentParameters` entry:
+
+{{<img "edit-filter-location.png" "Edit filter statement" >}}
+
+to read:
+
+```
+"Filters": "[ {\"Key\":\"PingStatus\",\"Values\":[\"Online\"]}, {\"Key\":\"ResourceType\",\"Values\":[\"ManagedInstance\"]} ]"
+```
+
+### Targeting specific managed instances
+
+SSM allows you to target instances based on tag values. The default version of the template will target all instances tagged with `OS` value `Raspbian`. We could furter refine that to only target instances with `Version` value `4`.  
+
+Navigate to the [**FIS experiment template console**](https://console.aws.amazon.com/fis/home?#ExperimentTemplates), select the experiment template ID created above, and edit the `"Filters"` statement in the `documentParameters` entry:
+
+{{<img "edit-filter-location.png" "Edit filter statement" >}}
+
+to read:
+
+```
+"Filters": "[ {\"Key\":\"tag:OS\",\"Values\":[\"Raspbian\"]}, {\"Key\":\"tag:Version\",\"Values\":[\"4\"]} ]"
+```
+
+### Targeting specific running instances
+
+Because tags are stored separately from instance metadata SSM does not allow joint queries for both metadata such as `PingState` and tags such as `OS`. If you have only a small number of instances you could make two separate lookups and use the `aws:executeScript` action to merge the two result sets. For large numbers of managed instances this is potentially slow and may run into pagination issues on the API. Here we would suggest on instead manage all relevant information in tags and do a single lookup. 
+
+
+
+From here follow the "Create FIS Experiment Template" step shown in [**FIS SSM Start Automation Setup**]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}) to add this as an action to your FIS experiment.
+
+
+
 
 
 ```bash
