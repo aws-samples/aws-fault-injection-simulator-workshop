@@ -1,7 +1,7 @@
 ---
 title: "Targeting on-prem instances"
 weight: 20
-draft: true
+draft: false
 services: false
 ---
 
