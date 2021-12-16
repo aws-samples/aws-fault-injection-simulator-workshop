@@ -7,7 +7,7 @@ services: false
 
 Some customers use [**AWS Systems Manager for hybrid environments**](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-managedinstances.html) to manage both on-prem and cloud resources and would like to run instance-based fault injection actions against on-prem resources.
 
-In this section we discuss how to use SSM automation to target on-prem instances with the same SSM runbooks used for EC2 instances.
+In this section we discuss how to use SSM automation (SSMA) to target on-prem instances with the same SSM runbooks used for EC2 instances.
 
 {{% notice warning %}}
 Some aspects of using hybrid instances may require activation of "advanced" tier. Please be aware that enabling advanced tier may incur substantial additional [**costs**](https://aws.amazon.com/systems-manager/pricing/#On-Premises_Instance_Management).
@@ -65,6 +65,10 @@ with an SSM assume role trust policy:
 To create a role, save the two JSON blocks above into files named `iam-hybrid-demo-policy.json` and `iam-hybrid-demo-trust.json` and run the following CLI commands to create a role named `FisWorkshopSsmHybridDemoRole`:
 
 ```bash
+# Set required variables
+REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
+ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
+
 cd ~/environment/aws-fault-injection-simulator-workshop
 cd workshop/content/030_basic_content/090_scenarios/020_targeting_hybrid_instances
 
@@ -211,16 +215,30 @@ HYBRID_DOCUMENT_ARN=arn:aws:ssm:${REGION}:${ACCOUNT_ID}:document/${HYBRID_DOCUME
 echo $HYBRID_DOCUMENT_ARN
 ```
 
-Assuming you have managed instances you can validate the SSM document by invoking it directly like this:
+Assuming you have managed instances you can validate the SSM document by invoking it directly like this. 
+
+{{% notice note %}}
+Invocation on the command line requires additional square brackets around the individual parameter values independent of the parameter type defined in the SSM document. Complex parameters passed through to SSM documents may additionally require escaping quotes as show below
+{{% /notice %}}
 
 ```bash
-# This works
+# Select all running managed instances (default with no Filters set)
 aws ssm start-automation-execution \
   --document-name "TargetHybridInstances" \
-  --parameters '{"AutomationAssumeRole":["'${HYBRID_ROLE_ARN}'"],"DocumentName":["AWSFIS-Run-CPU-Stress"],"DocumentParameters":["{ \"DurationSeconds\": \"120\" }"],"Filters":["{\"Key\":\"PingStatus\",\"Values\":[\"Online\"]}","{\"Key\":\"ResourceType\",\"Values\":[\"ManagedInstance\"]}"]}'
+  --parameters '{"AutomationAssumeRole":["'${HYBRID_ROLE_ARN}'"],"DocumentName":["AWSFIS-Run-CPU-Stress"],"DocumentParameters":["{ \"DurationSeconds\": \"120\" }"],"Filters":["[{\"Key\":\"PingStatus\",\"Values\":[\"Online\"]},{\"Key\":\"ResourceType\",\"Values\":[\"ManagedInstance\"]}]"] }'
 ```
 
-Once started you can examine the progress by navigating to the [**SSM Automation console**](https://us-west-2.console.aws.amazon.com/systems-manager/automation/executions?region=us-west-2) and selecting the execution ID from the invocation.
+and 
+
+```bash
+# Select all instances with tags OS=Raspbian and Version=4
+aws ssm start-automation-execution \
+  --document-name "TargetHybridInstances" \
+  --parameters '{"AutomationAssumeRole":["'${HYBRID_ROLE_ARN}'"],"DocumentName":["AWSFIS-Run-CPU-Stress"],"DocumentParameters":["{ \"DurationSeconds\": \"120\" }"],"Filters":["[{\"Key\":\"tag:OS\",\"Values\":[\"Raspbian\"]},{\"Key\":\"tag:Version\",\"Values\":[\"4\"]}]"] }'
+
+```
+
+Once started you can examine the progress by navigating to the [**SSM Automation console**](https://console.aws.amazon.com/systems-manager/automation/executions) and selecting the execution ID from the invocation.
 
 
 ### Create FIS template
@@ -228,6 +246,7 @@ Once started you can examine the progress by navigating to the [**SSM Automation
 As we saw in the **Create FIS Experiment Template** subsecton of [**FIS SSM Start Automation Setup**]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}), we need to substitute some ARN values into the FIS template. For convenience and to make the JSON string escaping easier we will do this with some shell substitutions. First we set the relevant environment variables:
 
 ```bash
+ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
 REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
 
 FIS_WORKSHOP_ROLE_ARN=arn:aws:iam::${ACCOUNT_ID}:role/FisWorkshopServiceRole
@@ -235,7 +254,11 @@ LINUX_STRESS_ARN=arn:aws:ssm:${REGION}::document/AWSFIS-Run-CPU-Stress
 
 ```
 
-The we use a bash trick to substitute them into our FIS template and write it to disk as `fis-hybrid-target.json`. Note: the 5 backslashes are escapes required for multiple evaluation steps. See the final FIS template for a more human readable result.
+Then we use a bash trick to substitute them into our FIS template and write it to disk as `fis-hybrid-target.json`. 
+
+{{% notice note %}}
+Because we are doing an additional string evaluation we need to add extra escape characters to the source string leading to the 5 backslashes. See the final FIS template for a more human readable result with one level of escapes removed.
+{{% /notice %}}
 
 ```bash
 cat > fis-hybrid-target.json <<EOT
@@ -251,7 +274,7 @@ cat > fis-hybrid-target.json <<EOT
     "actions": {
         "terminateInstances": {
             "actionId": "aws:ssm:start-automation-execution",
-            "description": "Terminate Instances in AZ",
+            "description": "Managed instances run-command CPU Stress",
             "parameters": {
                 "maxDuration": "PT3M",
                 "documentArn": "${HYBRID_DOCUMENT_ARN}",
@@ -261,7 +284,10 @@ cat > fis-hybrid-target.json <<EOT
             }
         }
     },
-    "roleArn": "${FIS_WORKSHOP_ROLE_ARN}"
+    "roleArn": "${FIS_WORKSHOP_ROLE_ARN}",
+    "tags": {
+        "Name": "ManagedInstanceCpuStress"
+    }
 }
 EOT
 
@@ -275,7 +301,7 @@ aws fis create-experiment-template \
 
 ```
 
-## Experiments
+## Running experiments
 
 ### Targeting all running hybrid instances
 
@@ -305,92 +331,11 @@ to read:
 "Filters": "[ {\"Key\":\"tag:OS\",\"Values\":[\"Raspbian\"]}, {\"Key\":\"tag:Version\",\"Values\":[\"4\"]} ]"
 ```
 
+## Learnings and next steps
+
+The approach outline above provides a generic way to run SSM documents on on-prem managed instances. You may want to expand the SSMA document to suit your needs, e.g. with custom parameters for easier targeting or with more complex selection mechanisms.
+
 ### Targeting specific running instances
 
-Because tags are stored separately from instance metadata SSM does not allow joint queries for both metadata such as `PingState` and tags such as `OS`. If you have only a small number of instances you could make two separate lookups and use the `aws:executeScript` action to merge the two result sets. For large numbers of managed instances this is potentially slow and may run into pagination issues on the API. Here we would suggest on instead manage all relevant information in tags and do a single lookup. 
+Because tags are stored separately from instance metadata SSM does not allow joint queries for both metadata such as `PingState` and tags such as `OS`. If you have only a small number of instances you could make two separate lookups and use the `aws:executeScript` action to merge the two result sets. For large numbers of managed instances this is potentially slow and may run into pagination issues on the API. Here we would suggest to instead manage all relevant information in tags and do a single lookup. 
 
-
-
-From here follow the "Create FIS Experiment Template" step shown in [**FIS SSM Start Automation Setup**]({{< ref "030_basic_content/040_ssm/050_direct_automation" >}}) to add this as an action to your FIS experiment.
-
-
-
-
-
-```bash
-aws ssm create-document \
-    --name ${HYBRID_DOCUMENT_NAME} \
-    --document-format YAML \
-    --document-type Automation \
-    --content file://hybrid-target.yaml 
-
-aws ssm update-document \
-    --name ${HYBRID_DOCUMENT_NAME} \
-    --document-format YAML \
-    --content file://hybrid-target.yaml \
-    --document-version '$LATEST'
-
-```
-
-```
-[ 
-    { "Key": "PingStatus", "Values": [ "Online" ] },
-    { "Key": "ResourceType", "Values": [ "ManagedInstance" ] },
-    {"Key":"tag:OS","Values":["Raspbian"]}
-]
-```
-
-```bash
-aws ssm start-automation-execution \
-  --document-name ${HYBRID_DOCUMENT_NAME} \
-  --parameters "AutomationAssumeRole=arn:aws:iam::238810465798:role/FisWorkshopSsmEc2DemoRole,DocumentName=AWSFIS-Run-CPU-Stress,DocumentParameters='{ \"DurationSeconds\": \"120\" }'"
-
-aws ssm start-automation-execution \
-  --document-name ${HYBRID_DOCUMENT_NAME} \
-  --parameters "AutomationAssumeRole=arn:aws:iam::238810465798:role/FisWorkshopSsmEc2DemoRole,DocumentName=AWSFIS-Run-CPU-Stress,DocumentParameters='{ \"DurationSeconds\": \"120\",\"Filters\": [ { \"Key\": \"PingStatus\", \"Values\": [ \"Online\" ] }, { \"Key\": \"ResourceType\", \"Values\": [ \"ManagedInstance\" ] }, {\"Key\":\"tag:OS\",\"Values\":[\"Raspbian\"]} ] }'"
-
-```
-
-```bash
-# This fails because of linked filters
-aws ssm start-automation-execution \
-  --document-name "TargetHybridInstances" \
-  --document-version "\$DEFAULT" \
-  --parameters '{"AutomationAssumeRole":["arn:aws:iam::238810465798:role/FisWorkshopSsmHybridDemoRole"],"DocumentName":["AWSFIS-Run-CPU-Stress"],"DocumentParameters":["{ \"DurationSeconds\": \"120\" }"],"Filters":["{\"Key\":\"PingStatus\",\"Values\":[\"Online\"]}","{\"Key\":\"ResourceType\",\"Values\":[\"ManagedInstance\"]}","{\"Key\":\"tag:OS\",\"Values\":[\"Raspbian\"]}"]}' \
-  --region us-west-2
-```
-
-```bash
-# This works
-aws ssm start-automation-execution \
-  --document-name "TargetHybridInstances" \
-  --document-version "\$DEFAULT" \
-  --parameters '{"AutomationAssumeRole":["arn:aws:iam::238810465798:role/FisWorkshopSsmHybridDemoRole"],"DocumentName":["AWSFIS-Run-CPU-Stress"],"DocumentParameters":["{ \"DurationSeconds\": \"120\" }"],"Filters":["{\"Key\":\"tag:OS\",\"Values\":[\"Raspbian\"]}"]}' \
-  --region us-west-2
-```
-
-```bash
-# This works
-aws ssm start-automation-execution \
-  --document-name "TargetHybridInstances" \
-  --document-version "\$DEFAULT" \
-  --parameters '{"AutomationAssumeRole":["arn:aws:iam::238810465798:role/FisWorkshopSsmHybridDemoRole"],"DocumentName":["AWSFIS-Run-CPU-Stress"],"DocumentParameters":["{ \"DurationSeconds\": \"120\" }"],"Filters":["{\"Key\":\"PingStatus\",\"Values\":[\"Online\"]}","{\"Key\":\"ResourceType\",\"Values\":[\"ManagedInstance\"]}"]}' \
-  --region us-west-2
-```
-
----
-
-```bash
-aws ssm create-document \
-    --name ${HYBRID_DOCUMENT_NAME}-converted \
-    --document-format YAML \
-    --document-type Automation \
-    --content file://hybrid-target-stringconverter.yaml 
-
-aws ssm start-automation-execution \
-  --document-name ${HYBRID_DOCUMENT_NAME}-converted \
-  --document-version "\$DEFAULT" \
-  --parameters '{"AutomationAssumeRole":["arn:aws:iam::238810465798:role/FisWorkshopSsmHybridDemoRole"],"DocumentName":["AWSFIS-Run-CPU-Stress"],"DocumentParameters":["{ \"DurationSeconds\": \"120\" }"],"Filters":["[{\"Key\":\"tag:OS\",\"Values\":[\"Raspbian\"]}]"]}' \
-  --region us-west-2
-
-```
