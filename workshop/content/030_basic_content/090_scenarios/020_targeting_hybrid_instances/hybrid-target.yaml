@@ -1,0 +1,74 @@
+---
+description: Run SSM command on SSM hybrid instances
+schemaVersion: '0.3'
+assumeRole: "{{ AutomationAssumeRole }}"
+parameters:
+  AutomationAssumeRole:
+    type: String
+    description: "The ARN of the role that allows Automation to perform
+      the actions on your behalf."
+  DocumentName:
+    type: String
+    description: "SSM document name to run on hybrid instances"
+  DocumentParameters:
+    type: StringMap
+    description: "Parameters to pass to SSM document run on hybrid instances (string to deal with FIS serialization bug)"
+  Filters:
+    # Normally this would be a MapList. 
+    # Currently passing as string and converting to deal with some serialization complexity.
+    type: String
+    description: '(Optional) Selector JSON for DescribeInstanceInformation as described in CLI/API docs. Default [{"Key":"PingStatus","Values":["Online"]},{"Key":"ResourceType","Values":["ManagedInstance"]}]'
+    default: "[{\"Key\":\"PingStatus\",\"Values\":[\"Online\"]},{\"Key\":\"ResourceType\",\"Values\":[\"ManagedInstance\"]}]" 
+mainSteps:
+# ------------------------------------------------------------------
+# Unpack a JSON string to JSON to deal with serialization complexity
+- name: FormatConverter
+  action: aws:executeScript
+  onFailure: 'step:ExitHook'
+  onCancel: 'step:ExitHook'
+  timeoutSeconds: 60
+  inputs:
+    Runtime: "python3.6"
+    Handler: "script_handler"
+    InputPayload: 
+      JSONstring: "{{Filters}}"
+    Script: |
+      import json
+      def script_handler(events, context):
+          return json.loads(events.get("JSONstring","{}"))
+  outputs:
+    - Name: Filters
+      Selector: "$.Payload"
+      Type: MapList
+# ------------------------------------------------------------------
+# Select managed instances. Note that you can filter EITHER on tags
+# OR on instance properties but not both. 
+- name: SelectHybridInstances
+  action: aws:executeAwsApi
+  onFailure: 'step:ExitHook'
+  onCancel: 'step:ExitHook'
+  timeoutSeconds: 60
+  inputs:
+    Service: ssm
+    Api: DescribeInstanceInformation
+    Filters: "{{ FormatConverter.Filters }}"
+  outputs:
+    - Name: InstanceIds
+      Selector: "$..InstanceId"
+      Type: StringList
+# ------------------------------------------------------------------
+# Execute the DocumentName / DocumentParameters from inputs on the 
+# instances selected in previous step.
+- name: DoStuff
+  action: 'aws:runCommand'
+  inputs:
+    DocumentName: "{{ DocumentName }}"
+    InstanceIds:
+      - '{{SelectHybridInstances.InstanceIds}}'
+    Parameters: "{{ DocumentParameters}}"
+# ------------------------------------------------------------------
+# NOOP exit point to allow skipping steps if selection fails
+- name: ExitHook
+  action: aws:sleep
+  inputs:
+    Duration: PT1S
