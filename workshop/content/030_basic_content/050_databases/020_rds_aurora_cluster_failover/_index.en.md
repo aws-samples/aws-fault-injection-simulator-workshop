@@ -102,7 +102,13 @@ To access your Aurora database, you can extract the connection information from 
 Using the information you can open another terminal, e.g. from the same instance you were using for testing, and connect to your Aurora database with the retrieved secret values:
 
 ```bash
-mysql -h HOST -u USERNAME -p DBNAME
+AURORA_HOST=[host value from secret]
+AURORA_USER=[username value from secret]
+AURORA_DBNM=[dbname value from secret]
+```
+
+```bash
+mysql -h ${AURORA_HOST} -u ${AURORA_USER} -p ${AURORA_DBNM}
 ```
 
 you can then run fault injection queries as further explained in this [**blog post**](https://aws.amazon.com/blogs/architecture/perform-chaos-testing-on-your-amazon-aurora-cluster/) and observe the effect on the test script, e.g.:
