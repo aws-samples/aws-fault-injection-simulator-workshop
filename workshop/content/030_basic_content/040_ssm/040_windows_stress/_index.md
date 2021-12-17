@@ -8,6 +8,10 @@ services: true
 This section requires that you have a Remote Desktop Protocol (RDP) client on your local machine. This section cannot be performed from a Cloud9 instance. 
 {{% /notice %}}
 
+{{% notice warning %}}
+The shell syntax in this section is written for bash. If you are on a Mac with zsh as default shell please switch to bash to execute the commands in this section.
+{{% /notice %}}
+
 ## Experiment idea
 
 In this section we are exploring tooling so we will start without a hypothesis. However, we will provide some learnings and next steps at the end.
@@ -66,8 +70,13 @@ We will use the Windows task manager to observe increased CPU load. To do this w
 
 When we deployed the instance we didn't use SSH Keys, and we don't know the password. However, with the SSM Agent along with the right IAM privileges we have a break glass scenario where we can reset the password. Please adjust the value of `TMP_PASSWORD` and use the commands below to find the InstanceId of the `FisWindowsCPUStress` instance and help you reset the admin password to the password of choice. 
 
+{{% notice warning %}}
+The password reset command will report "success" even if a trivial password is picked but will not reset the password in that case. Please pick a password with sufficient complexity (uppercase, lowercase, numbers, symbols) to ensure successfull password reset.
+{{% /notice %}}
+
 ```bash
 # For readability - passing passwords this way is not secure
+# Pick complex password
 TMP_PASSWORD=ENTER_NEW_PASSWORD_HERE
 ```
 
@@ -75,12 +84,13 @@ TMP_PASSWORD=ENTER_NEW_PASSWORD_HERE
 # For readability and convenience
 TMP_INSTANCE=$(  aws ec2 describe-instances --filter Name=tag:Name,Values=FisWindowsCPUStress --query 'Reservations[*].Instances[0].InstanceId' --output text )
 
-# Reset password on instance - this is not a secure method, 
+# Reset password on instance - this is NOT a secure method, 
 # in real life use AWS-PasswordReset document
 aws ssm send-command \
   --document-name "AWS-RunPowerShellScript" \
   --document-version "1" \
-  --targets '[{"Key":"InstanceIds","Values":["'${TMP_INSTANCE}'"]}]' --parameters '{"workingDirectory":[""],"executionTimeout":["3600"],"commands":["net user administrator '${TMP_PASSWORD}'"]}' \
+  --targets '[{"Key":"InstanceIds","Values":["'${TMP_INSTANCE}'"]}]' \
+  --parameters '{"workingDirectory":[""],"executionTimeout":["3600"],"commands":["net user administrator '${TMP_PASSWORD}'"]}' \
   --timeout-seconds 600 \
   --max-concurrency "50" \
   --max-errors "0" \
@@ -96,7 +106,10 @@ We now need to connect to our EC2 Instance so we can observe the CPU being stres
 
     ```bash
     # This presumes you set TMP_INSTANCE (see above)
-    aws ssm start-session --target ${TMP_INSTANCE} --document-name AWS-StartPortForwardingSession --parameters "portNumber"=["3389"],"localPortNumber"=["56788"]
+    aws ssm start-session \
+      --target ${TMP_INSTANCE} \
+      --document-name AWS-StartPortForwardingSession \
+      --parameters portNumber=3389,localPortNumber=56788
     ```
 
 3. Once the command says `waiting for connections` you can launch the RDP client and enter `localhost:56788` for the server name and login as `administrator` with the password you set in the previous section. 
