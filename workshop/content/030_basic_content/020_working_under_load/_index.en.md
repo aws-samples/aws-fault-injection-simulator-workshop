@@ -49,7 +49,7 @@ aws lambda invoke \
     }" \
   $FIX_CLI_PARAM \
   --invocation-type Event \
-  invoke.txt 
+  /dev/null 
 ```
 
 {{% notice info %}}
@@ -115,7 +115,7 @@ for ii in 1 2 3; do
       }" \
     $FIX_CLI_PARAM \
     --invocation-type Event \
-    invoke-${ii}.txt 
+    /dev/null 
 done
 ```
 {{% notice info %}}

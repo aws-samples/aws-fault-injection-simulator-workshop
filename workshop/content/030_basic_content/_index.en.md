@@ -58,7 +58,7 @@ aws lambda invoke \
     }" \
   $FIX_CLI_PARAM \
   --invocation-type Event \
-  invoke.txt
+  /dev/null
 
 # Wait for 5min before starting additional heavy load
 sleep 300
@@ -78,7 +78,7 @@ for ii in 1 2 3; do
       }" \
     --invocation-type Event \
     $FIX_CLI_PARAM \
-    invoke-${ii}.txt 
+    /dev/null 
 done
 ```
 
