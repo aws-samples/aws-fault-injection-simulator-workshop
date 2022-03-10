@@ -109,15 +109,18 @@ export DB_MYSQL_SECRET_ARN=$( aws cloudformation describe-stacks --stack-name Fi
 export DB_MYSQL_SECRET_JSON=$( aws secretsmanager get-secret-value --secret-id ${DB_MYSQL_SECRET_ARN} --output json )
 
 # hostname  / username / dbname from secret
-export DB_HOST_NAME=$( echo $DB_MYSQL_SECRET_JSON | jq -rc '.SecretString | fromjson | .hostname' )
+export DB_HOST_NAME=$( echo $DB_MYSQL_SECRET_JSON | jq -rc '.SecretString | fromjson | .host' )
 export DB_USER_NAME=$( echo $DB_MYSQL_SECRET_JSON | jq -rc '.SecretString | fromjson | .username' )
 export DB_NAME=$( echo $DB_MYSQL_SECRET_JSON | jq -rc '.SecretString | fromjson | .dbname' )
+
+# Because now you might not have looked at the secret
+echo Password $( echo $DB_MYSQL_SECRET_JSON | jq -rc '.SecretString | fromjson | .password' )
 ```
 {{% /expand %}}
 
 ```bash
 # hostname  / username / dbname from secret
-export DB_HOST_NAME=[hostname from secret]
+export DB_HOST_NAME=[host from secret]
 export DB_USER_NAME=[username from secret]
 export DB_NAME=[dbname from secret]
 ```
