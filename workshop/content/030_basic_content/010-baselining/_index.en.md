@@ -53,7 +53,7 @@ To gain visibility into the user experience from the sysops side we've used the 
 {{< img "fis-dashboard-1.png" "CloudWatch dashboard" >}}
 
 {{%expand "Accessing the dashboard from the console" %}}
-To access the dashboard, log into the AWS console as described in [**Start the workshop**]({{< ref "020_starting_workshop" >}}). From the "**Services**" dropdown navigate to "**CloudWatch**" under "**Management & Governance**" or use the search bar. On the top left select "**Dashboards**" and choose `fis-dashboard-us-west-2` (or the appropriate dashboard's name based on the region you selected).
+To access the dashboard, log into the AWS console as described in [**Start the workshop**]({{< ref "020_starting_workshop" >}}). From the "**Services**" dropdown navigate to "**CloudWatch**" under "**Management & Governance**" or use the search bar. On the top left select "**Dashboards**" and choose `FisDashboard-us-west-2` (or the appropriate dashboard's name based on the region you selected).
 {{% /expand%}}
 
 In the next section we will cover how to measure the user experience. 
