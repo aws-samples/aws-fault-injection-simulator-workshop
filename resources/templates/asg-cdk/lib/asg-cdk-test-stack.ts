@@ -66,7 +66,10 @@ export class AsgCdkTestStack extends cdk.Stack {
     });
     instanceRole.addToPrincipalPolicy(new iam.PolicyStatement({
       resources: ['*'], // TODO find a way to query this 
-      actions: ['secretsmanager:GetSecretValue'],
+      actions: [
+        'secretsmanager:GetSecretValue',
+        'cloudformation:DescribeStacks'
+      ],
       effect: iam.Effect.ALLOW
     }));
 

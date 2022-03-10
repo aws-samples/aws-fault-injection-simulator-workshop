@@ -93,16 +93,41 @@ If you were watching the output of your test script carefully you might also hav
 
 As this was essentially the same as the previous [**RDS DB Instance Reboot**]({{< ref "030_basic_content/050_databases/010_rds_database_reboot" >}}) section there are no new learnings here.
 
-However, you may want to experiment further with built-in Aurora [**fault injection queries**](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.FaultInjectionQueries.html).
+However, you may want to experiment further with built-in Aurora fault injenction queries for  [**MySQL**](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.FaultInjectionQueries.html) and [**PostgreSQL**](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Managing.FaultInjectionQueries.html).
 
-To access your Aurora database, you can extract the connection information from the [**AWS Secrets Manager console**](https://console.aws.amazon.com/secretsmanager/home?#!/secret?name=FisAuroraSecret) by selecting the `FisAuroraSecret` and selecting **"Retrieve secret value"**:
+E.g. for the Aurora MySQL database provisioned in this workshop, you can extract the connection information from the [**AWS Secrets Manager console**](https://console.aws.amazon.com/secretsmanager/home?#!/secret?name=FisAuroraSecret) by selecting the `FisAuroraSecret` and selecting **"Retrieve secret value"**:
 
 {{< img "ssm-get-secret.en.png" "Retrieve database credentials from Secrets Manager" >}}
 
 Using the information you can open another terminal, e.g. from the same instance you were using for testing, and connect to your Aurora database with the retrieved secret values:
 
+{{% expand "Expand to see scripted version" %}}
+
 ```bash
-mysql -h HOST -u USERNAME -p DBNAME
+# Query Secret ARN and JSON content for convenience
+export DB_MYSQL_SECRET_ARN=$( aws cloudformation describe-stacks --stack-name FisStackRdsAurora --query "Stacks[*].Outputs[?OutputKey=='FisMysqlSecret'].OutputValue" --output text )
+export DB_MYSQL_SECRET_JSON=$( aws secretsmanager get-secret-value --secret-id ${DB_MYSQL_SECRET_ARN} --output json )
+
+# hostname  / username / dbname from secret
+export DB_HOST_NAME=$( echo $DB_MYSQL_SECRET_JSON | jq -rc '.SecretString | fromjson | .hostname' )
+export DB_USER_NAME=$( echo $DB_MYSQL_SECRET_JSON | jq -rc '.SecretString | fromjson | .username' )
+export DB_NAME=$( echo $DB_MYSQL_SECRET_JSON | jq -rc '.SecretString | fromjson | .dbname' )
+```
+{{% /expand %}}
+
+```bash
+# hostname  / username / dbname from secret
+export DB_HOST_NAME=[hostname from secret]
+export DB_USER_NAME=[username from secret]
+export DB_NAME=[dbname from secret]
+```
+
+{{% notice note %}}
+The code below will not work from CloudShell because the database is in a private VPC. Make sure to run this from an EC2 instances with access to the VPC"
+{{% /notice %}}
+
+```bash
+mysql -h $DB_HOST_NAME -u $DB_USER_NAME -p $DB_NAME
 ```
 
 you can then run fault injection queries as further explained in this [**blog post**](https://aws.amazon.com/blogs/architecture/perform-chaos-testing-on-your-amazon-aurora-cluster/) and observe the effect on the test script, e.g.:
@@ -111,3 +136,4 @@ you can then run fault injection queries as further explained in this [**blog po
 ALTER SYSTEM CRASH NODE;
 ```
 
+Note that in contrast to the FIS actions these actions will only affect the connection making the queries. All other connections to the database will be unaffected by this simulation.
