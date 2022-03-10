@@ -40,7 +40,7 @@ Copy/Paste the following code in your CloudShell terminal (you can paste the who
 
 ```bash
 # Update to the latest stable release of npm and nodejs.
-sudo nvm install stable 
+sudo npm install stable 
 
 # Install typescript
 sudo npm install -g typescript
