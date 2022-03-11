@@ -34,17 +34,6 @@ and paste the following policy. This policy is designed to allow you to freely t
             "Resource": "*"
         },
         {
-            "Sid": "AllowFISExperimentLoggingActionsCloudwatch",
-            "Effect": "Allow",
-            "Action": [
-                "logs:CreateLogDelivery",
-                "logs:PutResourcePolicy",
-                "logs:DescribeResourcePolicies",
-                "logs:DescribeLogGroups"
-            ],
-            "Resource": "*"
-        },
-        {
             "Sid": "AllowFISExperimentRoleReadOnly",
             "Effect": "Allow",
             "Action": [
