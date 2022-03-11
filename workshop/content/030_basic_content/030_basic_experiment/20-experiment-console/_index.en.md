@@ -85,7 +85,7 @@ For "Log groups" enter `/fis-workshop/fis-logs` and select the relevant entry:
 
 #### Template tags
 
-AWS FIS tracks the temmplate name as the special tag `Name` which is displayed in the "Name" field of the experiment template list view. In addition to the Name tag that propagated from setting it in the "Description, name and permission" card, we can optionally attach tags to our template. Tags can be used in IAM policy [**condition keys**](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsfaultinjectionsimulator.html#awsfaultinjectionsimulator-fis_Service) to control access to the experiment template. 
+AWS FIS tracks the template name as the special tag `Name` which is displayed in the "Name" field of the experiment template list view. In addition to the Name tag that propagated from setting it in the "Description, name and permission" card, we can optionally attach tags to our template. Tags can be used in IAM policy [**condition keys**](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsfaultinjectionsimulator.html#awsfaultinjectionsimulator-fis_Service) to control access to the experiment template. 
 
 For this experiment we will make no changes here.
 
