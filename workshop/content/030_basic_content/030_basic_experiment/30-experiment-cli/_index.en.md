@@ -18,6 +18,7 @@ In this section we will show you how to create an experiment using AWS FIS templ
         "targets": {},
         "roleArn": "arn:aws:iam:...",
         "stopConditions": [],
+        "logConfiguration": {},
         "tags": {}
     }
 }
@@ -137,12 +138,25 @@ E.g.: to select an instance that is `running` in `us-east-2a` we would add the f
 ]
 ```
 
+### Logging configuration
+
+[**Experiment logging**](https://docs.aws.amazon.com/fis/latest/userguide/monitoring-logging.html) can be enabled in the `logConfiguration` section of the template. For logging to CloudWatch similar to the previous section would look like this (with the region and account number filled in appropriately):
+
+```json
+"logConfiguration": {
+    "cloudWatchLogsConfiguration": {
+        "logGroupArn": "arn:aws:logs:YOUR_REGION_HERE:YOUR_ACCOUNT_NUMBER_HERE:log-group:/fis-workshop/fis-logs:*"
+    },
+    "logSchemaVersion": 1
+},
+```
+
 ### Finished template
 
 Using the above, this would be the finished template. 
 
 {{% notice note %}}
-Before using this template, please ensure that you replace the ARN for the FIS execution role on the last line with the ARN of the role you you created in the [**Configuring permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions">}}) section.
+Before using this template, please ensure that you replace the ARN for the FIS execution role on the last line with the ARN of the role you  created in the [**Configuring permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions">}}) section and appropriately set the region and account number for the log group ARN.
 {{% /notice %}}
 
 ```json
@@ -181,7 +195,13 @@ Before using this template, please ensure that you replace the ARN for the FIS e
             "source": "none"
         }
     ],
-    "roleArn": "arn:aws:iam::YOUR_ACCOUNT_NUMBER_HERE:role/FisWorkshopServiceRole"
+    "roleArn": "arn:aws:iam::YOUR_ACCOUNT_NUMBER_HERE:role/FisWorkshopServiceRole",
+    "logConfiguration": {
+        "cloudWatchLogsConfiguration": {
+            "logGroupArn": "arn:aws:logs:YOUR_REGION_HERE:YOUR_ACCOUNT_NUMBER_HERE:log-group:/fis-workshop/fis-logs:*"
+        },
+        "logSchemaVersion": 1
+    },
 }
 ```
 

@@ -21,6 +21,7 @@ export class AsgCdkTestStack extends cdk.Stack {
 
     // Set some constants for convenience
 
+    const fisLogGroup = '/fis-workshop/fis-logs';
     const nginxAccessLogGroup = '/fis-workshop/asg-access-log';
     const nginxErrorLogGroup = '/fis-workshop/asg-error-log';
     
@@ -272,6 +273,13 @@ export class AsgCdkTestStack extends cdk.Stack {
     const lbUrl = new cdk.CfnOutput(this, 'FisAsgUrl', {value: 'http://' + lb.loadBalancerDnsName});
 
     // Set up logs, metrics, and dashboards
+
+    const logGroupFisLogs = new log.LogGroup(this, 'FisLogGroupFisLogs', {
+      logGroupName: fisLogGroup,
+      retention: log.RetentionDays.ONE_WEEK,
+    });
+
+    const outputFisLog = new cdk.CfnOutput(this, 'FisLogsArn', {value: logGroupFisLogs.logGroupArn});
 
     const logGroupNginxAccess = new log.LogGroup(this, 'FisLogGroupNginxAccess', {
       logGroupName: nginxAccessLogGroup,

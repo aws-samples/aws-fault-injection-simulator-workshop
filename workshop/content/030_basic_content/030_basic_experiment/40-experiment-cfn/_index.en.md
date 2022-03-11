@@ -98,6 +98,12 @@ We can wrap this into the `Resources` section of a [**CloudFormation template**]
                 ],
                 "RoleArn": {
                     "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/FisWorkshopServiceRole"
+                },
+                "LogConfiguration": {
+                    "CloudWatchLogsConfiguration": {
+                        "LogGroupArn": { "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/fis-workshop/fis-logs:*" }
+                    },
+                    "logSchemaVersion": 1
                 }
             }
         }
