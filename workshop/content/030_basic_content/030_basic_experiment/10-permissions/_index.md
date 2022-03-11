@@ -16,12 +16,34 @@ Navigate to the [**IAM console**](https://console.aws.amazon.com/iam/home?#/poli
 
 {{< img "create-policy-1.en.png" "Create AWS FIS service policy" >}}
 
-and paste the following policy. Take the time to look at how broad these permissions are:
+and paste the following policy. This policy is designed to allow you to freely test during the workshop but take the time to look at how broad these permissions are. We suggest limiting this policy using resource names and conditions before using FIS in production:
 
 ```json
 {
     "Version": "2012-10-17",
     "Statement": [
+        {
+            "Sid": "AllowFISExperimentLoggingActionsCloudwatch",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogDelivery",
+                "logs:PutResourcePolicy",
+                "logs:DescribeResourcePolicies",
+                "logs:DescribeLogGroups"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowFISExperimentLoggingActionsCloudwatch",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogDelivery",
+                "logs:PutResourcePolicy",
+                "logs:DescribeResourcePolicies",
+                "logs:DescribeLogGroups"
+            ],
+            "Resource": "*"
+        },
         {
             "Sid": "AllowFISExperimentRoleReadOnly",
             "Effect": "Allow",

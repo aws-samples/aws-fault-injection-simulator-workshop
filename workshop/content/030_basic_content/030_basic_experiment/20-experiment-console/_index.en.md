@@ -28,9 +28,9 @@ Navigate to the [**FIS console**](https://console.aws.amazon.com/fis/home?#Home)
 **_Note:_** if you've used AWS FIS before you may not see the splash screen. In that case select "Experiment templates" in the burger menu on the left and access **"Create experiment template"** from there.
 {{% /notice %}}
 
-#### Template description and permissions
+#### Template description, name, and permissions
 
-Let's write a description for our experiment template and select an IAM role to use when performing the experiment. Go to the "Description and permission" section. For "Description" enter `Terminate half of the instances in the auto scaling group` and for "IAM Role" select the `FisWorkshopServiceRole` role you created previously.
+Let's write a description for our experiment template and select an IAM role to use when performing the experiment. Go to the "Description, name and permission" section. For "Description" enter `Terminate half of the instances in the auto scaling group`, for "Name" enter `FisWorkshopExp1Run1` and for "IAM Role" select the `FisWorkshopServiceRole` role you created previously.
 
 {{< img "create-template-2-description.en.png" "Set FIS description and role" >}}
 
@@ -72,11 +72,22 @@ AWS FIS provides stop conditions tied to [**Amazon CloudWatch alarms**](https://
 {{< img "create-template-4-stop-conditions-empty.en.png" "Skip Stop Condition section" >}} 
 
 
-#### Template name and tags
+#### Logs
 
-Finally we can attach tags to our template. Tags can be used in IAM policy [**condition keys**](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsfaultinjectionsimulator.html#awsfaultinjectionsimulator-fis_Service) to control access to the experiment template. AWS FIS also recognizes the special tag `Name` which is displayed in the "Name" field of the experiment template list view. 
+To write logs of FIS events to CloudWatch, expand the "Logs" card, check the "Send to CloudWatchLogs" checkbox, and select "Browse" to select the pre-created log group:
 
-For this experiment we will give our template a short name to be used on the list page. To do this scroll to the "Tags" section at the bottom, select **"Add new tag"**, then enter `Name` in the "Key" field and `FisWorkshopExp1` for "Value"
+{{< img "create-template-5-logs-1.en.png" "Enable CloudWatch logging for FIS" >}} 
+
+For "Log groups" enter `/fis-workshop/fis-logs` and select the relevant entry: 
+
+{{< img "create-template-5-logs-2.en.png" "Browse for log group" >}} 
+
+
+#### Template tags
+
+AWS FIS tracks the temmplate name as the special tag `Name` which is displayed in the "Name" field of the experiment template list view. In addition to the Name tag that propagated from setting it in the "Description, name and permission" card, we can optionally attach tags to our template. Tags can be used in IAM policy [**condition keys**](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsfaultinjectionsimulator.html#awsfaultinjectionsimulator-fis_Service) to control access to the experiment template. 
+
+For this experiment we will make no changes here.
 
 {{< img "create-template-2-name.en.png" "Set FIS template name" >}}
 
@@ -149,13 +160,29 @@ Look at the "State" entry. If this still shows pending, feel free to select the 
 
 {{< img "run-experiment-1-fail.en.png" "Start experiment confirmation" >}}
 
-Click on the failed result to get more information about why it failed. The message should say `Target resolution returned empty set`. To see why this would happen, have a look at the auto scaling group from which we tried to select instances. Navigate to the [**EC2 console**](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select **"Auto Scaling Groups"** on the bottom of the burger menu, and search for `FisStackAsg-`:
+Click on the failed result to get more information about why it failed. The message should say `Target resolution returned empty set`. Scroll down further and select "Timeline":
+
+{{< img "run-experiment-1-fail-2.en.png" "Start experiment confirmation" >}}
+
+In this case this doesn't show anything because the experiment failed to run entirely, but for larger experiments you would see when each action was active in the timeline.
+
+Next navigate to the [**CloudWatch Logs console**](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Ffis-logs) and select the `/fis-workshop/fis-logs` log group
+
+{{< img "run-experiment-1-fail-3.en.png" "Start experiment confirmation" >}}
+
+then expand the topmost stream under "Log streams"
+
+{{< img "run-experiment-1-fail-4.en.png" "Start experiment confirmation" >}}
+
+All this shows that FIS failed to identify virtual machines that satisfied the condition of being "50% of instances with "Name" tag of `FisStackAsg/ASG`.
+
+To see why this would happen, have a look at the auto scaling group from which we tried to select instances. Navigate to the [**EC2 console**](https://console.aws.amazon.com/ec2autoscaling/home?#/details), select **"Auto Scaling Groups"** on the bottom of the burger menu, and search for `FisStackAsg-`:
 
 {{< img "review-1-asg-1.en.png" "Review ASG" >}}
 
 ## Learning and improving
 
-It looks like our ASG was configured to scale down to just one instance while idle. Since we can't shut down half of one instance our 50% selector came up empty and the experiment failed.
+It looks like our ASG was configured to scale down to just one instance while idle. Since we can't shut down half of one instance, our 50% selector came up empty and the experiment failed.
 
 **Great! While this wasn't really what we expected, we just found a flaw in our configuration that would severely affect our system's resilience! Let's fix it and try again!**
 
