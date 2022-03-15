@@ -54,7 +54,7 @@ The AWS CloudFormation template uses the same format as the API but capitalizes 
 }
 ```
 
-We can wrap this into the `Resources` section of a [**CloudFormation template**](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/gettingstarted.templatebasics.html#gettingstarted.templatebasics.multiple). Additionally CloudFormation allows us to use [**pseudo parameters**](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html#cfn-pseudo-param-accountid) which we can use to automatically insert the account number into the role definition using the `AWS::AccountId` parameter in conjunction with the [`Fn::Sub`](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-sub.html) function. Thus, a simple CFN template would become:
+We can wrap this into the `Resources` section of a [**CloudFormation template**](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/gettingstarted.templatebasics.html#gettingstarted.templatebasics.multiple). Additionally CloudFormation allows us to use [**pseudo parameters**](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html#cfn-pseudo-param-accountid) which we can use to automatically insert the account number into the role definition using the `AWS::AccountId` and `AWS::Region` parameters in conjunction with the [`Fn::Sub`](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-sub.html) function. Thus, a simple CFN template would become:
 
 ```json
 {
@@ -101,9 +101,11 @@ We can wrap this into the `Resources` section of a [**CloudFormation template**]
                 },
                 "LogConfiguration": {
                     "CloudWatchLogsConfiguration": {
-                        "LogGroupArn": { "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/fis-workshop/fis-logs:*" }
+                        "LogGroupArn": {
+                            "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/fis-workshop/fis-logs:*"
+                        }
                     },
-                    "logSchemaVersion": 1
+                    "LogSchemaVersion": 1
                 }
             }
         }
