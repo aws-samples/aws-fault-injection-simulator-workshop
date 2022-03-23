@@ -334,6 +334,12 @@ Outputs:
   ServerlessFaultFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt ServerlessFaultFunctionRole.Arn
+  FisWorkshopLambdaSsmRole:
+    Description: "IAM Role created for SSM exectuion"
+    Value: !GetAtt FisWorkshopLambdaSsmRole.Arn
+  FisWorkshopLambdaServiceRole:
+    Description: "IAM Role created for FIS exectuion"
+    Value: !GetAtt FisWorkshopLambdaServiceRole.Arn
   SsmDocumentArn: 
     Description: "ARN of SSM PutParameterShim documment for use with FIS"
     Value: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${PutParameterShim}"
