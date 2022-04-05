@@ -33,7 +33,7 @@ In the "Actions" section select the **"Add Action"** button.
 
 Name the Action as `StressCPUViaSSM`, and under "Action Type" select `aws:ssm:send-command/AWSFIS-Run-Cpu-Stress`. This is an out of the box action to run stress test on Linux Instances using the [**stress-ng**](https://kernel.ubuntu.com/git/cking/stress-ng.git/) tool. Set the "documentParameters" field to `{"DurationSeconds":120}` which is passed to the script and the "duration" field to `2` minutes which tells FIS how long to wait for a result. Leave the default “Target” `Instances-Target-1` and select **"Save"**. 
 
-{{< img "StressActionSettings.png" "Action Settings" >}}
+{{< img "StressActionSettings.en.png" "Action Settings" >}}
 
 This action will use [**AWS Systems Manager Run Command**](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the `AWSFIS-Run-Cpu-Stress` command document against our targets for two minutes.
 
@@ -43,7 +43,7 @@ For this action we need to designate EC2 instance targets on which to run the co
 
 You may leave the default name `Instances-Target-1` but for maintainability we rcommend using descriptive target names. Change the name to `FisWorkshop-StressLinux` (this will automatically update the name in the action as well) and make sure “Resource type” is set to `aws:ec2:instances`. To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Select **"Add new tag"** and enter a "Key" of `Name` and a "Value" of `FisLinuxCPUStress`. Finally select **"Save"**. 
 
-{{< img "EditTarget-rev1.png" "Target Settings" >}}
+{{< img "EditTarget-rev1.en.png" "Target Settings" >}}
 
 ### Creating template without stop conditions
 
@@ -56,11 +56,11 @@ We will use the linux `top` system command to observe the increased CPU load. To
 
 1. Once at the EC2 Console lets select our instance named `FisLinuxCpuStress` and click on the "Connect" button. 
 
-{{< img "SelectConnect-rev1.png" "Select Instance" >}}
+{{< img "SelectConnect-rev1.en.png" "Select Instance" >}}
 
 2. Select **"Session Manager"** and select **"Connect"**.
 
-{{< img "SessionManagerConnect.png" "Connect to EC2" >}}
+{{< img "SessionManagerConnect.en.png" "Connect to EC2" >}}
 
 This will open a session to the EC2 instance in another tab. In the new tab enter:
 
@@ -70,7 +70,7 @@ top
 
 You should now see a continuously updating display similar to the next screenshot. Initially the CPU percentage should be at or close to zero as this instance is not doing anything. Keep this tab open, we will come back once we have started our experiment. 
 
-{{< img "LinuxNoStress.png" "CPU Not Stressed" >}}
+{{< img "LinuxNoStress.en.png" "CPU Not Stressed" >}}
 
 ## Run CPU Stress Experiment
 
@@ -85,11 +85,11 @@ Keep the EC2 instance session with `top` running. In a new browser window naviga
 * confirm that you want to start the experiment
 * ensure that the "State" is `Running`
 
-{{< img "RunningState.png" "Experiment State" >}}
+{{< img "RunningState.en.png" "Experiment State" >}}
 
 In the EC2 terminal window watch the CPU percentage displayed by `top`: it should hit 100% for a few minutes and then return back to 0%. Once we have observed the action we can click the `Terminate` button to terminate our Session Manager session. 
 
-{{< img "linuxStressed.png" "Linux Stressed" >}}
+{{< img "linuxStressed.en.png" "Linux Stressed" >}}
 
 Congratulations for completing this lab! In this lab you walked through running an experiment that took action within a Linux EC2 Instance using AWS Systems Manager.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other chaos engineering tools and frameworks. 
 

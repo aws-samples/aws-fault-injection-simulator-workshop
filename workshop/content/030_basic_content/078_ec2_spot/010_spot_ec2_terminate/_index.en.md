@@ -32,7 +32,7 @@ In this experiment we will introduce an initial wait before triggering instance 
 
 For "Name" enter `AllowSomeCompletion` and add a "Description" like `Wait for some compute to happen before termination`. For "Action type" select `aws:fis:wait` and for "Action parameters" / "duration" select `3` minutes. Select **“Save”**.
 
-{{<img "wait-action.png" "Wait action definition" >}}
+{{<img "wait-action.en.png" "Wait action definition" >}}
 
 #### Action / Target definition 2
 
@@ -44,7 +44,7 @@ Following the same process as described in [**First Experiment**]({{<ref "030_ba
 
 Since we want this action to execute after an initial wait, select the `AllowSomeCompletion` action from the "Start after" drop down.
 
-{{<img "terminate-action.png" "Terminate action definition" >}}
+{{<img "terminate-action.en.png" "Terminate action definition" >}}
 
 Define targets by editing the auto-generated `Instances-Target-1` using:
 
@@ -96,11 +96,11 @@ If the experiment keeps failing, navigate to the [**StepFunctions console**](htt
 
 Finally navigate to the [**CloudWatch console**](https://console.aws.amazon.com/cloudwatch/home?#dashboards:), select the FisSpot dashboard and set a custom duration of 15min:
 
-{{<img "dashboard-custom-duration.png" "Set custom viewport duration">}}
+{{<img "dashboard-custom-duration.en.png" "Set custom viewport duration">}}
 
 You may have to wait for a few minutes for data to become available. You should then see data like this (no checkpoint happened before interruption):
 
-{{<img "terminate-no-checkpoint.png" "Spot instance terminated before checkpoint">}}
+{{<img "terminate-no-checkpoint.en.png" "Spot instance terminated before checkpoint">}}
 
 ## Learning and improving
 

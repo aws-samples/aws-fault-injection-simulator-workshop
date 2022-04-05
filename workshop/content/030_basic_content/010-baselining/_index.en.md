@@ -40,7 +40,7 @@ Once you stop laughing, stop to think: if _you_ ran a chaos experiment in dev/te
 
 Before starting our first fault injection experiment, let's take a look at our most basic infrastructure:
 
-{{< img "BasicASG-with-user.png" "Image of architecture to be injected with chaos" >}}
+{{< img "BasicASG-with-user.en.png" "Image of architecture to be injected with chaos" >}}
 
 We have a user trying to access a website running on AWS. We have designed it for high availability. We used EC2 instances with an Auto Scaling group and a load balancer to ensure that users can always reach our website even under heavy load or if an instance suddenly fails.
 
@@ -50,7 +50,7 @@ Once you've created the resources as described in [**Provision AWS resources**](
 
 To gain visibility into the user experience from the sysops side we've used the [**AWS CloudWatch agent**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/UseCloudWatchUnifiedAgent.html) to export our web server logs to [**AWS CloudWatch Logs**](https://console.aws.amazon.com/cloudwatch/home?#logsV2:log-groups/log-group/$252Ffis-workshop$252Fasg-access-log) and we created [**AWS CloudWatch Logs metrics filters**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) to track server response codes and speeds on a [**dashboard**](https://console.aws.amazon.com/cloudwatch/home?#dashboards:name=FisDashboard-us-west-2). Note that the dashboard's name is based on the region in which we deployed. If you chose a region other than `us-west-2` the dashboard's name will be different. The dashboard also shows the number of instances in our Auto Scaling Group (ASG).
 
-{{< img "fis-dashboard-1.png" "CloudWatch dashboard" >}}
+{{< img "fis-dashboard-1.en.png" "CloudWatch dashboard" >}}
 
 {{%expand "Accessing the dashboard from the console" %}}
 To access the dashboard, log into the AWS console as described in [**Start the workshop**]({{< ref "020_starting_workshop" >}}). From the "**Services**" dropdown navigate to "**CloudWatch**" under "**Management & Governance**" or use the search bar. On the top left select "**Dashboards**" and choose `FisDashboard-us-west-2` (or the appropriate dashboard's name based on the region you selected).

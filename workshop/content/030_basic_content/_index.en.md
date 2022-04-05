@@ -16,7 +16,7 @@ This workshop is broken into multiple chapters. The chapters are designed to be 
 
 This workshop is focused on how to inject fault into an existing infrastructure. For this purpose the template in the [**Provision AWS resources**]({{< ref "020_starting_workshop/010_self_paced/050_create_stack" >}}) section sets up a variety of components. Throughout this workshop we will be showing you architecture diagrams focusing on only the components relevant to the section, e.g.:
 
-{{< img "BasicASG.png" "Image of architecture to be injected with chaos" >}}
+{{< img "BasicASG.en.png" "Image of architecture to be injected with chaos" >}}
 
 You can click on these images to enlarge them.
 
