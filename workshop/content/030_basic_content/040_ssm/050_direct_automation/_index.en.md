@@ -16,7 +16,7 @@ In the previous sections we used AWS FIS actions to directly interact with AWS A
 In this section we will cover how to execute additional actions against AWS APIs that are not yet supported by FIS by using [**SSM Runbooks**](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-documents.html).
 
 
-{{< img "StressTest-with-runbook.png" "Stress test architecture" >}}
+{{< img "StressTest-with-runbook.en.png" "Stress test architecture" >}}
 
 ## Configure permissions
 

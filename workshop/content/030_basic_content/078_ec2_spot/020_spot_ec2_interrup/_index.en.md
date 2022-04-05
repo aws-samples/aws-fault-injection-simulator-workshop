@@ -40,7 +40,7 @@ Define action:
 * "Action Type": `aws:fis:wait`
 * "Action parameters" / "duration": `3` minutes
 
-{{<img "wait-action.png" "Wait action definition" >}}
+{{<img "wait-action.en.png" "Wait action definition" >}}
 
 #### Action / Target definition 2
 
@@ -53,7 +53,7 @@ Define action:
 
 We also need to set an amount of time to pass between the notification and the actual instance termination. We will set this to the minimum allowed value of `2` minutes:
 
-{{<img "terminate-action.png" "Terminate action definition" >}}
+{{<img "terminate-action.en.png" "Terminate action definition" >}}
 
 Define targets by editing the auto-generated `SpotInstances-Target-1` using:
 
@@ -105,11 +105,11 @@ If the experiment keeps failing, navigate to the [**StepFunctions console**](htt
 
 Finally navigate to the [**CloudWatch console**](https://console.aws.amazon.com/cloudwatch/home?#dashboards:), select the FisSpot dashboard and set a custom duration of 15min:
 
-{{<img "dashboard-custom-duration.png" "Set custom viewport duration">}}
+{{<img "dashboard-custom-duration.en.png" "Set custom viewport duration">}}
 
 You may have to wait for a few minutes for data to become available. You should then see data like this. In this graph a checkpoint happened at the 2minute mark and another checkpoint immediately after that resulting from the instance interruption. Notably the newly created spot instance did not have to re-do any of the work:
 
-{{<img "checkpoint-at-interrupt.png" "Checkpointing at interrupt">}}
+{{<img "checkpoint-at-interrupt.en.png" "Checkpointing at interrupt">}}
 
 
 ## Learning and improving

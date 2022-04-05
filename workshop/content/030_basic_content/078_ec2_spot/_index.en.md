@@ -15,7 +15,7 @@ EC2 Spot instances can be used with Auto Scaling groups or as worker nodes for v
 
 In this section we will use [**AWS Step Functions**](https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html) to orchestrate a hypothetical batch workload:
 
-{{<img "step-functions-runner.png" "Step Functions workflow" >}}
+{{<img "step-functions-runner.en.png" "Step Functions workflow" >}}
 
 The workflow will:
 
@@ -26,7 +26,7 @@ The workflow will:
 
 The workload is a python script, passed as [**user data**](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html), that writes metrics to CloudWatch:
 
-{{<img "full-run.png" "Full run without interrupt">}}
+{{<img "full-run.en.png" "Full run without interrupt">}}
 
 More details in the next section.
 

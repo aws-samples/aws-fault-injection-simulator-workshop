@@ -9,7 +9,7 @@ While it is possible to do this workshop from your desktop, the instructions in 
 
 To open CloudShell, navigate to the [AWS console](https://console.aws.amazon.com/console/home) and either search for "CloudShell" or click on the CloudShell icon in the menu bar:
 
-{{< img "start-cloudshell.png" "Start CloudShell" >}}
+{{< img "start-cloudshell.en.png" "Start CloudShell" >}}
 
 Once the CloudShell terminal opens, we need to check out the GitHub repository. Paste the following into your CloudShell:
 
@@ -21,13 +21,13 @@ git clone https://github.com/aws-samples/aws-fault-injection-simulator-workshop.
 
 If this is this first time you are using CloudShell you may receive a dialog box asking to confirm a multi-line paste:
 
-{{< img "cloudshell-safe-paste.png" "Confirm CloudShell multi-line paste" >}}
+{{< img "cloudshell-safe-paste.en.png" "Confirm CloudShell multi-line paste" >}}
 
 Optionally uncheck the "Ask before pasting multiline code" checkbox. Then select "Paste".
 
 You should see a git clone like this:
 
-{{< img "clone-git-repo.png" "GitHub clone" >}}
+{{< img "clone-git-repo.en.png" "GitHub clone" >}}
 
 
 ### Update tools and dependencies

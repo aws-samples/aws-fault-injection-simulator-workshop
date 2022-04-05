@@ -8,7 +8,7 @@ In the previous section we showed you a typical configuration to collect sysops 
 
 In this section we will show you how to generate and record synthetic load to reflect the user experience:
 
-{{< img "BasicASG-with-user-and-synthetics.png" "Image of architecture to be injected with chaos" >}}
+{{< img "BasicASG-with-user-and-synthetics.en.png" "Image of architecture to be injected with chaos" >}}
 
 ## Generating load against our website
 

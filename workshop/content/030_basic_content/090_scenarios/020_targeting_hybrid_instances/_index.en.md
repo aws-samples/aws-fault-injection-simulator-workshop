@@ -19,7 +19,7 @@ For this section we assume that you already have a hybrid instance setup.
 
 For illustration we will assume that you have a hybrid activation of two on-prem Raspberry Pi instances and the managed instances have been tagged in [**SSM FleetManager**](https://docs.aws.amazon.com/systems-manager/latest/userguide/tagging-managed-instances.html) with tag `OS` / value `Raspbian` and tag `Version` / value `2` and `4` respectively:
 
-{{< img "stresstest-with-runbook-hybrid.png" "Hybrid setup">}}
+{{< img "stresstest-with-runbook-hybrid.en.png" "Hybrid setup">}}
 
 ## Setup
 

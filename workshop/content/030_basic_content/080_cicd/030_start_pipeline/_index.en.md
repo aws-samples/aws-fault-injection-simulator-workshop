@@ -76,7 +76,7 @@ Open the [**AWS CodePipeline Console**](https://console.aws.amazon.com/codesuite
 You should now see the `FIS_Workshop` pipeline is in progress.
 Click on the pipeline name to view the step details.
 
-{{< img "codepipelineinprogress.png" "AWS CodePipeline in progress" >}}
+{{< img "codepipelineinprogress.en.png" "AWS CodePipeline in progress" >}}
 
 The pipeline runs in sequence, first running the Wait for the "Infrastructure_Provisioning" step, and on success starting the "FIS" step.
 
@@ -85,18 +85,18 @@ You can monitor the progress of our experiment either from the CodePipeline deta
 Navigate to the [**FIS console**](https://console.aws.amazon.com/fis/home?#Experiments). Click on the "Experiment ID" of the running experiment.
 You should see the experiment in a running status:
 
-{{< img "fisrunning.png" "Running Experiment" >}}
+{{< img "fisrunning.en.png" "Running Experiment" >}}
 
 If you expand the "instanceActions / aws:ec2:stop-instance" card (as shown above) you can see that the experiment stops the test instance, waits for 1minute, then restarts the instance.
 
 Wait a couple minutes for the instance to restart and the experiment to finish and refresh the page. You should see the experiment is completed successfully.
 
-{{< img "fissuccessfully.png" "Successful Experiment" >}}
+{{< img "fissuccessfully.en.png" "Successful Experiment" >}}
 
 Finally navigate back to the [**AWS CodePipeline Console**](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home).
 You should also see that your pipeline has completed successfully.
 
-{{< img "codepipelinesuccessfully.png" "Successful Pipeline" >}}
+{{< img "codepipelinesuccessfully.en.png" "Successful Pipeline" >}}
 
 Congratulations! You have successfully integrated a Fault Injection Simulator Experiment into a CI/CD pipeline.
 In this scenario, we completed a happy path to ensure that our infrastructure and experiment completed without error.

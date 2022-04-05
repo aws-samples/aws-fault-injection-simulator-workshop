@@ -61,7 +61,7 @@ In the "client" account window follow the same procedure outlined in the [**Acce
 
 At this point you should see a blue indicator at the top of your console indicating that you are no longer "client" account `444455556666` but are instead logged into the "server" account `111122223333` with role `FisAccessControlSecurityAdmin`. You should also be able to see your role history in the left part of the drop down indicating your origin "client" account and role.
 
-{{< img "cross-account-assumed-1.png" "Cross account role assumed" >}}
+{{< img "cross-account-assumed-1.en.png" "Cross account role assumed" >}}
 
 As this approach is based on IAM you can use instance or service roles in the "client" account or you can configure the AWS CLI to use [**profiles that assume a role**](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html) or to [**use AWS SSO**](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html). 
 

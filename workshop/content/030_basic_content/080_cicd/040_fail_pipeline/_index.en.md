@@ -19,10 +19,10 @@ We will be making a change to our CloudFormation template that creates our EC2 I
 Open the [**AWS CodeCommit Console**](https://console.aws.amazon.com/codesuite/codecommit/home?#Home) and select the `FIS_Workshop` repository. Click on `cfn_fis_demos.yaml` and select **"Edit"** in the upper right hand corner. Edit the file as shown below to enable am AWS CloudWatch alarm as a Stop Condition. 
 
 Before:
-{{< img "sourcebefore.png" "Source Before" >}}
+{{< img "sourcebefore.en.png" "Source Before" >}}
 
 After:
-{{< img "sourceafter.png" "Source After" >}}
+{{< img "sourceafter.en.png" "Source After" >}}
 
 Finally, enter your name and email at the bottom of the page and select "Commit changes". Just like our prior `git push` this will trigger the pipeline to start. 
 
@@ -44,11 +44,11 @@ We are artificially changing the alarm state. The alarm will reset to OK state a
 
 To verify the Experiment was stopped, navigate to the [**FIS console**](https://console.aws.amazon.com/fis/home?#Experiments). You should see that your latest experiment has failed due to the stop condition. 
 
-{{< img "fisfail.png" "Failed Experiment" >}}
+{{< img "fisfail.en.png" "Failed Experiment" >}}
 
 To verify that this resulted in a failed pipeline execution navigate back to the [**AWS CodePipeline Console**](https://console.aws.amazon.com/codesuite/codepipeline/home?#Home). You should see that your pipeline has also failed do to the experiment stopping.
 
-{{< img "codepipelinefail.png" "Failed Pipeline" >}}
+{{< img "codepipelinefail.en.png" "Failed Pipeline" >}}
 
 Congratulations! You have built a CI/CD pipeline, instrumented it with an AWS FIS experiment, and demonstrated both successful and failed experiment outcomes.
 
