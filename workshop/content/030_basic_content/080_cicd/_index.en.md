@@ -46,7 +46,7 @@ For demonstration purposes we have made the following choices but there are many
 
 The setup looks like this:
 
-{{< img "Continuous-Stress.png" "Continuous stress architecture" >}}
+{{< img "Continuous-Stress.en.png" "Continuous stress architecture" >}}
 
 In the next section we will:
 

@@ -29,11 +29,11 @@ All tabs in a browser profile will share the same AWS identity. As such, assumin
 
 To assume the `FisAccessControlAdmin` role navigate to the [**AWS console**](https://console.aws.amazon.com/console/home) and click on the user identity at the top to get an info drop down. From the drop-down copy the account ID (12 digit number). Finally select "Switch Roles".
 
-{{< img "switch-role-1.png" "Switch role image" >}}
+{{< img "switch-role-1.en.png" "Switch role image" >}}
 
 To define the role we would like to assume enter the account number you just copied and use the role name `FisAccessControlAdmin`. Pick a color to identify the role in the dropdown later. Since this is a privileged role we are using "red". Finally select "Switch Role".
 
-{{< img "switch-role-2.png" "Switch role data entry" >}}
+{{< img "switch-role-2.en.png" "Switch role data entry" >}}
 
 {{% notice note %}}
 We will assume that you have previously created the `FisWorkshopExp1` Experiment template from the [**First Experiment**]({{< ref "030_basic_content/030_basic_experiment" >}}) section and will use that template for the examples below but this should work with other templates as well.
@@ -41,11 +41,11 @@ We will assume that you have previously created the `FisWorkshopExp1` Experiment
 
 With the assumed role (visible at the top) navigate to the [**FIS console**](https://console.aws.amazon.com/fis/home?#ExperimentTemplates), select the `FisWorkshopExp1` template, and from the "Actions" drop down select "Start Experiment".
 
-{{< img "start-exp-1.png" "Start experiment">}}
+{{< img "start-exp-1.en.png" "Start experiment">}}
 
 Add a new tag with "Key" `Name` and "Value" `FisAccessControlAdmin`, then select "Start Experiment" and confirm you wish to start the experiment.
 
-{{< img "name-exp-1.png" "Name experiment">}}
+{{< img "name-exp-1.en.png" "Name experiment">}}
 
 Even though the `FisAccessControlAdmin` role itself does not have `ec2:TerminateInstances` privileges, the experiment will run and you will get a "Completed" or "Failed" result depending on how many instances were in the auto-scaling group, just as observed in the [**First Experiment**]({{< ref "030_basic_content/030_basic_experiment" >}}) section.
 
@@ -53,7 +53,7 @@ Just as in the First Experiment section you can also update the template as need
 
 Before the next step, return to the normal workshop role by using the same dropdown you used to assume the role, then selecting "Back to ...". 
 
-{{< img "return-role.png" "Return to workshop role">}}
+{{< img "return-role.en.png" "Return to workshop role">}}
 
 #### Execution access via FisAccessControlUser
 
@@ -63,13 +63,13 @@ With this role you can list experiments and experiment templates and run an expe
 
 To test this, navigate to the [**FIS Console**](https://console.aws.amazon.com/fis/home?#ExperimentTemplates), select "Experiment Templates", select the `FisWorkshopExp1` template, and under the "Actions" drop down select "Update experiment template". 
 
-{{< img "edit-template-user-1.png" "Edit template as user">}}
+{{< img "edit-template-user-1.en.png" "Edit template as user">}}
 
 Edit the `FisWorkshopAsg-50Percent1` "Target", set "Selection mode" to `COUNT` and "Mumber of resources" to `1`, and select "Save" on the edit modal.
 
 Select "Update experiment template" and confirm the intent to update. This will result in a failure banner informing you that the assumed role lacks the required edit/update privileges.
 
-{{< img "edit-template-user-2.png" "Edit template as user failure">}}
+{{< img "edit-template-user-2.en.png" "Edit template as user failure">}}
 
 Before the next step, return to the normal workshop role by using the same dropdown you used to assume the role, then selecting "Back to ...". 
 
@@ -81,8 +81,8 @@ Even though this role is based on the AWS managed `ReadOnlyAccess` policy, acces
 
 Navigate to the [**FIS Console**](https://console.aws.amazon.com/fis/home?#Home) and select "Experiment Templates". You will notice that no templates are listed because the user is not sufficiently privileged.
 
-{{< img "non-user-templates.png" "Unprivileged list failure for templates">}}
+{{< img "non-user-templates.en.png" "Unprivileged list failure for templates">}}
 
 Similarly if you select "Experiments" you will notice that no experiments are listed because the user is not sufficiently privileged.
 
-{{< img "non-user-experiments.png" "Unprivileged list failure for experiments">}}
+{{< img "non-user-experiments.en.png" "Unprivileged list failure for experiments">}}

@@ -272,7 +272,7 @@ for ii in 1 2 3; do
       }" \
     $FIX_CLI_PARAM \
     --invocation-type Event \
-    invoke-${ii}.txt 
+    /dev/null
 done
 ```
 

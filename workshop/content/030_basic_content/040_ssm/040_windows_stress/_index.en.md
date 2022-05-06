@@ -46,7 +46,7 @@ To find the ARN of the document that was created by the template, open a new tab
 
 Return to the FIS console and enter the ARN you copied into the "documentArn" field. Then set the "documentParameters" field to `{"durationSeconds":120}` which is passed to the script and the "duration" field to `2` minutes which tells FIS how long to wait for a result. Leave the default “Target” `Instances-Target-1` and  select **"Save"**. 
 
-{{< img "WinStressActionSettings.png" "Action Settings" >}}
+{{< img "WinStressActionSettings.en.png" "Action Settings" >}}
 
 This action will use [**AWS Systems Manager Run Command**](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) to run the `FisCpuStress-WinStressDocument` document against our targets for two minutes. 
 
@@ -56,7 +56,7 @@ For this action we need to designate EC2 instance targets on which to run the co
 
 You may leave the default name `Instances-Target-1` but for maintainability we rcommend using descriptive target names. Change the name to `FisWorkshop-StressWindows` (this will automatically update the name in the action as well) and make sure “Resource type” is set to `aws:ec2:instances`. To select our target instances by tag select "Resource tags and filters" and keep selection mode `ALL`. Select **"Add new tag"** and enter a "Key" of `Name` and a "Value" of `FisWindowsCPUStress`. Finally select **"Save"**. 
 
-{{< img "WinEditTarget-rev1.png" "Target Settings" >}}
+{{< img "WinEditTarget-rev1.en.png" "Target Settings" >}}
 
 ### Creating template without stop conditions
 
@@ -136,7 +136,7 @@ Then examine the Error output:
 
 4. Once you have RDP'ed into the Windows Instance, launch task manager by right clicking on the menu bar and selecting "Task Manager" (or by using the SHIFT-CTRL-ESC keyboard sortcut). Click on **"More details"** button and then on the **"Performance"** tab so you can see the CPU graph as shown below. 
 
-{{< img "WinNoStress.png" "Task Manager" >}}
+{{< img "WinNoStress.en.png" "Task Manager" >}}
 
 ## Run CPU Stress Experiment
 
@@ -155,7 +155,7 @@ Once the experiment is running, lets go back to the RDP session and observe the 
 
 Watch the CPU percentage, it should hit 100% for a few minutes and then return back to 0%. Once we have observed the action we can logout of the Windows Instance and hit CTRL + C on the window you ran the port forwarding command to close the session. 
  
-{{< img "WindowsStressed.png" "Windows Stressed" >}}
+{{< img "WindowsStressed.en.png" "Windows Stressed" >}}
 
 Congratulations for completing this lab! In this lab you walked through running an experiment that took action within a Windows EC2 Instance using AWS Systems Manager and a custom run command.  Using the integration between Fault Injection Simulator and AWS Systems Manager you can run scripted actions within an EC2 Instance. Through this integration you can script events against your applications or run other chaos engineering tools and frameworks. 
 
