@@ -13,7 +13,7 @@ In this section we use the open source [**chaos_lambda**](https://github.com/adh
 * change the response code of the serverless function, and
 * simulate exceptions in code execution.
 
-A similar JS library, [**failure-lambda**](https://github.com/gunnargrosch/failure-lambda) is described in the [**Serverless Chaos workshop**](https://catalog.us-east-1.prod.workshops.aws/workshops/3015a19d-0e07-4493-9781-6c02a7626c65/en-US/serverless/failure-lambda/fault-injection) and the understanding of the priciples should allow the reader to build their own in their preferred language.
+A similar JS library, [**failure-lambda**](https://github.com/gunnargrosch/failure-lambda) is described in the [**Serverless Chaos workshop**](https://catalog.us-east-1.prod.workshops.aws/workshops/3015a19d-0e07-4493-9781-6c02a7626c65/en-US/serverless/failure-lambda/fault-injection) and the understanding of the principles should allow the reader to build their own in their preferred language.
 
 ## Architecture
 
@@ -45,11 +45,11 @@ We will observe these changes by continuously checking response time, response c
 {{% /notice %}}
 
 {{% notice note %}}
-In earlier sections we have described how confgure to service roles, create FIS experiment templates, and create SSM automaton documents. For this section, we have created all the required resources as part of the infrastructure setup, and we will only outline the configuration process on the console.
+In earlier sections we have described how configure to service roles, create FIS experiment templates, and create SSM automation documents. For this section, we have created all the required resources as part of the infrastructure setup, and we will only outline the configuration process on the console.
 {{% /notice %}}
 
 
-### Prerequistes
+### Prerequisites
 
 We will be using an SSM document to call the SSM PutParameter API. As such, we will require an IAM role that allows `ssm:PutParameter` - see [**template definition in GitHub**](https://github.com/aws-samples/aws-fault-injection-simulator-workshop/blob/main/resources/templates/serverless/template.yaml#L91-L112). Name this role `FisWorkshopLambdaSsmRole`.
 
@@ -73,7 +73,7 @@ We will define multiple actions that we want to run in sequence. This follows th
   * "Action type": `aws:ssm:start-automation-execution`
   * "Start after": leave this empty as the first step starts at the beginning of the experiment
   * "documentArn": the ARN found in the "Outputs" tab of the FisStackServerless [**CloudFormation**](https://console.aws.amazon.com/cloudformation/home?#/stacks/outputs?filteringStatus=active&filteringText=&viewNested=true&hideStacks=false&stackId=FisStackServerless). 
-  * "documentParameters": Reformatted here for legibiity. For the `AutomationAssumeRole` you will need to insert the ARN of the `FisWorkshopLambdaSsmRole` either from the "Outputs" of the cloudformation stack or from the "Prerequisites" section.
+  * "documentParameters": Reformatted here for legibility. For the `AutomationAssumeRole` you will need to insert the ARN of the `FisWorkshopLambdaSsmRole` either from the "Outputs" of the cloudformation stack or from the "Prerequisites" section.
     ```json
     {
         "AutomationAssumeRole": "arn:aws:iam::ACCOUNT_ID:role/FisStackServerless-FisWorkshopLambdaSsmRole-xxxxyyyyzzzz",   
@@ -98,7 +98,7 @@ We will define multiple actions that we want to run in sequence. This follows th
   * "Action type": `aws:ssm:start-automation-execution`
   * "Start after": `S02_Wait1`
   * "documentArn": the ARN found in the "Outputs" tab of the FisStackServerless [**CloudFormation**](https://console.aws.amazon.com/cloudformation/home?#/stacks/outputs?filteringStatus=active&filteringText=&viewNested=true&hideStacks=false&stackId=FisStackServerless). 
-  * "documentParameters": Reformatted here for legibiity. For the `AutomationAssumeRole` you will need to insert the ARN of the `FisWorkshopLambdaSsmRole` either from the "Outputs" of the cloudformation stack or from the "Prerequisites" section.
+  * "documentParameters": Reformatted here for legibility. For the `AutomationAssumeRole` you will need to insert the ARN of the `FisWorkshopLambdaSsmRole` either from the "Outputs" of the cloudformation stack or from the "Prerequisites" section.
     ```json
     {
         "AutomationAssumeRole": "arn:aws:iam::ACCOUNT_ID:role/FisStackServerless-FisWorkshopLambdaSsmRole-xxxxyyyyzzzz",   
@@ -123,7 +123,7 @@ We will define multiple actions that we want to run in sequence. This follows th
   * "Action type": `aws:ssm:start-automation-execution`
   * "Start after": `S04_Wait2`
   * "documentArn": the ARN found in the "Outputs" tab of the FisStackServerless [**CloudFormation**](https://console.aws.amazon.com/cloudformation/home?#/stacks/outputs?filteringStatus=active&filteringText=&viewNested=true&hideStacks=false&stackId=FisStackServerless). 
-  * "documentParameters": Reformatted here for legibiity. For the `AutomationAssumeRole` you will need to insert the ARN of the `FisWorkshopLambdaSsmRole` either from the "Outputs" of the cloudformation stack or from the "Prerequisites" section.
+  * "documentParameters": Reformatted here for legibility. For the `AutomationAssumeRole` you will need to insert the ARN of the `FisWorkshopLambdaSsmRole` either from the "Outputs" of the cloudformation stack or from the "Prerequisites" section.
     ```json
     {
         "AutomationAssumeRole": "arn:aws:iam::ACCOUNT_ID:role/FisStackServerless-FisWorkshopLambdaSsmRole-xxxxyyyyzzzz",   
@@ -148,7 +148,7 @@ We will define multiple actions that we want to run in sequence. This follows th
   * "Action type": `aws:ssm:start-automation-execution`
   * "Start after": `S06_Wait3`
   * "documentArn": the ARN found in the "Outputs" tab of the FisStackServerless [**CloudFormation**](https://console.aws.amazon.com/cloudformation/home?#/stacks/outputs?filteringStatus=active&filteringText=&viewNested=true&hideStacks=false&stackId=FisStackServerless). 
-  * "documentParameters": Reformatted here for legibiity. For the `AutomationAssumeRole` you will need to insert the ARN of the `FisWorkshopLambdaSsmRole` either from the "Outputs" of the cloudformation stack or from the "Prerequisites" section.
+  * "documentParameters": Reformatted here for legibility. For the `AutomationAssumeRole` you will need to insert the ARN of the `FisWorkshopLambdaSsmRole` either from the "Outputs" of the cloudformation stack or from the "Prerequisites" section.
     ```json
     {
         "AutomationAssumeRole": "arn:aws:iam::ACCOUNT_ID:role/FisStackServerless-FisWorkshopLambdaSsmRole-xxxxyyyyzzzz",   
@@ -243,7 +243,7 @@ Hello from Lambda! - 404 - 0.136305
 ...
 ```
 
-and finally changing to an error message indicating an exception has occured during code execution:
+and finally changing to an error message indicating an exception has occurred during code execution:
 
 ```
 ...
@@ -260,11 +260,11 @@ Congratulations for completing this lab! In this lab, you walked through running
 
 ## Learning and improving
 
-The setup we've shown here provides failure modes similar to those available for instances and containers. For teching purposes it also has various problems that you can experiment with and use for ideation on how to customize your own serverless fault injection libraries:
+The setup we've shown here provides failure modes similar to those available for instances and containers. For teaching purposes it also has various problems that you can experiment with and use for ideation on how to customize your own serverless fault injection libraries:
 
-* **Parameter resets** - In the example above, we are using FIS to control the parameter value in two separate steps rather than setting / unsetting the the parameter using a single long-running SSM document. Therefore, if you stop the FIS experiment prematurely, the parameter will not be reset to a non-impacting configuration. To address this you could add a `RollbackValue` parameter to the SSM document / FIS template and add an `onError` / `onCancel` path to the SSM document as shown in the [aws-fis-templates-cdk](https://github.com/adhorn/aws-fis-templates-cdk) GitHub examples [here](https://github.com/adhorn/aws-fis-templates-cdk/blob/main/lib/fis-upload-ssm-docs/documents/ssma-put-config-parameterstore.yml#L63-L65) and [here](https://github.com/adhorn/aws-fis-templates-cdk/blob/main/lib/fis-upload-ssm-docs/documents/ssma-put-config-parameterstore.yml#L105-L114). You could even read the parameter at the start of the SSM document run, but please consider concurrency implications if anyother experiment is also changing the parameter.
+* **Parameter resets** - In the example above, we are using FIS to control the parameter value in two separate steps rather than setting / un-setting the parameter using a single long-running SSM document. Therefore, if you stop the FIS experiment prematurely, the parameter will not be reset to a non-impacting configuration. To address this you could add a `RollbackValue` parameter to the SSM document / FIS template and add an `onError` / `onCancel` path to the SSM document as shown in the [aws-fis-templates-cdk](https://github.com/adhorn/aws-fis-templates-cdk) GitHub examples [here](https://github.com/adhorn/aws-fis-templates-cdk/blob/main/lib/fis-upload-ssm-docs/documents/ssma-put-config-parameterstore.yml#L63-L65) and [here](https://github.com/adhorn/aws-fis-templates-cdk/blob/main/lib/fis-upload-ssm-docs/documents/ssma-put-config-parameterstore.yml#L105-L114). You could even read the parameter at the start of the SSM document run, but please consider concurrency implications if another experiment is also changing the parameter.
 
 * **Order of events** - If you are simulating a failure, do you still want the Lambda code to run or not? There is no single correct answer to this question, as it may depend on your business logic. At the time of writing, if you use the `status-code` error, the Lambda code still executes but reports a failure when no failure occurred. Similarly, in the current implementation an exception occurs before executing user code but could be moved to occur after user code. As you create your own versions, ask yourself: what impact would the mismatch between code execution and error reporting have on error handling in downstream systems?
 
-* **Rate limiting** - As we saw in the [**First Experiment**]({{<ref "/030_basic_content/030_basic_experiment/20-experiment-console" >}}), small differences like terminating 50% vs. terminating 1 of an assumed 2 instances can lead to substantially different outcomes. Similary the pattern of failures in consecutive invocations may matter to your experiment. E.g., sometimes you may want to affect all invocations for the duration of the fault, sometimes you may want to affect up to a certain number of invocations per time unit, and sometimes you may want to affect a certain fraction of invocations. Sometimes you may prefer deterministic outcomes, sometimes you may prefer heuristic outcomes. As you create your own scenarios, you can review the heuristic implementation in [**chaos_lambda**](https://github.com/adhorn/aws-lambda-chaos-injection/blob/a6d10af49ea823dc0d24998fe6d5f5544327fc03/chaos_lambda.py#L282).
+* **Rate limiting** - As we saw in the [**First Experiment**]({{<ref "/030_basic_content/030_basic_experiment/20-experiment-console" >}}), small differences like terminating 50% vs. terminating 1 of an assumed 2 instances can lead to substantially different outcomes. Similarly the pattern of failures in consecutive invocations may matter to your experiment. E.g., sometimes you may want to affect all invocations for the duration of the fault, sometimes you may want to affect up to a certain number of invocations per time unit, and sometimes you may want to affect a certain fraction of invocations. Sometimes you may prefer deterministic outcomes, sometimes you may prefer heuristic outcomes. As you create your own scenarios, you can review the heuristic implementation in [**chaos_lambda**](https://github.com/adhorn/aws-lambda-chaos-injection/blob/a6d10af49ea823dc0d24998fe6d5f5544327fc03/chaos_lambda.py#L282).
 
