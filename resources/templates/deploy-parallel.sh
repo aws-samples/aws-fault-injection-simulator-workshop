@@ -60,6 +60,10 @@ call_deploy_script "goad-cdk" "Load generator stack"
 # Access controls using CFN
 call_deploy_script "access-controls" "Access controls stack" 
 
+# Serverless failures are fully self-contained SAM
+call_deploy_script "serverless" "Serverless failure stack" 
+
+
 # Need to sequence construction
 (
     # RDS/aurora stack uses CDK

@@ -1,0 +1,345 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Demonstrate fault injection decorator pattern for Lambda
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+  ServerlessFaultFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: assets/fail_python_lambda/
+      Handler: app.handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          CHAOS_PARAM: !Ref ServerlessFaultParameter
+      Events:
+        ServerlessFault:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
+      Policies:
+        - Statement:
+          - Sid: SSMDescribeParametersPolicy
+            Effect: Allow
+            Action:
+            - ssm:DescribeParameters
+            Resource: '*'
+          - Sid: SSMGetParameterPolicy
+            Effect: Allow
+            Action:
+            - ssm:GetParameters
+            - ssm:GetParameter
+            Resource: '*'
+
+  ServerlessFaultParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: 'FisWorkshopLambdaFault'
+      Description: 'Parameter controlling failures in chaos-lambda'
+      Type: String
+      # https://aws-lambda-chaos-injection.readthedocs.io/en/latest/
+      # fault-type: one of: latency, status_code, exception
+      Value: '{"is_enabled":false,"fault_type":"latency","delay":400,"error_code":404,"exception_msg":"Fault injected by chaos-lambda","rate":1}'
+
+  PutParameterShim:
+    Type: AWS::SSM::Document
+    Properties:
+      DocumentType: Automation
+      Name: 'FisWorkshopPutParameterShim'
+      Content:
+        schemaVersion: '0.3'
+        assumeRole: "{{ AutomationAssumeRole }}"
+        description: 'Write value to SSM parameter. Create parameter if it does not exist, overwrite if it does. WARNING: this has no rollback. See workshop for explanation.'
+        parameters:
+          AutomationAssumeRole:
+            type: String
+            description: (Optional) The ARN of the role that allows Automation to perform the actions on your behalf.
+            default: ''
+          FaultParameterName:
+            type: String
+            description: '(Optional) Name of the fault injection parameter to use with chaos-lambda'
+            default: 'FisWorkshopLambdaFault'
+          FaultParameterDescription:
+            type: String
+            description: '(Optional) A description for the value of the fault injection parameter to use with chaos-lambda'
+            default: 'SSM generated parameter for FaultInjectionSimulator workshop chaos-lambda'
+          FaultParameterValue:
+            type: String
+            description: '(Optional) The value of the fault injection parameter to use with chaos-lambda'
+            default: '{"is_enabled":false,"fault_type":"latency","delay":400,"error_code":404,"exception_msg":"Fault injected by chaos-lambda","rate":1}'
+        mainSteps:
+        - name: putParameter
+          action: aws:executeAwsApi
+          timeoutSeconds: 60
+          inputs:
+            Service: ssm
+            Api: PutParameter
+            DataType: text
+            Name: '{{ FaultParameterName }}'
+            Description: '{{ FaultParameterDescription }}'
+            Overwrite: true
+            Value: '{{ FaultParameterValue }}'
+
+  FisWorkshopLambdaSsmRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ssm.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Sid: EnablePutParameterDocument
+              Effect: Allow
+              Action:
+              - ssm:PutParameter
+              Resource: "*"
+
+
+  FisWorkshopLambdaServiceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: FisWorkshopLambdaServiceRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - fis.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Sid: EnableSSMAutomationExecution
+              Effect: Allow
+              Action:
+              - ssm:GetAutomationExecution
+              - ssm:StartAutomationExecution
+              - ssm:StopAutomationExecution
+              Resource: "*"
+            - Sid: AllowFisToPassListedRolesToSsm
+              Effect: Allow
+              Action:
+              - iam:PassRole
+              Resource: !GetAtt FisWorkshopLambdaSsmRole.Arn
+            - Sid: AllowFISExperimentLoggingActionsCloudwatch
+              Effect: Allow
+              Action:
+              - logs:CreateLogDelivery
+              - logs:PutResourcePolicy
+              - logs:DescribeResourcePolicies
+              - logs:DescribeLogGroups
+              Resource: "*"
+            - Sid: AllowFISExperimentRoleReadOnly
+              Effect: Allow
+              Action:
+              - ec2:DescribeInstances
+              - ecs:DescribeClusters
+              - ecs:ListContainerInstances
+              - eks:DescribeNodegroup
+              - iam:ListRoles
+              - rds:DescribeDBInstances
+              - rds:DescribeDbClusters
+              - ssm:ListCommands
+              Resource: "*"
+            - Sid: AllowFISExperimentRoleEC2Actions
+              Effect: Allow
+              Action:
+              - ec2:RebootInstances
+              - ec2:StopInstances
+              - ec2:StartInstances
+              - ec2:TerminateInstances
+              Resource: arn:aws:ec2:*:*:instance/*
+            - Sid: AllowFISExperimentRoleECSActions
+              Effect: Allow
+              Action:
+              - ecs:UpdateContainerInstancesState
+              - ecs:ListContainerInstances
+              Resource: arn:aws:ecs:*:*:container-instance/*
+            - Sid: AllowFISExperimentRoleEKSActions
+              Effect: Allow
+              Action:
+              - ec2:TerminateInstances
+              Resource: arn:aws:ec2:*:*:instance/*
+            - Sid: AllowFISExperimentRoleFISActions
+              Effect: Allow
+              Action:
+              - fis:InjectApiInternalError
+              - fis:InjectApiThrottleError
+              - fis:InjectApiUnavailableError
+              Resource: arn:*:fis:*:*:experiment/*
+            - Sid: AllowFISExperimentRoleRDSReboot
+              Effect: Allow
+              Action:
+              - rds:RebootDBInstance
+              Resource: arn:aws:rds:*:*:db:*
+            - Sid: AllowFISExperimentRoleRDSFailOver
+              Effect: Allow
+              Action:
+              - rds:FailoverDBCluster
+              Resource: arn:aws:rds:*:*:cluster:*
+            - Sid: AllowFISExperimentRoleSSMSendCommand
+              Effect: Allow
+              Action:
+              - ssm:SendCommand
+              Resource:
+              - arn:aws:ec2:*:*:instance/*
+              - arn:aws:ssm:*:*:document/*
+            - Sid: AllowFISExperimentRoleSSMCancelCommand
+              Effect: Allow
+              Action:
+              - ssm:CancelCommand
+              Resource: "*"
+
+  LambdaChaosExperiment:
+    Type: AWS::FIS::ExperimentTemplate
+    Properties:
+      Description: Inject Lambda Failures
+      Targets: {}
+      Actions:
+        S01_EnableLatency:
+          ActionId: aws:ssm:start-automation-execution
+          Parameters:
+            documentArn: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${PutParameterShim}"
+            documentParameters: !Sub >-
+              { 
+                "AutomationAssumeRole": "${FisWorkshopLambdaSsmRole.Arn}", 
+                "FaultParameterValue": "{
+                  \"is_enabled\":true,
+                  \"fault_type\":\"latency\",
+                  \"delay\":400,
+                  \"error_code\":404,
+                  \"exception_msg\":\"Fault injected by chaos-lambda\",
+                  \"rate\":1
+                }" 
+              }
+            maxDuration: PT1M
+        S02_Wait1:
+          ActionId: aws:fis:wait
+          Parameters:
+            duration: PT1M
+          StartAfter:
+            - S01_EnableLatency
+        S03_EnableStatusCode:
+          ActionId: aws:ssm:start-automation-execution
+          Parameters:
+            documentArn: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${PutParameterShim}"
+            documentParameters: !Sub >-
+              { 
+                "AutomationAssumeRole": "${FisWorkshopLambdaSsmRole.Arn}", 
+                "FaultParameterValue": "{
+                  \"is_enabled\":true,
+                  \"fault_type\":\"status_code\",
+                  \"delay\":400,
+                  \"error_code\":404,
+                  \"exception_msg\":\"Fault injected by chaos-lambda\",
+                  \"rate\":1
+                }" 
+              }
+            maxDuration: PT1M
+          StartAfter:
+            - S02_Wait1
+        S04_Wait2:
+          ActionId: aws:fis:wait
+          Parameters:
+            duration: PT1M
+          StartAfter:
+            - S03_EnableStatusCode
+        S05_EnableException:
+          ActionId: aws:ssm:start-automation-execution
+          Parameters:
+            documentArn: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${PutParameterShim}"
+            documentParameters: !Sub >-
+              { 
+                "AutomationAssumeRole": "${FisWorkshopLambdaSsmRole.Arn}", 
+                "FaultParameterValue": "{
+                  \"is_enabled\":true,
+                  \"fault_type\":\"exception\",
+                  \"delay\":400,
+                  \"error_code\":404,
+                  \"exception_msg\":\"Fault injected by chaos-lambda\",
+                  \"rate\":1
+                }" 
+              }
+            maxDuration: PT1M
+          StartAfter:
+            - S04_Wait2
+        S06_Wait3:
+          ActionId: aws:fis:wait
+          Parameters:
+            duration: PT1M
+          StartAfter:
+            - S05_EnableException            
+        S07_DisableFaults:
+          ActionId: aws:ssm:start-automation-execution
+          Parameters:
+            documentArn: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${PutParameterShim}"
+            documentParameters: !Sub >-
+              { 
+                "AutomationAssumeRole": "${FisWorkshopLambdaSsmRole.Arn}", 
+                "FaultParameterValue": "{
+                  \"is_enabled\":false,
+                  \"fault_type\":\"latency\",
+                  \"delay\":400,
+                  \"error_code\":404,
+                  \"exception_msg\":\"Fault injected by chaos-lambda\",
+                  \"rate\":1
+                }" 
+              }
+            maxDuration: PT1M
+          StartAfter:
+            - S06_Wait3
+      StopConditions:
+        - Source: none
+      RoleArn: !GetAtt FisWorkshopLambdaServiceRole.Arn
+      LogConfiguration:
+        CloudWatchLogsConfiguration:
+          # LogGroupArn: "arn:aws:logs:us-west-2:313373485031:log-group:/fisworkshop/fislogs:*"
+          LogGroupArn: !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/fisworkshop/fislogs:*"
+        LogSchemaVersion: 1
+      Tags:
+        Name: FisWorkshopLambdaFailure
+
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ServerlessFaultApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  ServerlessFaultFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt ServerlessFaultFunction.Arn
+  ServerlessFaultFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt ServerlessFaultFunctionRole.Arn
+  FisWorkshopLambdaSsmRole:
+    Description: "IAM Role created for SSM exectuion"
+    Value: !GetAtt FisWorkshopLambdaSsmRole.Arn
+  FisWorkshopLambdaServiceRole:
+    Description: "IAM Role created for FIS exectuion"
+    Value: !GetAtt FisWorkshopLambdaServiceRole.Arn
+  SsmDocumentArn: 
+    Description: "ARN of SSM PutParameterShim documment for use with FIS"
+    Value: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${PutParameterShim}"
