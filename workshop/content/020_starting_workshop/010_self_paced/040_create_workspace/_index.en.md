@@ -92,7 +92,8 @@ Copy/Paste the following code in your Cloud9 terminal (you can paste the whole b
 
 ```bash
 # Update to the latest stable release of npm and nodejs.
-nvm install stable 
+nvm install --lts
+nvm use --lts 
 
 # Install typescript
 npm install -g typescript
