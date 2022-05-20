@@ -26,4 +26,25 @@ cd resources/templates
 ./deploy-parallel.sh
 ```
 
-It can take up to 30 minutes to complete.  
+{{% notice note %}}
+Instantiating all resources will take about 30 minutes. This might be a good time to read ahead at [**Baselining and Monitoring**]({{<ref "030_basic_content/010-baselining">}}) or go for coffee.
+{{% /notice %}}
+
+Review the deploy output. It should similar to this:
+
+```
+Substack vpc SUCCEEDED
+Substack goad-cdk SUCCEEDED
+Substack access-controls SUCCEEDED
+Substack serverless SUCCEEDED
+Substack rds SUCCEEDED
+Substack asg-cdk SUCCEEDED
+Substack eks SUCCEEDED
+Substack ecs SUCCEEDED
+Substack cpu-stress SUCCEEDED
+Substack api-failures SUCCEEDED
+Substack spot SUCCEEDED
+Overall install SUCCEEDED
+```
+
+If any of the substacks report as `FAILED` you can try to re-run the deployment script. If that still fails you can find some debugging information in files named `deploy-output.*.txt`.

@@ -111,6 +111,7 @@ for substack in \
     vpc \
     goad-cdk \
     access-controls \
+    serverless \
     rds \
     asg-cdk \
     eks \
