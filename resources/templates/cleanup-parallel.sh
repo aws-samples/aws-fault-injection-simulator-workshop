@@ -51,7 +51,10 @@ call_cleanup_script "asg-cdk" "ASG stack"
 # RDS/aurora stack uses CDK
 call_cleanup_script "rds" "RDS stack" 
 
-# Goad stack moved to CDK
+# Serverless controls using SAM
+call_cleanup_script "serverless" "Serverless stack" 
+
+# Access controls using CDK
 call_cleanup_script "access-controls" "Access controls stack" 
 
 # Goad stack moved to CDK
