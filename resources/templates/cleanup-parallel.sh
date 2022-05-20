@@ -92,6 +92,19 @@ echo "Deleting cdk state files ..."
 echo "Waiting for finish"
 wait
 
+# Manual cleanups of log groups
+
+(
+    for ii in \
+      /fis-workshop/fis-logs \
+      /fis-workshop/asg-error-log \
+      /fis-workshop/asg-access-log \
+    ; do
+      echo Deleting log group $ii
+      aws logs delete-log-group --log-group-name $ii >/dev/null 2>&1
+    done
+)
+
 EXIT_STATUS=0
 for substack in \
     ../code/cdk/cicd \
