@@ -20,7 +20,7 @@ Using the region selected in [**Region Selection**]({{< ref "030_region_selectio
 - Select **Create environment**
 - Name it `fisworkshop` and select **Next step**.
 - Since we only need to access our Cloud9 environment via web browser, please select the **Create a new no-ingress EC2 instance for environment (access via Systems Manager)** under the Environment Type.
-- Choose `t3.small` for instance type, go through the wizard with the default values. Finally select **Create environment**
+- Select "Other Instance Types" and choose `t3.medium` (you can type to search) for instance type, go through the wizard with the default values. Finally select **Create environment**
 
 When it comes up, customize the environment by:
 

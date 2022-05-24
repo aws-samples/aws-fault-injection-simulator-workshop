@@ -11,6 +11,7 @@ echo "FAIL" > deploy-status.txt
 # Workaround to let sam deploy infer template by looking in build directory
 sam build \
   -t template.yaml \
+  --use-container \
 && \
 sam deploy \
   --stack-name FisStackServerless \

@@ -43,7 +43,7 @@ cd ~/environment
 ```bash
 cd aws-fault-injection-simulator-workshop
 cd resources/templates
-./cleanup.sh
+./cleanup-parallel.sh
 ```
 
 ## Retained resources

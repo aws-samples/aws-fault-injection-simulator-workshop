@@ -1,6 +1,6 @@
 ---
 title: "Introduction"
-chapter: true
+chapter: false
 weight: 10
 services: true
 ---
@@ -21,9 +21,30 @@ Additionally, chaos engineering is about proving or disproving a hypothesis of h
 
 ## Duration
 
-When run in a prepared AWS account the core sections of the workshop will take between 1-2h. The whole workshop about 2-4h. Using the Amazon DevOps Guru section will require an additional 2-24h of wait time after the infrastructure has been configured.
+### Core sections
 
-When run in a customer account, deploying the workshop's core infrastructure will require an additional 45min. 
+For an introductory workshop we recommend the following core sections:
+
+* Baselining and Monitoring
+* Synthetic User Experience
+* First Experiment > Configuring Permissions
+* First Experiment > Experiment (Console)
+* AWS Systems Manager Integration > FIS SSM Send Command Setup
+* AWS Systems Manager Integration > Linux CPU Stress Experiment
+* AWS Systems Manager Integration > Working with SSM documents
+* AWS Systems Manager Integration > Optional - Windows CPU Stress Experiment
+* AWS Systems Manager Integration > FIS SSM Start Automation Setup
+* AWS Systems Manager Integration > SSM Additional resources
+* Databases > RDS DB Instance Reboot
+
+When run in a prepared AWS account these core sections of the workshop will take about 2-3h. When run in a customer account, deploying the workshop's core infrastructure will require an additional 45min. 
+
+### Additional sections
+
+All remaining sections are intended as independent modules that can be added based on customer need and interest. All sections require the roles created in
+
+* First Experiment > Configuring Permissions
+* AWS Systems Manager Integration > FIS SSM Start Automation Setup
 
 ## Cost
 

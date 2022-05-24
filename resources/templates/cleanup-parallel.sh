@@ -51,7 +51,10 @@ call_cleanup_script "asg-cdk" "ASG stack"
 # RDS/aurora stack uses CDK
 call_cleanup_script "rds" "RDS stack" 
 
-# Goad stack moved to CDK
+# Serverless controls using SAM
+call_cleanup_script "serverless" "Serverless stack" 
+
+# Access controls using CDK
 call_cleanup_script "access-controls" "Access controls stack" 
 
 # Goad stack moved to CDK
@@ -88,6 +91,19 @@ echo "Deleting cdk state files ..."
 # Wait for everything to finish
 echo "Waiting for finish"
 wait
+
+# Manual cleanups of log groups
+
+(
+    for ii in \
+      /fis-workshop/fis-logs \
+      /fis-workshop/asg-error-log \
+      /fis-workshop/asg-access-log \
+    ; do
+      echo Deleting log group $ii
+      aws logs delete-log-group --log-group-name $ii >/dev/null 2>&1
+    done
+)
 
 EXIT_STATUS=0
 for substack in \
