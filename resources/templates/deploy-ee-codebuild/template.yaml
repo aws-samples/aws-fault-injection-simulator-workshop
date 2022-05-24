@@ -108,8 +108,10 @@ Resources:
           phases:
             install:
               runtime-versions:
-                python: 3.9
-                nodejs: 16
+                # Not ideal but if we pick explicit versions it fails in some regions
+                python: latest
+                # Not ideal but if we pick explicit versions it fails in some regions
+                nodejs: latest
               commands:
                 # Install sudo and jq for our installers
                 - yum install -y sudo jq
