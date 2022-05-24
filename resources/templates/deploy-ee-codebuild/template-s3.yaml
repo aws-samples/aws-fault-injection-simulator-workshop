@@ -1,0 +1,192 @@
+Parameters:
+  EEAssetsBucket:
+    Description: "Region-specific assets S3 bucket name (e.g. ee-assets-prod-us-east-1)"
+    Type: String
+    Default: ee-assets-prod-us-east-1
+  EEAssetsKeyPrefix:
+    Description: "S3 key prefix where this modules assets are stored. (e.g. modules/my_module/v1/)"
+    Type: String
+    Default: modules/4bbb96f5e7cc46f6beaca519345b642d/v1/
+Resources:
+  WorkshopBuilderCustomResource:
+    Type: 'Custom::CdkInstallWrapper'
+    DependsOn: CustomResourceLambda
+    Properties:
+      ServiceToken: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${CustomResourceLambda}"
+      CodeBuildProjectName: !Ref CodeBuildProject
+      ForceUpdateParam: 1
+  CustomResourceLambda:
+    Type: AWS::Lambda::Function
+    DependsOn: CodeBuildProject
+    Properties:
+      Runtime: nodejs12.x
+      Role: !GetAtt CustomLambdaRole.Arn
+      Handler: index.handler
+      Code:
+        ZipFile: |
+          var aws = require('aws-sdk')
+          var response = require('cfn-response')
+          exports.handler = function(event, context) {
+              console.log("REQUEST RECEIVED:\n" + JSON.stringify(event))
+
+              // For Delete requests, immediately send a SUCCESS response.
+              // We never try to "delete" the stacks / codebuild, we leave that to EE reapers
+              if (event.RequestType == "Delete") {
+                  response.send(event, context, "SUCCESS")
+                  return
+              }
+
+              // pass custom resource invocation params to codebuild
+              var params={
+                projectName: event.ResourceProperties.CodeBuildProjectName,
+                environmentVariablesOverride: [
+                  {
+                    name: 'CUSTOM_RESOURCE_REQUEST',
+                    value: event.RequestType.toLowerCase()
+                  },
+                  {
+                    name: 'CUSTOM_RESOURCE_PHYSICAL_RESOURCE_ID',
+                    value: event.PhysicalResourceId || context.logStreamName,
+                  },
+                  {
+                    name: 'CUSTOM_RESOURCE_STACK_ID',
+                    value: event.StackId
+                  },
+                  {
+                    name: 'CUSTOM_RESOURCE_REQUEST_ID',
+                    value: event.RequestId
+                  },
+                  {
+                    name: 'CUSTOM_RESOURCE_LOGICAL_RESOURCE_ID',
+                    value: event.LogicalResourceId
+                  },
+                  {
+                    name: 'CUSTOM_RESOURCE_RESPONSE_URL',
+                    value: event.ResponseURL
+                  },
+                  /* more items */
+                ],
+              };
+              console.log("Parameters: " + JSON.stringify(params))
+
+              // Kick off codebuild. Note that this lambda will never
+              // return success because the codebuild time can 
+              // exceed 15min. Instead the loop will close with a 
+              // success message from codebuild or the 1h timeout
+              // for custom resources.
+              var codebuild = new aws.CodeBuild();
+              codebuild.startBuild(params, function(err, data) {
+                if (err) {
+                  // an error occurred - tell CFN immediately
+                  console.log(err, err.stack); 
+                  response.send(event, context, "FAILED");
+                } else {
+                  // successfully started codpipeline
+                  // success signal will come from CodeBuild job
+                  console.log(data);           
+                }
+              });
+
+              // Do NOT send success ... we close the loop in CodeBuild
+              //response.send(event, context, "SUCCESS")
+              return
+          }
+      Description: Invoke codebuild for custom resource
+      TracingConfig:
+        Mode: Active
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        # Type: CODEPIPELINE
+        Type: NO_ARTIFACTS
+      Environment:
+        # Pick a container type and size
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        # Enable set this to true if you need docker in docker builds,
+        # e.g. for Golang lambda deployments from CDK
+        PrivilegedMode: True
+        EnvironmentVariables:
+          - Name: EE_ASSETS_BUCKET
+            Type: PLAINTEXT
+            Value: !Ref EEAssetsBucket
+          - Name: EE_ASSETS_BUCKET_KEY_PREFIX
+            Type: PLAINTEXT
+            Value: !Ref EEAssetsKeyPrefix
+      Source:
+        # We let the script pull code from GitHub or S3
+        Type: NO_SOURCE
+        BuildSpec: |
+          version: 0.2
+          phases:
+            install:
+              runtime-versions:
+                # Not ideal but if we pick explicit versions it fails in some regions
+                python: latest
+                # Not ideal but if we pick explicit versions it fails in some regions
+                nodejs: latest
+              commands:
+                # Install sudo and jq for our installers
+                - yum install -y sudo jq
+                # Update AWS CLI just in case
+                - pip install --upgrade awscli
+                # CDK stuffs
+                - npm install -g typescript
+                - npm install -g aws-cdk
+            build:
+              commands:
+                # Default outcome of build is FAILED
+                - export CUSTOM_RESOURCE_STATUS=FAILED
+                # Some debugging info 
+                - env | sort
+                - env | grep CUSTOM_RESOURCE_
+                - pwd
+                - df -h
+                - cdk --version
+                - python --version
+                - aws --version
+                # Pull source - from S3 module bucket - this will lag
+                - mkdir ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/
+                - time aws s3 cp s3://${EE_ASSETS_BUCKET}/${EE_ASSETS_BUCKET_KEY_PREFIX}resources.zip ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources.zip
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/ && unzip resources.zip'
+                # Build and deploy via CDK
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh $CUSTOM_RESOURCE_REQUEST'
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
+                # We didn't fail so reset build outcome to SUCCESS
+                - export CUSTOM_RESOURCE_STATUS=SUCCESS
+                - echo DONE
+              finally:
+                - echo DONE
+                - "echo Returning build status to custom resource: $CUSTOM_RESOURCE_STATUS"
+                - "curl  -H 'Content-Type: ''' -X PUT -d '{ \"Status\": \"'${CUSTOM_RESOURCE_STATUS}'\", \"PhysicalResourceId\": \"'${CUSTOM_RESOURCE_PHYSICAL_RESOURCE_ID}'\", \"StackId\": \"'${CUSTOM_RESOURCE_STACK_ID}'\", \"RequestId\": \"'${CUSTOM_RESOURCE_REQUEST_ID}'\", \"LogicalResourceId\": \"'${CUSTOM_RESOURCE_LOGICAL_RESOURCE_ID}'\" }' ${CUSTOM_RESOURCE_RESPONSE_URL}"
+  
+      TimeoutInMinutes: 60
+  CustomLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [lambda.amazonaws.com]
+        Version: '2012-10-17'
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [codebuild.amazonaws.com]
+        Version: '2012-10-17'
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
