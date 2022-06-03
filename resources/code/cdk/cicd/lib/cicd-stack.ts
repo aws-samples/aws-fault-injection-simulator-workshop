@@ -1,13 +1,15 @@
-import * as cdk from '@aws-cdk/core';
-import * as codebuild from '@aws-cdk/aws-codebuild';
-import * as codecommit from '@aws-cdk/aws-codecommit';
-import * as codepipeline from '@aws-cdk/aws-codepipeline';
-import * as codepipeline_actions from '@aws-cdk/aws-codepipeline-actions';
-import * as iam from '@aws-cdk/aws-iam'
-import * as ec2 from '@aws-cdk/aws-ec2'
+import * as cdk          from 'aws-cdk-lib';
+import {Construct}       from 'constructs';
+
+import * as codebuild            from 'aws-cdk-lib/aws-codebuild';
+import * as codecommit           from 'aws-cdk-lib/aws-codecommit';
+import * as codepipeline         from 'aws-cdk-lib/aws-codepipeline';
+import * as codepipeline_actions from 'aws-cdk-lib/aws-codepipeline-actions';
+import * as iam                  from 'aws-cdk-lib/aws-iam'
+import * as ec2                  from 'aws-cdk-lib/aws-ec2'
 
 export class CicdStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const vpc = ec2.Vpc.fromLookup(this, 'FisVpc', { 
