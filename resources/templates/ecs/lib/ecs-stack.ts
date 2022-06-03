@@ -1,12 +1,13 @@
-import * as cdk from "@aws-cdk/core";
-import ec2 = require("@aws-cdk/aws-ec2");
-import * as ecs from "@aws-cdk/aws-ecs";
-import * as ecs_patterns from "@aws-cdk/aws-ecs-patterns";
-import * as autoscaling from "@aws-cdk/aws-autoscaling";
-import * as iam from "@aws-cdk/aws-iam";
+import * as cdk          from 'aws-cdk-lib';
+import {Construct}       from 'constructs';
+import * as ec2          from "aws-cdk-lib/aws-ec2";
+import * as ecs          from "aws-cdk-lib/aws-ecs";
+import * as ecs_patterns from "aws-cdk-lib/aws-ecs-patterns";
+import * as autoscaling  from "aws-cdk-lib/aws-autoscaling";
+import * as iam          from "aws-cdk-lib/aws-iam";
 
 export class EcsStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const vpc = ec2.Vpc.fromLookup(this, 'FisVpc', { 
