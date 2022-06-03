@@ -1,9 +1,10 @@
-import * as cdk from '@aws-cdk/core';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as iam from '@aws-cdk/aws-iam';
+import * as cdk    from 'aws-cdk-lib';
+import {Construct} from 'constructs';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as iam    from 'aws-cdk-lib/aws-iam';
 
 export class GoadCdkTestStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // The code that defines your stack goes here

@@ -1,22 +1,20 @@
-import * as cdk from '@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as iam from '@aws-cdk/aws-iam';
-import * as autoscaling from '@aws-cdk/aws-autoscaling';
-import * as alb from '@aws-cdk/aws-elasticloadbalancingv2';
-import * as log from '@aws-cdk/aws-logs';
-import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
-import * as cwactions from '@aws-cdk/aws-cloudwatch-actions';
-import * as mustache from 'mustache';
-import * as ssm from '@aws-cdk/aws-ssm';
-import * as rds from '@aws-cdk/aws-rds';
+import * as cdk         from 'aws-cdk-lib';
+import {Stack}          from 'aws-cdk-lib';
+import {Construct}      from 'constructs';
+import * as ec2         from 'aws-cdk-lib/aws-ec2';
+import * as iam         from 'aws-cdk-lib/aws-iam';
+import * as autoscaling from 'aws-cdk-lib/aws-autoscaling';
+import * as alb         from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as log         from 'aws-cdk-lib/aws-logs';
+import * as cloudwatch  from 'aws-cdk-lib/aws-cloudwatch';
+import * as cwactions   from 'aws-cdk-lib/aws-cloudwatch-actions';
+import * as ssm         from 'aws-cdk-lib/aws-ssm';
 
-// import * as rds from '@aws-cdk/aws-rds';
+import * as mustache    from 'mustache';
 import * as fs  from 'fs';
-import { isMainThread } from 'worker_threads';
-import { AdjustmentType, AutoScalingGroup, GroupMetrics, StepScalingAction } from '@aws-cdk/aws-autoscaling';
 
-export class AsgCdkTestStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+export class AsgCdkTestStack extends Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // Set some constants for convenience
@@ -54,9 +52,10 @@ export class AsgCdkTestStack extends cdk.Stack {
     rdsSecurityGroup.connections.allowFrom(mySecurityGroup,ec2.Port.allTcp())
 
 
-    const amazon2 = ec2.MachineImage.fromSSMParameter(
+    const amazon2 = ec2.MachineImage.fromSsmParameter(
       '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-ebs', 
-      ec2.OperatingSystemType.LINUX);
+      { os: ec2.OperatingSystemType.LINUX }
+      );
 
     const instanceRole = new iam.Role(this, 'FisInstanceRole', {
       assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
@@ -207,7 +206,7 @@ export class AsgCdkTestStack extends cdk.Stack {
     const myAsgCpuMetric = new cloudwatch.Metric({
       namespace: 'AWS/EC2',
       metricName: 'CPUUtilization',
-      dimensions: { 
+      dimensionsMap: { 
         'AutoScalingGroupName': myASG.autoScalingGroupName
       },
       period: cdk.Duration.minutes(1) 
