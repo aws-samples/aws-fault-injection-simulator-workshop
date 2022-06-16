@@ -28,7 +28,7 @@ export class FisStackRdsAurora extends cdk.Stack {
     const auroraCredentials = rds.Credentials.fromGeneratedSecret('clusteradmin', { secretName: "FisAuroraSecret"});
     const aurora = new rds.DatabaseCluster(this, 'FisWorkshopRdsAurora', {
       engine: rds.DatabaseClusterEngine.auroraMysql({ 
-        version: rds.AuroraMysqlEngineVersion.VER_5_7_12 
+        version: rds.AuroraMysqlEngineVersion.VER_2_10_2
       }),
       credentials: auroraCredentials,
       defaultDatabaseName: 'testdb',
