@@ -10,7 +10,7 @@ Resources:
     Type: AWS::Lambda::Function
     DependsOn: CodeBuildProject
     Properties:
-      Runtime: nodejs12.x
+      Runtime: nodejs16.x
       Role: !GetAtt CustomLambdaRole.Arn
       Handler: index.handler
       Code:
@@ -96,7 +96,7 @@ Resources:
         # Pick a container type and size
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        Image: aws/codebuild/standard:5.0
         # Enable set this to true if you need docker in docker builds,
         # e.g. for Golang lambda deployments from CDK
         PrivilegedMode: True
@@ -113,13 +113,22 @@ Resources:
                 # Not ideal but if we pick explicit versions it fails in some regions
                 nodejs: latest
               commands:
+                # Default outcome of build is FAILED
+                - export CUSTOM_RESOURCE_STATUS=FAILED
+                # Some debugging info 
+                - env | grep CUSTOM_RESOURCE_
                 # Install sudo and jq for our installers
-                - yum install -y sudo jq
+                - "apt update && apt install -y jq time"
                 # Update AWS CLI just in case
                 - pip install --upgrade awscli
                 # CDK stuffs
                 - npm install -g typescript
                 - npm install -g aws-cdk
+                - export CUSTOM_RESOURCE_STATUS=SUCCESS
+              finally:
+                - echo FINALLY
+                - "if [ ${CUSTOM_RESOURCE_STATUS:=FAIL} = FAIL ]; then echo \"Returning build status to custom resource: ${CUSTOM_RESOURCE_STATUS}\"; fi"
+                - "if [ ${CUSTOM_RESOURCE_STATUS:=FAIL} = FAIL ]; then curl  -H 'Content-Type: ''' -X PUT -d '{ \"Status\": \"'${CUSTOM_RESOURCE_STATUS}'\", \"PhysicalResourceId\": \"'${CUSTOM_RESOURCE_PHYSICAL_RESOURCE_ID}'\", \"StackId\": \"'${CUSTOM_RESOURCE_STACK_ID}'\", \"RequestId\": \"'${CUSTOM_RESOURCE_REQUEST_ID}'\", \"LogicalResourceId\": \"'${CUSTOM_RESOURCE_LOGICAL_RESOURCE_ID}'\" }' ${CUSTOM_RESOURCE_RESPONSE_URL}; fi"
             build:
               commands:
                 # Default outcome of build is FAILED
@@ -135,19 +144,22 @@ Resources:
                 # Pull source - right now straight from github
                 # For EE we may want to update this to use the S3 bucket to avoid performance issues
                 - time git clone https://github.com/aws-samples/aws-fault-injection-simulator-workshop.git
-                # Optionally checkout branch for testing 
+                # Optionally checkout branch or version for testing 
                 # - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time git switch rudpot/fix-315'
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time git checkout f5eb1ae657d3eb1bbd63bbda269a7bfc8c88a0f5'
                 # Build and deploy via CDK
                 - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh $CUSTOM_RESOURCE_REQUEST'
-                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
                 # We didn't fail so reset build outcome to SUCCESS
                 - export CUSTOM_RESOURCE_STATUS=SUCCESS
                 - echo DONE
               finally:
-                - echo DONE
+                - echo FINALLY
                 - "echo Returning build status to custom resource: $CUSTOM_RESOURCE_STATUS"
                 - "curl  -H 'Content-Type: ''' -X PUT -d '{ \"Status\": \"'${CUSTOM_RESOURCE_STATUS}'\", \"PhysicalResourceId\": \"'${CUSTOM_RESOURCE_PHYSICAL_RESOURCE_ID}'\", \"StackId\": \"'${CUSTOM_RESOURCE_STACK_ID}'\", \"RequestId\": \"'${CUSTOM_RESOURCE_REQUEST_ID}'\", \"LogicalResourceId\": \"'${CUSTOM_RESOURCE_LOGICAL_RESOURCE_ID}'\" }' ${CUSTOM_RESOURCE_RESPONSE_URL}"
-  
+            post_build:
+              commands:
+                # Debug output
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
       TimeoutInMinutes: 60
   CustomLambdaRole:
     Type: AWS::IAM::Role
