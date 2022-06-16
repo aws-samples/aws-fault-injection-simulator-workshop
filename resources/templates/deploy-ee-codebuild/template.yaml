@@ -146,7 +146,7 @@ Resources:
                 - time git clone https://github.com/aws-samples/aws-fault-injection-simulator-workshop.git
                 # Optionally checkout branch or version for testing 
                 # - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time git switch rudpot/fix-315'
-                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time git checkout f5eb1ae657d3eb1bbd63bbda269a7bfc8c88a0f5'
+                # - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time git checkout f5eb1ae657d3eb1bbd63bbda269a7bfc8c88a0f5'
                 # Build and deploy via CDK
                 - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh $CUSTOM_RESOURCE_REQUEST'
                 # We didn't fail so reset build outcome to SUCCESS
