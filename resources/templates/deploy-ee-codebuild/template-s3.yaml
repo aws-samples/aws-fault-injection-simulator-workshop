@@ -70,20 +70,20 @@ Resources:
               console.log("Parameters: " + JSON.stringify(params))
 
               // Kick off codebuild. Note that this lambda will never
-              // return success because the codebuild time can 
-              // exceed 15min. Instead the loop will close with a 
+              // return success because the codebuild time can
+              // exceed 15min. Instead the loop will close with a
               // success message from codebuild or the 1h timeout
               // for custom resources.
               var codebuild = new aws.CodeBuild();
               codebuild.startBuild(params, function(err, data) {
                 if (err) {
                   // an error occurred - tell CFN immediately
-                  console.log(err, err.stack); 
+                  console.log(err, err.stack);
                   response.send(event, context, "FAILED");
                 } else {
                   // successfully started codpipeline
                   // success signal will come from CodeBuild job
-                  console.log(data);           
+                  console.log(data);
                 }
               });
 
@@ -140,7 +140,7 @@ Resources:
               commands:
                 # Default outcome of build is FAILED
                 - export CUSTOM_RESOURCE_STATUS=FAILED
-                # Some debugging info 
+                # Some debugging info
                 - env | sort
                 - env | grep CUSTOM_RESOURCE_
                 - pwd
@@ -154,7 +154,6 @@ Resources:
                 - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/ && unzip resources.zip'
                 # Build and deploy via CDK
                 - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh $CUSTOM_RESOURCE_REQUEST'
-                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
                 # We didn't fail so reset build outcome to SUCCESS
                 - export CUSTOM_RESOURCE_STATUS=SUCCESS
                 - echo DONE
@@ -162,7 +161,11 @@ Resources:
                 - echo DONE
                 - "echo Returning build status to custom resource: $CUSTOM_RESOURCE_STATUS"
                 - "curl  -H 'Content-Type: ''' -X PUT -d '{ \"Status\": \"'${CUSTOM_RESOURCE_STATUS}'\", \"PhysicalResourceId\": \"'${CUSTOM_RESOURCE_PHYSICAL_RESOURCE_ID}'\", \"StackId\": \"'${CUSTOM_RESOURCE_STACK_ID}'\", \"RequestId\": \"'${CUSTOM_RESOURCE_REQUEST_ID}'\", \"LogicalResourceId\": \"'${CUSTOM_RESOURCE_LOGICAL_RESOURCE_ID}'\" }' ${CUSTOM_RESOURCE_RESPONSE_URL}"
-  
+            post_build:
+              commands:
+                # Debug output
+                - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done'
+
       TimeoutInMinutes: 60
   CustomLambdaRole:
     Type: AWS::IAM::Role
