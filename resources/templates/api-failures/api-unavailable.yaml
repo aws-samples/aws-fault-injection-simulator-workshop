@@ -38,9 +38,6 @@ Resources:
     Properties:
       ImageId: !Ref LatestAmiId
       InstanceType: t3.micro
-      Tags: 
-        - Key: Name
-          Value: FisAPIFailures
       SubnetId: !If [UseDefaultVpc, !Ref "AWS::NoValue", !Ref SubnetId]
   apiGateway:
     Type: AWS::ApiGateway::RestApi
@@ -50,12 +47,12 @@ Resources:
         Types:
           - REGIONAL
       Name: !Ref apiGatewayName
-
+  
   async:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
       RestApiId: !Ref apiGateway
-      ParentId: !GetAtt
+      ParentId: !GetAtt 
         - apiGateway
         - RootResourceId
       PathPart: terminate
@@ -196,7 +193,7 @@ Resources:
                 'statusCode': 200
               }
             elif event.get('httpMethod') == 'GET' and event.get('path') == "/terminate":
-              describe_instances()
+              describe_instances()   
               return {
                 "body": f"Deleting Instance: {instance_id}" + "\n",
                 "headers": {
@@ -218,7 +215,7 @@ Resources:
       Runtime: python3.8
       Environment:
         Variables:
-          INSTANCE: !Ref Instance
+          INSTANCE: !Ref Instance 
 
   lambdaThrottleInvoke:
     Type: AWS::Lambda::Permission
