@@ -13,7 +13,7 @@ export class EksStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const vpc = ec2.Vpc.fromLookup(this, 'FisVpc', {
+    const vpc = ec2.Vpc.fromLookup(this, 'FisVpc', { 
       vpcName: 'FisStackVpc/FisVpc'
     });
 
@@ -25,33 +25,17 @@ export class EksStack extends cdk.Stack {
       clusterName: "FisWorkshop-EksCluster"
     });
 
-
-    const lt = new ec2.CfnLaunchTemplate(this, 'LaunchTemplate', {
-     launchTemplateData: {
-       instanceType: 't3.medium',
-       tagSpecifications: [{resourceType: 'instance',
-      tags: [{
-        key: 'Name',
-        value: 'FisEKSNode',
-      }],}]
-     }
-    });
-
     const eksNodeGroup = eksCluster.addNodegroupCapacity("ManagedNodeGroup", {
       desiredSize: 1,
       nodegroupName: "FisWorkshopNG",
       tags: {
-        key:"Name", value:"FISTarget"
-      },
-      launchTemplateSpec: {
-        id: lt.ref,
-        version: lt.attrLatestVersionNumber,
-      },
+        "Name": "FISTarget"
+      }
     });
 
     // Add SSM access policy to nodegroup
     eksNodeGroup.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMManagedInstanceCore"));
-
+    
     const appLabel = { app: "hello-kubernetes" };
 
     const deployment = {
