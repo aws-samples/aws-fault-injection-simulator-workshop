@@ -25,12 +25,28 @@ export class EksStack extends cdk.Stack {
       clusterName: "FisWorkshop-EksCluster"
     });
 
+
+    const lt = new ec2.CfnLaunchTemplate(this, 'LaunchTemplate', {
+         launchTemplateData: {
+           instanceType: 't3.medium',
+           tagSpecifications: [{resourceType: 'instance',
+          tags: [{
+            key: 'Name',
+            value: 'FisEKSNode',
+          }],}]
+         }
+        });
+
     const eksNodeGroup = eksCluster.addNodegroupCapacity("ManagedNodeGroup", {
       desiredSize: 1,
       nodegroupName: "FisWorkshopNG",
       tags: {
         "Name": "FISTarget"
-      }
+      },
+      launchTemplateSpec: {
+        id: lt.ref,
+        version: lt.attrLatestVersionNumber,
+      },
     });
 
     // Add SSM access policy to nodegroup
