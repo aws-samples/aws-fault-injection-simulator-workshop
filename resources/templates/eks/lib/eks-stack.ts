@@ -3,13 +3,13 @@ import {Construct}         from 'constructs';
 import * as ec2            from 'aws-cdk-lib/aws-ec2';
 import * as eks            from 'aws-cdk-lib/aws-eks';
 import * as iam            from 'aws-cdk-lib/aws-iam';
+import * as lambda         from 'aws-cdk-lib/aws-lambda';
+import * as logs           from 'aws-cdk-lib/aws-logs';
 
-
-// import ec2 = require("@aws-cdk/aws-ec2");
-// import eks = require('@aws-cdk/aws-eks');
-// import iam = require('@aws-cdk/aws-iam');
 
 export class EksStack extends cdk.Stack {
+    counter: number;
+
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -96,5 +96,19 @@ export class EksStack extends cdk.Stack {
     const kubeCtlRole = new cdk.CfnOutput(this, 'FisEksKubectlRole', {
       value: eksCluster.kubectlRole?.roleArn.toString() ? eksCluster.kubectlRole?.roleArn.toString() : "undefined"
     });
+
+    this.counter = 1;
+    this.node.findAll().forEach((construct, index) => {
+          if (construct instanceof lambda.Function) {
+            new logs.LogGroup(this, `LogGroup${this.counter}`, {
+                logGroupName: `/aws/lambda/${construct.functionName}`,
+                retention: logs.RetentionDays.THREE_MONTHS,
+                removalPolicy: cdk.RemovalPolicy.DESTROY
+            });
+            this.counter += 1;
+          }
+
+    });
+
   }
 }
