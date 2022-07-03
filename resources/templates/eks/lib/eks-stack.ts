@@ -27,15 +27,15 @@ export class EksStack extends cdk.Stack {
 
 
     const lt = new ec2.CfnLaunchTemplate(this, 'LaunchTemplate', {
-         launchTemplateData: {
-           instanceType: 't3.medium',
-           tagSpecifications: [{resourceType: 'instance',
-          tags: [{
-            key: 'Name',
-            value: 'FisEKSNode',
-          }],}]
-         }
-        });
+     launchTemplateData: {
+       instanceType: 't3.medium',
+       tagSpecifications: [{resourceType: 'instance',
+      tags: [{
+        key: 'Name',
+        value: 'FisEKSNode',
+      }],}]
+     }
+    });
 
     const eksNodeGroup = eksCluster.addNodegroupCapacity("ManagedNodeGroup", {
       desiredSize: 1,
