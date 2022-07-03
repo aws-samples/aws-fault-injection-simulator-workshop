@@ -41,7 +41,7 @@ export class EksStack extends cdk.Stack {
       desiredSize: 1,
       nodegroupName: "FisWorkshopNG",
       tags: {
-        key:"Name", value:"FISTarget"
+        "Name": "FISTarget"
       },
       launchTemplateSpec: {
         id: lt.ref,
