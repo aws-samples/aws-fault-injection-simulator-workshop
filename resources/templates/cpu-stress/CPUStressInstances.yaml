@@ -47,7 +47,7 @@ Conditions:
       - !Ref SubnetId
       - "subnet-000000"
 Resources:
-  SSMInstanceRole: 
+  SSMInstanceRole:
     Type : AWS::IAM::Role
     Properties:
       ManagedPolicyArns:
@@ -87,6 +87,11 @@ Resources:
       Tags:
         - Key: Name
           Value: 'FisLinuxCPUStress'
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          sudo yum -y install htop
+
   FISRole:
     Type: AWS::IAM::Role
     Properties:
@@ -111,7 +116,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: 
+              Service:
               - "fis.amazonaws.com"
             Action: sts:AssumeRole
 #  FISExperimentCPUStress:
@@ -154,7 +159,7 @@ Resources:
 #            duration: PT2M
 #          Targets:
 #            Instances: instanceTargets
-  WinStressDocument: 
+  WinStressDocument:
     Type: AWS::SSM::Document
     Properties:
       DocumentType: Command
