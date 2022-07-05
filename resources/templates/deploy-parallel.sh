@@ -54,6 +54,9 @@ call_deploy_script "vpc" "VPC stack"
 echo "Waiting for VPC stack to finish"
 wait
 
+# Plain CLI for SLR creation
+call_deploy_script "slr" "Service linked role stack" 
+
 # Goad stack moved to CDK
 call_deploy_script "goad-cdk" "Load generator stack" 
 
@@ -119,6 +122,7 @@ for substack in \
     cpu-stress \
     api-failures \
     spot \
+    slr \
 ; do
     touch $substack/deploy-status.txt
     RES=$(cat $substack/deploy-status.txt)
