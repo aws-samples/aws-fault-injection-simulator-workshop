@@ -8,6 +8,10 @@ The AWS FIS security model uses two IAM roles. The first IAM role, the one you u
 
 The second role governs what resources an AWS FIS experiment can affect during a fault injection experiment. For the purposes of this workshop, we will create one generic role. However, you can create fine grained IAM roles for each fault injection experiment.
 
+{{% notice note %}}
+Please note that FIS uses a [**service linked role**](https://docs.aws.amazon.com/IAM/latest/UserGuide/using-service-linked-roles.html) to perform some of the internal tasks FIS does on your behalf. If you have sufficient privileges like during this workshop, specifically if you are permitted to perform the `iam:CreateServiceLinkedRole` action, this role will be automatically created the first time you use FIS. If you plan on configuring FIS in an account that is fully managed by Infrastructure as Code (IaC) and where all FIS users do not have the above permission, please make sure to create the service linked role as part of your IaC setup.
+{{% /notice %}}
+
 ### Create FIS service role
 
 We need to create an [**IAM role for the AWS FIS service**](https://docs.aws.amazon.com/fis/latest/userguide/getting-started-iam.html#getting-started-iam-service-role) to grant it permissions to inject faults into the system. While we could have pre-created this IAM role for you, we think it is important to review its scope with you.
