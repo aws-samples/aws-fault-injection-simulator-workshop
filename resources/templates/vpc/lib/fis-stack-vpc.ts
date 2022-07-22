@@ -21,12 +21,12 @@ export class FisStackVpc extends cdk.Stack {
         {
           cidrMask: 24,
           name: "FisPriv",
-          subnetType: ec2.SubnetType.PRIVATE
+          subnetType: ec2.SubnetType.PRIVATE_WITH_NAT
         },
         {
           cidrMask: 24,
           name: "FisIso",
-          subnetType: ec2.SubnetType.ISOLATED
+          subnetType: ec2.SubnetType.PRIVATE_ISOLATED
         },
       ]
     });
@@ -36,10 +36,10 @@ export class FisStackVpc extends cdk.Stack {
     this.vpc.selectSubnets({ subnetType: ec2.SubnetType.PUBLIC }).subnets.map((subnet, index) => {
       new cdk.CfnOutput(this, 'FisPub' + (index + 1), { value: subnet.subnetId });
     });
-    this.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE }).subnets.map((subnet, index) => {
+    this.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_WITH_NAT }).subnets.map((subnet, index) => {
       new cdk.CfnOutput(this, 'FisPriv' + (index + 1), { value: subnet.subnetId });
     });
-    this.vpc.selectSubnets({ subnetType: ec2.SubnetType.ISOLATED }).subnets.map((subnet, index) => {
+    this.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }).subnets.map((subnet, index) => {
       new cdk.CfnOutput(this, 'FisIso' + (index + 1), { value: subnet.subnetId });
     });
 
