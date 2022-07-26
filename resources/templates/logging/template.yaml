@@ -1,0 +1,187 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: FIS Logging
+Parameters:
+  LambdaFunctionName:
+    Type: String
+    AllowedPattern: "[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+"
+    Default: fis-workshop-logging
+Resources:
+  loggingFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Environment:
+        Variables:
+          S3BUCKET: !Ref loggingS3Bucket
+      Code:
+        ZipFile: |
+            import gzip
+            import json
+            import base64
+            import boto3
+            import datetime
+            import os
+            from botocore.exceptions import ClientError
+            
+            def handler(event, context):
+                bucket = os.environ['S3BUCKET']
+                log,id = get_event_details(event)
+                response = get_experiment(id)
+                return_json = {"experimentResults": log, "experiment":response["experiment"]}
+                json_cleaned = json.dumps(return_json, default=time_converter)
+                print(f'json: {json_cleaned}')
+                now = datetime.datetime.now()
+                dt_string = now.strftime("%Y-%m-%dT%H:%M:%S")
+                upload_file(json_cleaned, bucket, id+"-"+dt_string+".json")
+                return(json_cleaned)
+                
+                
+            def time_converter(json_object):
+                if isinstance(json_object, datetime.datetime):
+                    return json_object.__str__()
+                    
+                    
+            def get_experiment(id):
+                client = boto3.client('fis')
+                response = client.get_experiment(
+                    id=id
+                )
+                return response
+                
+            def get_event_details(event):
+                cw_data = event['awslogs']['data']
+                compressed_payload = base64.b64decode(cw_data)
+                uncompressed_payload = gzip.decompress(compressed_payload)
+                payload = json.loads(uncompressed_payload)
+                log_events = payload['logEvents']
+                log = json.loads(log_events[0]["message"])
+                id = log["id"]
+                return(log,id)
+                
+            def upload_file(data, bucket, object_name):
+                """Upload a file to an S3 bucket
+            
+                :param file_name: File to upload
+                :param bucket: Bucket to upload to
+                :param object_name: S3 object name
+                :return: True if file was uploaded, else False
+                """
+            
+                # Upload the file
+                client = boto3.client('s3')
+                response = client.put_object(
+                    Body=data,
+                    Bucket=bucket,
+                    Key=object_name,
+                )
+                return response
+    
+    
+      Description: FIS Workshop
+      FunctionName: !Ref LambdaFunctionName
+      Handler: index.handler
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt lambdaIAMRole.Arn
+      Runtime: python3.8
+      
+  lambdaIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource:
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${LambdaFunctionName}:*
+          PolicyName: lambda
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - s3:PutObject
+                  - s3:PutObjectAcl
+                Effect: Allow
+                Resource: 
+                  - !GetAtt loggingS3Bucket.Arn
+                  - !Join ['', [!GetAtt loggingS3Bucket.Arn, '/*']]
+          PolicyName: s3Logging
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - fis:GetExperiment
+                Effect: Allow
+                Resource: "*"
+          PolicyName: FISDescribe
+  lambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${LambdaFunctionName}
+      RetentionInDays: 90  
+  FISLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: "/fis-workshop/fis-logging"
+      RetentionInDays: 90
+
+  SubscriptionFilter: 
+    Type: AWS::Logs::SubscriptionFilter
+    Properties: 
+      # RoleArn: 
+      #   !GetAtt CloudWatchIAMRole.Arn
+      LogGroupName: 
+        !Ref FISLogGroup
+      FilterPattern: '{$.log_type="experiment-end"}'
+      DestinationArn: 
+        !GetAtt loggingFunction.Arn
+
+  loggingS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+  
+  # CloudWatchIAMRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     Policies:
+  #       - PolicyDocument:
+  #           Version: 2012-10-17
+  #           Statement:
+  #             - Action:
+  #                 - lambda:InvokeFunction
+  #               Effect: Allow
+  #               Resource:
+  #                 - !GetAtt loggingFunction.Arn
+  #         PolicyName: InvokeFunction
+                  
+  LogGroupInvokeLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt loggingFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: logs.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/fis-workshop/fis-logging:*'
