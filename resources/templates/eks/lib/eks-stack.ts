@@ -22,9 +22,25 @@ export class EksStack extends cdk.Stack {
       vpc: vpc,
       version: eks.KubernetesVersion.V1_20,
       defaultCapacity: 0,
-      clusterName: "FisWorkshop-EksCluster"
+      clusterName: "FisWorkshop-EksCluster",
     });
 
+    // Install ChaosMesh via helm chart
+    // https://chaos-mesh.org/docs/production-installation-using-helm/
+    eksCluster.addHelmChart('ChaosMesh', {
+      chart: 'chaos-mesh',
+      repository: 'https://charts.chaos-mesh.org',
+      namespace: 'chaos-testing',
+    });
+
+    // Currently does not work - somehow CDK crates an illegal resource name 
+    // Install Litmus via helm chart
+    // https://chaos-mesh.org/docs/production-installation-using-helm/
+    eksCluster.addHelmChart('Litmus', {
+      chart: 'litmus',
+      repository: 'https://litmuschaos.github.io/litmus-helm/',
+      namespace: 'litmus',
+    });
 
     const lt = new ec2.CfnLaunchTemplate(this, 'LaunchTemplate', {
      launchTemplateData: {
