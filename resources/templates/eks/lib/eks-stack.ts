@@ -31,15 +31,18 @@ export class EksStack extends cdk.Stack {
       chart: 'chaos-mesh',
       repository: 'https://charts.chaos-mesh.org',
       namespace: 'chaos-testing',
+      // Override auto-generated hash from kubectl-provider to avoid name length issues
+      release: 'chaos-mesh'
     });
 
-    // Currently does not work - somehow CDK crates an illegal resource name 
     // Install Litmus via helm chart
     // https://chaos-mesh.org/docs/production-installation-using-helm/
     eksCluster.addHelmChart('Litmus', {
       chart: 'litmus',
       repository: 'https://litmuschaos.github.io/litmus-helm/',
       namespace: 'litmus',
+      // Override auto-generated hash from kubectl-provider to avoid name length issues
+      release: 'litmus',
     });
 
     const lt = new ec2.CfnLaunchTemplate(this, 'LaunchTemplate', {
