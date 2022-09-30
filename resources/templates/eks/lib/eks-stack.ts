@@ -32,7 +32,15 @@ export class EksStack extends cdk.Stack {
       repository: 'https://charts.chaos-mesh.org',
       namespace: 'chaos-testing',
       // Override auto-generated hash from kubectl-provider to avoid name length issues
-      release: 'chaos-mesh'
+      release: 'chaos-mesh',
+      values: {
+        dashboard: {
+          service: {
+            type: "LoadBalancer",
+            ports: [ { name: "http", port: 80, targetport: 2333, protoco: "TCP" } ]
+          }
+        }
+      }
     });
 
     // Install Litmus via helm chart
@@ -43,6 +51,22 @@ export class EksStack extends cdk.Stack {
       namespace: 'litmus',
       // Override auto-generated hash from kubectl-provider to avoid name length issues
       release: 'litmus',
+      values: {
+        portal: {
+          server: {
+            service: {
+              type: "ClusterIP"
+            }
+          },
+          frontend: {
+            service: {
+              type: "LoadBalancer",
+              port: 80,
+              selector: { app: "litmus-frontend" }
+            }
+          }
+        }
+      }
     });
 
     const lt = new ec2.CfnLaunchTemplate(this, 'LaunchTemplate', {
