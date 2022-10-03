@@ -9,7 +9,8 @@ if [[ -n "$1" ]]; then
     else
       echo "Running and installing cheat $1"
       cheat=$( printf 'cheat-%02d.sh' $1  ) 
-      ( cat ~/environment/restore-cheats.txt; echo $cheat ) | sort -u > ~/environment/restore-cheats.txt
+      ( cat ~/environment/restore-cheats.txt; echo $cheat ) | sort -u > ~/environment/restore-cheats.tmp
+      mv ~/environment/restore-cheats.tmp ~/environment/restore-cheats.txt
       source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/$cheat
   
       fgrep '~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh' ~/.bashrc > /dev/null
