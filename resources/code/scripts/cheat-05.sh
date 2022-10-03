@@ -11,7 +11,7 @@ export SSM_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${SSM_ROLE_
 if [ -z FIS_ROLE_ARN ]; then
   echo "Calling depenency cheat 2"
   source cheat-02.sh
-  FIS_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${FIS_ROLE_NAME}'].Arn" --output text )
+  export FIS_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${FIS_ROLE_NAME}'].Arn" --output text )
 fi
 
 if [ -z "$SSM_ROLE_ARN" ]; then

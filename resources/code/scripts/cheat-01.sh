@@ -12,5 +12,5 @@ echo URL_HOME=$URL_HOME
 echo URL_PHP=$URL_PHP
 
 # Workaround for AWS CLI v1/v2 compatibility issues
-CLI_MAJOR_VERSION=$( aws --version | grep '^aws-cli' | cut -d/ -f2 | cut -d. -f1 )
+export CLI_MAJOR_VERSION=$( aws --version | grep '^aws-cli' | cut -d/ -f2 | cut -d. -f1 )
 if [ "$CLI_MAJOR_VERSION" == "2" ]; then FIX_CLI_PARAM="--cli-binary-format raw-in-base64-out"; else unset FIX_CLI_PARAM; fi
