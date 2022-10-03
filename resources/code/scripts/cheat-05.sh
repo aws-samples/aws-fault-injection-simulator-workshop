@@ -14,7 +14,7 @@ if [ -z FIS_ROLE_ARN ]; then
   FIS_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${FIS_ROLE_NAME}'].Arn" --output text )
 fi
 
-if [ -z "$EXISTS" ]; then
+if [ -z "$SSM_ROLE_ARN" ]; then
 
     cat cheat-03/template.json | envsubst > /tmp/cheat-03.json
     aws iam create-role \
