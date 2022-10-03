@@ -28,7 +28,13 @@
         }
     ],
     "roleArn": "arn:aws:iam::${ACCOUNT_ID}:role/FisCpuStress-FISRole-1O5SDM3R8D0R8",
+    "logConfiguration": {
+        "cloudWatchLogsConfiguration": {
+            "logGroupArn": "arn:aws:logs:${REGION}:${ACCOUNT_ID}:log-group:/fis-workshop/fis-logs:*"
+        },
+        "logSchemaVersion": 1
+    },
     "tags": {
-        "Name": "LinuxBurnCPUviaSSM"
+        "Name": "${TEMPLATE_NAME}"
     }
 }

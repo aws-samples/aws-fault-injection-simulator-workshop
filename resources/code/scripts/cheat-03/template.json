@@ -1,7 +1,13 @@
 {
     "description": "Terminate 50% of instances based on Name Tag",
-    "tags": {
-        "Name": "FisWorkshop-Exp1-CLI"
+    "targets": {
+        "FisWorkshopAsg-50Percent": {
+            "resourceType": "aws:ec2:instance",
+            "resourceTags": {
+                "Name": "FisStackAsg/ASG"
+            },
+            "selectionMode": "PERCENT(50)"
+        }
     },
     "actions": {
         "FisWorkshopTerminateAsg-1-CLI": {
@@ -19,15 +25,6 @@
             }
         }
     },
-    "targets": {
-        "FisWorkshopAsg-50Percent": {
-            "resourceType": "aws:ec2:instance",
-            "resourceTags": {
-                "Name": "FisStackAsg/ASG"
-            },
-            "selectionMode": "PERCENT(50)"
-        }
-    },
     "stopConditions": [
         {
             "source": "none"
@@ -39,5 +36,8 @@
             "logGroupArn": "arn:aws:logs:${REGION}:${ACCOUNT_ID}:log-group:/fis-workshop/fis-logs:*"
         },
         "logSchemaVersion": 1
+    },
+    "tags": {
+        "Name": "${TEMPLATE_NAME}"
     }
 }
