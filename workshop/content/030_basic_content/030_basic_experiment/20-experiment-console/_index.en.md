@@ -6,6 +6,10 @@ services: true
 
 In this section, we will learn how to create an AWS FIS experiment template using the AWS Console. 
 
+{{% notice note %}}
+This section relies on the `FisWorkshopServiceRole` role created in the [**Configuring Permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section. You can create this role by pasting this into CloudShell: `source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh 2`
+{{% /notice %}}
+
 ## Experiment setup
 
 To create a fault injection experiment, we first need to create an AWS FIS template defining:

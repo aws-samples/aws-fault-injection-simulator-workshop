@@ -6,6 +6,10 @@ services: true
 
 In this section we will show you how to create an experiment using AWS FIS templates. For clarity, we will replicate the same experiment as we previously did via the AWS console.
 
+{{% notice note %}}
+This section relies on the `FisWorkshopServiceRole` role created in the [**Configuring Permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section. You can create this role by pasting this into CloudShell: `source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh 2`
+{{% /notice %}}
+
 ## Template overview
 
 [**Experiment templates**](https://docs.aws.amazon.com/fis/latest/userguide/experiment-templates.html) are JSON files containing Actions, Targets, an IAM role, and optional Stop Conditions, and Tags: 

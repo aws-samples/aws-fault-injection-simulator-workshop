@@ -17,6 +17,10 @@ In the previous section we ensured that we have a resilient front end of servers
 We are assuming that you know how to set up a basic FIS experiment and will focus on things specific to this experiment. If you need a refresher see the previous [**First Experiment**]({{< ref "030_basic_content/030_basic_experiment/" >}}) section.
 {{% /notice %}}
 
+{{% notice note %}}
+This section relies on the `FisWorkshopServiceRole` role created in the [**Configuring Permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section. You can create this role by pasting this into CloudShell: `source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh 2`
+{{% /notice %}}
+
 ### General template setup
 
 * Create a new experiment template

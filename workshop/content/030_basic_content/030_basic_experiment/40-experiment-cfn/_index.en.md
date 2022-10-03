@@ -6,6 +6,10 @@ services: true
 
 In this section we will cover how to define and update experiment templates using [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-fis-experimenttemplate.html).
 
+{{% notice note %}}
+This section relies on the `FisWorkshopServiceRole` role created in the [**Configuring Permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section. You can create this role by pasting this into CloudShell: `source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh 2`
+{{% /notice %}}
+
 ## CFN template format
 
 The AWS CloudFormation template uses the same format as the API but capitalizes the first letter of section names. As such the AWS FIS experiment template from the previous section would become:

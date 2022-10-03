@@ -21,7 +21,7 @@ We are assuming that you know how to set up a basic FIS experiment and will focu
 ### General template setup
 
 {{% notice note %}}
-We are assuming that you have already set up an IAM role for for this workshop. If you haven't, see the [**Create FIS Service Role**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section.
+This section relies on the `FisWorkshopServiceRole` role created in the [**Configuring Permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section. You can create this role by pasting this into CloudShell: `source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh 2`
 {{% /notice %}}
 
 Create a new experiment template:
@@ -117,3 +117,7 @@ curl -IL <REPLACE_WITH_ECS_SERVICE_ALB_URL> | grep "^HTTP\/"
 * Confirm that you want to start an experiment
 
 {{< img "start-experiment-3.en.png" "Confirm Start Experiment" >}}
+
+{{% notice note %}}
+If you are working in CloudShell you terminal may expire throughout this workshop. To save your environment variables from this section so they re-populate when you restart your terminal, paste this into your shell: `source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh 6`
+{{% /notice %}}

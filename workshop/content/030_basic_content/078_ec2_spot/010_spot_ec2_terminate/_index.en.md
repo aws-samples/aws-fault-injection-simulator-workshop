@@ -21,6 +21,10 @@ We are assuming that you know how to set up a basic FIS experiment and will focu
 
 ### General template setup
 
+{{% notice note %}}
+This section relies on the `FisWorkshopServiceRole` role created in the [**Configuring Permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section. You can create this role by pasting this into CloudShell: `source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh 2`
+{{% /notice %}}
+
 * Create a new experiment template
   * Add "Name" tag of `FisWorkshopSpotTerminate`
   * Add "Description" of `Use EC2 terminate instances on spot instance`
