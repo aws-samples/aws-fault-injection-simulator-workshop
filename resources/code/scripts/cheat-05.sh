@@ -2,11 +2,11 @@
 
 echo "Create workshop service role for SSM"
 
-FIS_ROLE_NAME=FisWorkshopServiceRole
-SSM_ROLE_NAME=FisWorkshopSsmEc2DemoRole
+export FIS_ROLE_NAME=FisWorkshopServiceRole
+export SSM_ROLE_NAME=FisWorkshopSsmEc2DemoRole
 
-FIS_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${FIS_ROLE_NAME}'].Arn" --output text )
-SSM_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${SSM_ROLE_NAME}'].Arn" --output text )
+export FIS_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${FIS_ROLE_NAME}'].Arn" --output text )
+export SSM_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${SSM_ROLE_NAME}'].Arn" --output text )
 
 if [ -z FIS_ROLE_ARN ]; then
   echo "Calling depenency cheat 2"
