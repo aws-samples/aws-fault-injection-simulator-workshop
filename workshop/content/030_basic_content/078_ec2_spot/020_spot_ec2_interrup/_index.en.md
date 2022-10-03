@@ -88,13 +88,13 @@ aws stepfunctions start-execution \
 Currently all target resolution is performed at the beginning of the experiment run. As such it is possible that the FIS experiment will fail target resolution if the spot instance is not running yet. If that happens, wait a few seconds and restart the FIS experiment below.
 {{% /notice %}}
 
-Then start the experiment. If you named the template as described above this should work, otherwise adjust `EXPERIMENT_TEMPLATE_ID` as needed:
+Then start the experiment. If you named the template as described above this should work, otherwise adjust `SPOT_EXPERIMENT_TEMPLATE_ID` as needed:
 
 ```
-EXPERIMENT_TEMPLATE_ID=$( aws fis list-experiment-templates --query "experimentTemplates[?tags.Name=='FisWorkshopSpotInterrupt'].id" --output text )
+SPOT_EXPERIMENT_TEMPLATE_ID=$( aws fis list-experiment-templates --query "experimentTemplates[?tags.Name=='FisWorkshopSpotInterrupt'].id" --output text )
 
 aws fis start-experiment \
-  --experiment-template-id $EXPERIMENT_TEMPLATE_ID \
+  --experiment-template-id $SPOT_EXPERIMENT_TEMPLATE_ID \
   --tags Name=FisWorkshopSpotInterruptTest \
 | jq -rc '.experiment.id'
 ```
