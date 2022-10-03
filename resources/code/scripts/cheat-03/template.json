@@ -39,5 +39,5 @@
             "logGroupArn": "arn:aws:logs:${REGION}:${ACCOUNT_ID}:log-group:/fis-workshop/fis-logs:*"
         },
         "logSchemaVersion": 1
-    },
+    }
 }
