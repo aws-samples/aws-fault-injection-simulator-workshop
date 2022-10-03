@@ -1,0 +1,43 @@
+{
+    "description": "Terminate 50% of instances based on Name Tag",
+    "tags": {
+        "Name": "FisWorkshop-Exp1-CLI"
+    },
+    "actions": {
+        "FisWorkshopTerminateAsg-1-CLI": {
+            "actionId": "aws:ec2:terminate-instances",
+            "description": "Terminate 50% of instances based on Name Tag",
+            "parameters": {},
+            "targets": {
+                "Instances": "FisWorkshopAsg-50Percent"
+            }
+        },
+        "Wait": {
+            "actionId": "aws:fis:wait",
+            "parameters": {
+                "duration": "PT3M"
+            }
+        }
+    },
+    "targets": {
+        "FisWorkshopAsg-50Percent": {
+            "resourceType": "aws:ec2:instance",
+            "resourceTags": {
+                "Name": "FisStackAsg/ASG"
+            },
+            "selectionMode": "PERCENT(50)"
+        }
+    },
+    "stopConditions": [
+        {
+            "source": "none"
+        }
+    ],
+    "roleArn": "arn:aws:iam::${ACCOUNT_ID}:role/FisWorkshopServiceRole",
+    "logConfiguration": {
+        "cloudWatchLogsConfiguration": {
+            "logGroupArn": "arn:aws:logs:${REGION}:${ACCOUNT_ID}:log-group:/fis-workshop/fis-logs:*"
+        },
+        "logSchemaVersion": 1
+    },
+}
