@@ -186,6 +186,50 @@
                     }
                 }
             }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 24,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "period": 60,
+                "metrics": [
+                    [ "AWS/ApplicationELB", "HealthyHostCount",  "TargetGroup", "{{targetgroupName}}", "LoadBalancer", "{{lbName}}", { "label": "ELB healthy" } ],
+                    [ ".",                  "UnHealthyHostCount", ".",          ".",                   ".",            ".",          { "label": "ELB unhealthy" } ]
+                ],
+                "region": "{{region}}",
+                "stat": "Average",
+                "title": "ELB Host HealthCheck",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": false
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 30,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "view": "timeSeries",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/AutoScaling", "GroupTotalInstances",       "AutoScalingGroupName", "{{asgName}}", { "label": "ASG GroupTotalInstances"} ],
+                    [ ".",               "GroupPendingInstances",     ".",                    ".",           { "label": "ASG GroupPendingInstances"} ],
+                    [ ".",               "GroupInServiceInstances",   ".",                    ".",           { "label": "ASG GroupInServiceInstances"} ],
+                    [ ".",               "GroupTerminatingInstances", ".",                    ".",           { "label": "ASG GroupTerminatingInstances"} ]
+                ],
+                "title": "ASG Instance Checks",
+                "region": "{{region}}",
+                "period": 60
+            }
         }
     ]
 }
