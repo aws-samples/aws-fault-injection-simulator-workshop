@@ -80,6 +80,7 @@ export class AsgCdkTestStack extends Stack {
       machineImage: amazon2,
       minCapacity: 1,
       maxCapacity: 3,
+      healthCheck: autoscaling.HealthCheck.elb({grace: cdk.Duration.seconds(60)}),
       groupMetrics: [autoscaling.GroupMetrics.all()],
       desiredCapacity: 1,
       init: ec2.CloudFormationInit.fromElements(
