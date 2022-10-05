@@ -1,0 +1,40 @@
+{
+    "description": "Inject CPU stress on Linux",
+    "targets": {
+        "FisWorkshop-StressLinux": {
+            "resourceType": "aws:ec2:instance",
+            "resourceTags": {
+                "Name": "FisLinuxCPUStress"
+            },
+            "selectionMode": "COUNT(1)"
+        }
+    },
+    "actions": {
+        "StressCPUViaSSM": {
+            "actionId": "aws:ssm:send-command",
+            "parameters": {
+                "documentArn": "arn:aws:ssm:${REGION}::document/AWSFIS-Run-CPU-Stress",
+                "documentParameters": "{\"DurationSeconds\":100}",
+                "duration": "PT2M"
+            },
+            "targets": {
+                "Instances": "FisWorkshop-StressLinux"
+            }
+        }
+    },
+    "stopConditions": [
+        {
+            "source": "none"
+        }
+    ],
+    "roleArn": "arn:aws:iam::${ACCOUNT_ID}:role/FisCpuStress-FISRole-1O5SDM3R8D0R8",
+    "logConfiguration": {
+        "cloudWatchLogsConfiguration": {
+            "logGroupArn": "arn:aws:logs:${REGION}:${ACCOUNT_ID}:log-group:/fis-workshop/fis-logs:*"
+        },
+        "logSchemaVersion": 1
+    },
+    "tags": {
+        "Name": "${TEMPLATE_NAME}"
+    }
+}

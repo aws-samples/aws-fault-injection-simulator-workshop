@@ -21,6 +21,10 @@ We are assuming that you know how to set up a basic FIS experiment and will focu
 
 ### General template setup
 
+{{% notice note %}}
+This section relies on the `FisWorkshopServiceRole` role created in the [**Configuring Permissions**]({{< ref "030_basic_content/030_basic_experiment/10-permissions" >}}) section. You can create this role by pasting this into CloudShell: `source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh 2`
+{{% /notice %}}
+
 * Create a new experiment template
   * Add "Name" tag of `FisWorkshopSpotTerminate`
   * Add "Description" of `Use EC2 terminate instances on spot instance`
@@ -79,13 +83,13 @@ aws stepfunctions start-execution \
 Currently all target resolution is performed at the beginning of the experiment run. As such it is possible that the FIS experiment will fail target resolution if the spot instance is not running yet. If that happens, wait a few seconds and restart the FIS experiment below.
 {{% /notice %}}
 
-Then start the experiment. If you named the template as described above this should work, otherwise adjust `EXPERIMENT_TEMPLATE_ID` as needed:
+Then start the experiment. If you named the template as described above this should work, otherwise adjust `SPOT_EXPERIMENT_TEMPLATE_ID` as needed:
 
 ```
-EXPERIMENT_TEMPLATE_ID=$( aws fis list-experiment-templates --query "experimentTemplates[?tags.Name=='FisWorkshopSpotTerminate'].id" --output text )
+SPOT_EXPERIMENT_TEMPLATE_ID=$( aws fis list-experiment-templates --query "experimentTemplates[?tags.Name=='FisWorkshopSpotTerminate'].id" --output text )
 
 aws fis start-experiment \
-  --experiment-template-id $EXPERIMENT_TEMPLATE_ID \
+  --experiment-template-id $SPOT_EXPERIMENT_TEMPLATE_ID \
   --tags Name=FisWorkshopSpotTerminateTest \
 | jq -rc '.experiment.id'
 ```

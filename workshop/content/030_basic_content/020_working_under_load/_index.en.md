@@ -130,3 +130,6 @@ According to the dashboards, we've now generated enough load to force a scaling 
 
 
 
+{{% notice note %}}
+If you are working in CloudShell you terminal may expire throughout this workshop. To save your environment variables from this section so they re-populate when you restart your terminal, paste this into your shell: `source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh 1`
+{{% /notice %}}
