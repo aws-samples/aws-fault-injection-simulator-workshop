@@ -80,6 +80,7 @@ export class AsgCdkTestStack extends Stack {
       machineImage: amazon2,
       minCapacity: 1,
       maxCapacity: 3,
+      healthCheck: autoscaling.HealthCheck.elb({grace: cdk.Duration.seconds(180)}),
       groupMetrics: [autoscaling.GroupMetrics.all()],
       desiredCapacity: 1,
       init: ec2.CloudFormationInit.fromElements(
@@ -262,12 +263,20 @@ export class AsgCdkTestStack extends Stack {
       port: 80,
     });
 
-    listener.addTargets('FisAsgTargets', {
+    const tg1 = new alb.ApplicationTargetGroup(this, 'FisAsgTargetGroup', {
+      targetType: alb.TargetType.INSTANCE,
       port: 80,
-      targets: [myASG]
+      targets: [myASG],
+      vpc
+    });
+
+    listener.addTargetGroups('FisTargetGroup',{
+      targetGroups: [tg1],
     });
 
     listener.connections.allowDefaultPortFromAnyIpv4('Open to the world');
+
+    
 
     const lbUrl = new cdk.CfnOutput(this, 'FisAsgUrl', {value: 'http://' + lb.loadBalancerDnsName});
 
@@ -317,7 +326,9 @@ export class AsgCdkTestStack extends Stack {
         DashboardName: 'FisDashboard-'+this.region,
         DashboardBody: mustache.render(fs.readFileSync('./assets/dashboard-asg.json', 'utf8'),{
           region: this.region,
-          asgName: myASG.autoScalingGroupName
+          asgName: myASG.autoScalingGroupName,
+          lbName: lb.loadBalancerFullName,
+          targetgroupName: tg1.targetGroupFullName,
         })
       }
     });
