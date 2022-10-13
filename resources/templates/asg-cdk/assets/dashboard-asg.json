@@ -204,7 +204,7 @@
                 "view": "timeSeries",
                 "stacked": true,
                 "region": "us-west-2",
-                "stat": "Average",
+                "stat": "Maximum",
                 "period": 10,
                 "title": "HealthyHostCount, UnHealthyHostCount"
             }
