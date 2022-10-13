@@ -190,16 +190,38 @@
         {
             "height": 6,
             "width": 12,
-            "y": 24,
+            "y": 30,
+            "x": 0,
+            "type": "metric",
+            "properties":
+            {
+                "metrics": [
+                    [ "AWS/ApplicationELB", "UnHealthyHostCount", "TargetGroup", "{{{targetgroupName}}}", "LoadBalancer", "{{{lbName}}}", "AvailabilityZone", "us-west-2b", { "color": "#1f77b4" } ],
+                    [ ".", "HealthyHostCount", ".", ".", ".", ".", ".", ".", { "color": "#aec7e8" } ],
+                    [ ".", "UnHealthyHostCount", ".", ".", ".", ".", ".", "us-west-2a", { "color": "#ffbb78" } ],
+                    [ ".", "HealthyHostCount", ".", ".", ".", ".", ".", ".", { "color": "#ff7f0e" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": true,
+                "region": "us-west-2",
+                "stat": "Average",
+                "period": 10,
+                "title": "HealthyHostCount, UnHealthyHostCount"
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 30,
             "x": 0,
             "type": "metric",
             "properties": {
-                "period": 60,
+                "period": 10,
                 "metrics": [
-                    [ "AWS/ApplicationELB", "HealthyHostCount",  "TargetGroup", "{{targetgroupName}}", "LoadBalancer", "{{lbName}}", { "label": "ELB healthy" } ],
+                    [ "AWS/ApplicationELB", "HealthyHostCount",  "TargetGroup", "{{{targetgroupName}}}", "LoadBalancer", "{{{lbName}}}", { "label": "ELB healthy" } ],
                     [ ".",                  "UnHealthyHostCount", ".",          ".",                   ".",            ".",          { "label": "ELB unhealthy" } ]
                 ],
-                "region": "{{region}}",
+                "region": "{{{region}}}",
                 "stat": "Average",
                 "title": "ELB Host HealthCheck",
                 "yAxis": {
@@ -214,21 +236,21 @@
         {
             "height": 6,
             "width": 12,
-            "y": 30,
+            "y": 36,
             "x": 0,
             "type": "metric",
             "properties": {
                 "view": "timeSeries",
                 "stacked": false,
                 "metrics": [
-                    [ "AWS/AutoScaling", "GroupTotalInstances",       "AutoScalingGroupName", "{{asgName}}", { "label": "ASG GroupTotalInstances"} ],
+                    [ "AWS/AutoScaling", "GroupTotalInstances",       "AutoScalingGroupName", "{{{asgName}}}", { "label": "ASG GroupTotalInstances"} ],
                     [ ".",               "GroupPendingInstances",     ".",                    ".",           { "label": "ASG GroupPendingInstances"} ],
                     [ ".",               "GroupInServiceInstances",   ".",                    ".",           { "label": "ASG GroupInServiceInstances"} ],
                     [ ".",               "GroupTerminatingInstances", ".",                    ".",           { "label": "ASG GroupTerminatingInstances"} ]
                 ],
                 "title": "ASG Instance Checks",
-                "region": "{{region}}",
-                "period": 60
+                "region": "{{{region}}}",
+                "period": 10
             }
         }
     ]

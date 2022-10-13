@@ -79,8 +79,9 @@ export class AsgCdkTestStack extends Stack {
       role: instanceRole,
       machineImage: amazon2,
       minCapacity: 1,
-      maxCapacity: 3,
-      healthCheck: autoscaling.HealthCheck.elb({grace: cdk.Duration.seconds(180)}),
+      maxCapacity: 9,
+      // // This is tempting for NACL tests but it breaks things really badly
+      // healthCheck: autoscaling.HealthCheck.elb({grace: cdk.Duration.seconds(180)}),
       groupMetrics: [autoscaling.GroupMetrics.all()],
       desiredCapacity: 1,
       init: ec2.CloudFormationInit.fromElements(
