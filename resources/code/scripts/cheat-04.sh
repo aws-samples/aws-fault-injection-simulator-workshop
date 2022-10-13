@@ -19,4 +19,6 @@ if [ -z "$EXISTS" ]; then
     cat cheat-04/template.json | envsubst > /tmp/cheat-04.json
 
     AWS_PAGER="" aws fis create-experiment-template --cli-input-json file:///tmp/cheat-04.json
+else
+    echo "Template exists with ID ${EXISTS}"
 fi
