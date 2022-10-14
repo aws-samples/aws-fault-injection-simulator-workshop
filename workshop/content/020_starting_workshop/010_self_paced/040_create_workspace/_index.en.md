@@ -102,5 +102,5 @@ npm install -g typescript
 npm install -g aws-cdk
 
 # Install the jq tool
-sudo yum install jq -y
+sudo yum install -y jq gettext
 ```

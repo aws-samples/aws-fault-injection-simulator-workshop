@@ -49,6 +49,6 @@ sudo npm install -g typescript
 sudo npm install -g aws-cdk
 
 # Install the jq tool
-sudo yum install jq -y
+sudo yum install -y jq gettext
 
 ```
