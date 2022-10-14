@@ -35,4 +35,6 @@ if [ -z "$SSM_ROLE_ARN" ]; then
     --policy-name ${SSM_ROLE_NAME} \
     --policy-document file:///tmp/workshop-policy2.json
 
+else
+    echo "Role exists with ARN ${SSM_ROLE_ARN}"
 fi

@@ -1,0 +1,281 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Demonstrate fault injection decorator pattern for Lambda
+
+Resources:
+
+  CallLoadGen:
+    Type: AWS::SSM::Document
+    Properties:
+      DocumentType: Automation
+      Name: 'FisWorkshopCallLoadGen'
+      Content:
+        schemaVersion: '0.3'
+        assumeRole: "{{ AutomationAssumeRole }}"
+        description: 'Write value to SSM parameter. Create parameter if it does not exist, overwrite if it does. WARNING: this has no rollback. See workshop for explanation.'
+        parameters:
+          AutomationAssumeRole:
+            type: String
+            description: The ARN of the role that allows Automation to perform the actions on your behalf.
+          FunctionName:
+            type: String
+            description: The ARN of the load generator lambda function
+          ConnectionTargetUrl:
+            type: String
+            description: The URL to generate load on
+          ExperimentDurationSeconds: 
+            type: Integer
+            description: Duration over which to generate load in seconds
+            default: 180
+          Replicas: 
+            type: Integer
+            description: Number of concurrent load generators to start
+            default: 1
+          ConnectionsPerSecond: 
+            type: Integer
+            description: Number of concurrent connections per second (1-1000)
+            default: 1000
+          ReportingMilliseconds:
+            type: Integer
+            description: Duration between sending log data in milliseconds
+            default: 1000
+          ConnectionTimeoutMilliseconds:
+            type: Integer
+            description: Maximum time load generator will wait for a connection response before registering an error in milliseconds
+            default: 2000
+          TlsTimeoutMilliseconds:
+            type: Integer
+            description: Maximum time load generator will wait for a TLS negotiation to finish before registering an error in milliseconds
+            default: 2000
+          TotalTimeoutMilliseconds:
+            type: Integer
+            description: Maximum time load generator will wait for a finished HTTP response before registering an error in milliseconds
+            default: 2000
+        mainSteps:
+        # - name: runLoad
+        #   action: aws:invokeLambdaFunction
+        #   timeoutSeconds: 60
+        #   inputs:
+        #     # Service: lambda
+        #     # Api: Invoke
+        #     FunctionName: "{{ FunctionName }}"
+        #     InvocationType: Event
+        #     InputPayload: 
+        #       ConnectionTargetUrl: "{{ ConnectionTargetUrl }}"
+        #       ExperimentDurationSeconds: "{{ ExperimentDurationSeconds }}"
+        #       ConnectionsPerSecond: "{{ ConnectionsPerSecond }}"
+        #       ReportingMilliseconds: "{{ ReportingMilliseconds }}"
+        #       ConnectionTimeoutMilliseconds: "{{ ConnectionTimeoutMilliseconds }}"
+        #       TlsTimeoutMilliseconds: "{{ TlsTimeoutMilliseconds }}"
+        #       TotalTimeoutMilliseconds: "{{ TotalTimeoutMilliseconds }}"
+        - name: runLoadReplicas
+          action: aws:executeScript
+          timeoutSeconds: 60
+          inputs:
+            Runtime: "python3.8"
+            Handler: "script_handler"
+            InputPayload: 
+              FunctionName: "{{ FunctionName }}"
+              Replicas: "{{ Replicas }}"
+              InputPayload:
+                ConnectionTargetUrl: "{{ ConnectionTargetUrl }}"
+                ExperimentDurationSeconds: "{{ ExperimentDurationSeconds }}"
+                ConnectionsPerSecond: "{{ ConnectionsPerSecond }}"
+                ReportingMilliseconds: "{{ ReportingMilliseconds }}"
+                ConnectionTimeoutMilliseconds: "{{ ConnectionTimeoutMilliseconds }}"
+                TlsTimeoutMilliseconds: "{{ TlsTimeoutMilliseconds }}"
+                TotalTimeoutMilliseconds: "{{ TotalTimeoutMilliseconds }}"
+            Script: |
+              import boto3
+              import json
+              client = boto3.client("lambda")
+              def script_handler(events, context):
+                  function_name = events.get("FunctionName","")
+                  replicas = events.get("Replicas",1)
+                  results = []
+                  status = 200
+                  for ii in range(replicas):
+                      try:
+                          response = client.invoke(
+                              FunctionName=function_name,
+                              InvocationType='Event',
+                              Payload=json.dumps(events.get("InputPayload",{})).encode("utf8"),
+                          )
+                          response_status = response.get("StatusCode",500)
+                          if not response_status in [ 200, 202 ]:
+                              status = 500
+                          results.append({ 
+                              "RequestId": response.get("ResponseMetadata",{}).get("RequestId","none"), 
+                              "StatusCode": response.get("StatusCode",500)
+                          })
+                      except Exception as e: 
+                          results.append({ 
+                              "RequestId": "none", 
+                              "StatusCode": 503,
+                              "Exception": "{}".format(e)
+                          })
+                          status=500
+                  return {
+                      "response": json.dumps(results),
+                      "statusCode": status
+                  }
+          outputs:
+            - Name: Response
+              Selector: "$.Payload.response"
+              Type: String
+
+
+
+  
+  FisWorkshopAzSsmRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ssm.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Sid: EnableLambdaInvoke
+              Effect: Allow
+              Action:
+              - lambda:InvokeFunction
+              # Using * here because it's in a different stack from FisLoadGen and I don't want to do lookups
+              Resource: "*"
+            - Sid: EnableAsgDocument
+              Effect: Allow
+              Action:
+              - autoscaling:DescribeAutoScalingGroups
+              - autoscaling:SuspendProcesses
+              - autoscaling:ResumeProcesses
+              - ec2:DescribeInstances
+              - ec2:DescribeInstanceStatus
+              - ec2:TerminateInstance
+              Resource: "*"
+
+
+
+  # LambdaChaosExperiment:
+  #   Type: AWS::FIS::ExperimentTemplate
+  #   Properties:
+  #     Description: Inject Lambda Failures
+  #     Targets: {}
+  #     Actions:
+  #       S01_EnableLatency:
+  #         ActionId: aws:ssm:start-automation-execution
+  #         Parameters:
+  #           documentArn: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${PutParameterShim}"
+  #           documentParameters: !Sub >-
+  #             { 
+  #               "AutomationAssumeRole": "${FisWorkshopLambdaSsmRole.Arn}", 
+  #               "FaultParameterValue": "{
+  #                 \"is_enabled\":true,
+  #                 \"fault_type\":\"latency\",
+  #                 \"delay\":400,
+  #                 \"error_code\":404,
+  #                 \"exception_msg\":\"Fault injected by chaos-lambda\",
+  #                 \"rate\":1
+  #               }" 
+  #             }
+  #           maxDuration: PT1M
+  #       S02_Wait1:
+  #         ActionId: aws:fis:wait
+  #         Parameters:
+  #           duration: PT1M
+  #         StartAfter:
+  #           - S01_EnableLatency
+  #       S03_EnableStatusCode:
+  #         ActionId: aws:ssm:start-automation-execution
+  #         Parameters:
+  #           documentArn: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${PutParameterShim}"
+  #           documentParameters: !Sub >-
+  #             { 
+  #               "AutomationAssumeRole": "${FisWorkshopLambdaSsmRole.Arn}", 
+  #               "FaultParameterValue": "{
+  #                 \"is_enabled\":true,
+  #                 \"fault_type\":\"status_code\",
+  #                 \"delay\":400,
+  #                 \"error_code\":404,
+  #                 \"exception_msg\":\"Fault injected by chaos-lambda\",
+  #                 \"rate\":1
+  #               }" 
+  #             }
+  #           maxDuration: PT1M
+  #         StartAfter:
+  #           - S02_Wait1
+  #       S04_Wait2:
+  #         ActionId: aws:fis:wait
+  #         Parameters:
+  #           duration: PT1M
+  #         StartAfter:
+  #           - S03_EnableStatusCode
+  #       S05_EnableException:
+  #         ActionId: aws:ssm:start-automation-execution
+  #         Parameters:
+  #           documentArn: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${PutParameterShim}"
+  #           documentParameters: !Sub >-
+  #             { 
+  #               "AutomationAssumeRole": "${FisWorkshopLambdaSsmRole.Arn}", 
+  #               "FaultParameterValue": "{
+  #                 \"is_enabled\":true,
+  #                 \"fault_type\":\"exception\",
+  #                 \"delay\":400,
+  #                 \"error_code\":404,
+  #                 \"exception_msg\":\"Fault injected by chaos-lambda\",
+  #                 \"rate\":1
+  #               }" 
+  #             }
+  #           maxDuration: PT1M
+  #         StartAfter:
+  #           - S04_Wait2
+  #       S06_Wait3:
+  #         ActionId: aws:fis:wait
+  #         Parameters:
+  #           duration: PT1M
+  #         StartAfter:
+  #           - S05_EnableException            
+  #       S07_DisableFaults:
+  #         ActionId: aws:ssm:start-automation-execution
+  #         Parameters:
+  #           documentArn: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${PutParameterShim}"
+  #           documentParameters: !Sub >-
+  #             { 
+  #               "AutomationAssumeRole": "${FisWorkshopLambdaSsmRole.Arn}", 
+  #               "FaultParameterValue": "{
+  #                 \"is_enabled\":false,
+  #                 \"fault_type\":\"latency\",
+  #                 \"delay\":400,
+  #                 \"error_code\":404,
+  #                 \"exception_msg\":\"Fault injected by chaos-lambda\",
+  #                 \"rate\":1
+  #               }" 
+  #             }
+  #           maxDuration: PT1M
+  #         StartAfter:
+  #           - S06_Wait3
+  #     StopConditions:
+  #       - Source: none
+  #     RoleArn: !GetAtt FisWorkshopLambdaServiceRole.Arn
+  #     LogConfiguration:
+  #       CloudWatchLogsConfiguration:
+  #         # LogGroupArn: "arn:aws:logs:us-west-2:313373485031:log-group:/fisworkshop/fislogs:*"
+  #         LogGroupArn: !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/fisworkshop/fislogs:*"
+  #       LogSchemaVersion: 1
+  #     Tags:
+  #       Name: FisWorkshopLambdaFailure
+
+
+Outputs:
+  FisWorkshopAzSsmRoleArn:
+    Description: "IAM Role created for SSM exectuion"
+    Value: !GetAtt FisWorkshopAzSsmRole.Arn
+  CallLoadGenArn: 
+    Description: "ARN of SSM CallLoadGen documment for use with FIS"
+    Value: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${CallLoadGen}"

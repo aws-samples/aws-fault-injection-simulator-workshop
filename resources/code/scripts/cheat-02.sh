@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Create workshop service role"
+echo "Create workshop service role 'FisWorkshopServiceRole'"
 
 ROLE_NAME=FisWorkshopServiceRole
 

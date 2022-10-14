@@ -1,0 +1,27 @@
+{
+    "description": "Terminate All ASG Instances in AZ using SSM",
+    "stopConditions": [
+        {
+            "source": "none"
+        }
+    ],
+    "targets": {
+    },
+    "actions": {
+        "terminateInstances": {
+            "actionId": "aws:ssm:start-automation-execution",
+            "description": "Terminate Instances in AZ using SSM",
+            "parameters": {
+                "documentArn": "${DOP313_SSM_DOCUMENT_ARN}",
+                "documentParameters": "{\"AvailabilityZone\": \"${DOP313_AZ_NAME}\", \"AutoscalingGroupName\": \"${DOP313_ASG_NAME}\", \"AutomationAssumeRole\": \"${SSM_ROLE_ARN}\"}",
+                "maxDuration": "PT3M"
+            },
+            "targets": {
+            }
+        }
+    },
+    "roleArn": "${FIS_ROLE_ARN}",
+    "tags": {
+        "Name": "${DOP313_TEMPLATE_NAME}"
+    }
+}
