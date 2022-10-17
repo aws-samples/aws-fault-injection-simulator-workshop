@@ -97,9 +97,9 @@ With the FIS template created you can now run the FIS template from the [**FIS c
 
 ## Lab 3 - Explore AZ outage simulations (30-40min)
 
-In the previous Labs, you have learned how to use built-in FIS template to terminate EC2 instances based on Tag, to inject controled fault. You also learn how to do the same using SSM Document but this time based on AZ. SSM Document provides flexibility to design your experiment. It allows us to write custom experiment as long as we can script it! In this Lab, we are going to use SSM Document to simulate an AZ failure.
+In the previous Labs, you have learned how to use built-in FIS template to terminate EC2 instances based on Tag, to inject controlled fault. You also learn how to do the same using SSM Document but this time based on AZ. SSM Document provides flexibility to design your experiment. It allows us to write custom experiment as long as we can script it! In this Lab, we are going to use SSM Document to simulate an AZ failure.
 
-Hypotheis: If there is AZ failure, the workload is able to scale and handle incoming load increases (because we are using multi-AZ!). 
+Hypothesis: If there is AZ failure, the workload is able to scale and handle incoming load increases (because we are using multi-AZ!). 
 
 To design this experiment to your system, you need to ask yourself what it means by AZ failure? For our Web Application, AZ failure means that:
 1. All the instances in the failure AZ are not able to accept the incoming load. AND
@@ -107,7 +107,7 @@ To design this experiment to your system, you need to ask yourself what it means
 
 We already have the SSM Document to terminate EC2 instances in a specify AZ from previous lab now we are going to create another SSM Document to prevent ASG to scale in the same AZ.  We are expecting ASG to scale in the available AZ to the desire number of instances and our application continue to serve the requests. 
 
-We are going to use SSM Document available in this section. [**Simulating AZ Issues**]({{<ref "030_basic_content/090_scenarios/010_simulating_az_issues/020_impact_ec2-asg.html#workaround-remove-az-from-asg--lb">}})
+We are going to use SSM Document available in this section. [**Simulating AZ Issues**]({{<ref "030_basic_content/090_scenarios/010_simulating_az_issues/020_impact_ec2-asg#workaround-remove-az-from-asg--lb">}})
 
 Use the following CLI command to create the SSM document and export the document ARN:
 
