@@ -179,20 +179,34 @@ Click "Save"
     "AutoscalingGroupName":"<<Enter ASG Name>>", 
     "AutomationAssumeRole": "arn:aws:iam::<<Your Account Id>>:role/FisWorkshopSsmEc2DemoRole"}
  ````
-Max Duration: 3 Minutes
+Max Duration: 6 Minutes
 Click "Save"
 4. Click "Create Experiment Template"
 
 Now Let's start the experiment.
 
-1. Run this command to see all instances that are hosting our website.
+1. Run this command to see all instances that are hosting our website. You should see our EC2 fleet were provisioned across both AZ. 
 
-```bash
+```
+watch --interval=15 source ./list-instances.sh
+```
+What it does is running the following command every 15 seconds.
+
+``` bash
 aws ec2 describe-instances \
 --query "Reservations[*].Instances[*].{ID:InstanceId,AZ:Placement.AvailabilityZone,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}"  \
 --filters "Name=instance-state-name,Values=running" "Name=tag:Name,Values='FisStackAsg/ASG'"  \
 --output table
-
 ```
 
+
 2. In FIS Console under Experiment Template, select the template we just created then click "Start Experiment"
+
+If you navigate to ASG Console, under Network section, you should see the Availability Zones to only include one AZ.
+
+{{< img "ASG-limitAZ.png" "Explore FIS template" >}}
+
+3. Now you should see the instances are removed from AZ-a and are provisioned in AZ-b. (Potentially we can create more load here. Follow the note section below.)
+
+4. Our experiment are setup to run for 5 minutes.  You should now start seeing instances are scale back in AZ-a.  
+
