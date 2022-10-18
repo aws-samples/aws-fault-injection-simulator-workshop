@@ -124,11 +124,6 @@ aws ssm create-document \
   --document-type Automation \
   --content file://ssm-asg-remove-az.yaml
   
-# Construct ARN
-REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
-ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
-DOCUMENT_ARN=arn:aws:ssm:${REGION}:${ACCOUNT_ID}:document/${SSM_DOCUMENT_NAME}
-echo $DOCUMENT_ARN
 ```
 
 Now Let's create an Experiment template that bring one AZ down
@@ -136,8 +131,8 @@ Now Let's create an Experiment template that bring one AZ down
 Through FIS Console
 
 1. Navigate to FIS Console and click Create Experiment Template
-2. Under "Description", enter `Simulate AZ-a Failure`.  Under "Name", enter `AZ-a Failure`.
-3. Under "Actions" Section, we are going to add two actions using SSM Automation Document. Before that, run these command to get SSM Automation Document ARN.
+2. Under **"Description"**, enter `Simulate AZ-a Failure`.  Under **"Name"**, enter `AZ-a Failure`.
+3. Under **"Actions"**33333 Section, we are going to add two actions using SSM Automation Document. Before that, run these command to get SSM Automation Document ARN.
 
 ```bash
 REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
@@ -151,39 +146,40 @@ RemoveAZ_SSM_DOCUMENT_NAME=RemoveAZFromAsgWithSsm
 RemoveAZ_DOCUMENT_ARN=arn:aws:ssm:${REGION}:${ACCOUNT_ID}:document/${RemoveAZ_SSM_DOCUMENT_NAME}
 echo $RemoveAZ_DOCUMENT_ARN
 ```
+- *Terminate EC2 Instances in AZ-a*
 
+ Click **"Add Action"**, fill the configuration with these values.
 
-3.1 Terminate EC2 Instances in AZ-a
- Click "Add Action", fill the configuration with these values.
- Name: Terminate-EC2-AZa
- Action type: aws:ssm:start-automation-execution
- Document Arn:  Enter the ARN from output of the above command for Document Name "TerminateAsgInstancesWithSsm"
- Document Parameter: 
+ **Name**: Terminate-EC2-AZa  
+ **Action type**: aws:ssm:start-automation-execution  
+ **Document Arn**:  Enter the ARN from output of the above command for Document Name "TerminateAsgInstancesWithSsm"  
+ **Document Parameter**: 
  ```json
  {
-    "AvailabilityZone": "us-east-1a", 
+    "AvailabilityZone": "<<Enter Region Such as us-east-1a>>", 
     "AutoscalingGroupName":"<<Enter ASG Name>>", 
     "AutomationAssumeRole": "arn:aws:iam::<<Your Account Id>>:role/FisWorkshopSsmEc2DemoRole"}
  ```
-Max Duration: 3 Minutes
-Click "Save"
-3.2 Remove AZ from ASG
- Click "Add Action", fill the configuration with these values.
- Name: Remove-AZa-From-ASG
- Action type: aws:ssm:start-automation-execution
- Document Arn:  Enter the ARN from output of the above command for Document Name "TerminateAsgInstancesWithSsm"
- Document Parameter: (Same Parameter as the previous document)
+**Max Duration**: 3 Minutes 
+Click **"Save"**
+
+- **Remove AZ from ASG**  
+ Click "Add Action", fill the configuration with these values.  
+ **Name**: Remove-AZa-From-ASG  
+ **Action type**: aws:ssm:start-automation-execution  
+ **Document Arn**:  Enter the ARN from output of the above command for Document Name "TerminateAsgInstancesWithSsm"  
+ **Document Parameter**: (Same Parameter as the previous document)  
  ```json
  {
-    "AvailabilityZone": "us-east-1a", 
+    "AvailabilityZone": "<<Enter Region Such as us-east-1a>>", 
     "AutoscalingGroupName":"<<Enter ASG Name>>", 
     "AutomationAssumeRole": "arn:aws:iam::<<Your Account Id>>:role/FisWorkshopSsmEc2DemoRole"}
  ````
-Max Duration: 6 Minutes
-Click "Save"
+**Max Duration**: 6 Minutes
+Click **"Save"**
 4. Click "Create Experiment Template"
 
-Now Let's start the experiment.
+### Now Let's start the experiment.
 
 1. Run this command to see all instances that are hosting our website. You should see our EC2 fleet were provisioned across both AZ. 
 
@@ -200,7 +196,7 @@ aws ec2 describe-instances \
 ```
 
 
-2. In FIS Console under Experiment Template, select the template we just created then click "Start Experiment"
+2. In FIS Console under **"Experiment Template"**, select the template we just created then click **"Start Experiment"**
 
 If you navigate to ASG Console, under Network section, you should see the Availability Zones to only include one AZ.
 
