@@ -1,5 +1,5 @@
 import * as cdk         from 'aws-cdk-lib';
-import {Stack}          from 'aws-cdk-lib';
+import {Duration, Stack}          from 'aws-cdk-lib';
 import {Construct}      from 'constructs';
 import * as ec2         from 'aws-cdk-lib/aws-ec2';
 import * as iam         from 'aws-cdk-lib/aws-iam';
@@ -12,6 +12,8 @@ import * as ssm         from 'aws-cdk-lib/aws-ssm';
 
 import * as mustache    from 'mustache';
 import * as fs  from 'fs';
+import { ApplicationProtocol } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { Protocol } from 'aws-cdk-lib/aws-ec2';
 
 export class AsgCdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -262,13 +264,23 @@ export class AsgCdkTestStack extends Stack {
 
     const listener = lb.addListener('FisAsgListener', {
       port: 80,
+
+    
     });
 
     const tg1 = new alb.ApplicationTargetGroup(this, 'FisAsgTargetGroup', {
       targetType: alb.TargetType.INSTANCE,
       port: 80,
       targets: [myASG],
-      vpc
+      vpc,
+      healthCheck: {
+        healthyHttpCodes: '200-299',
+        healthyThresholdCount: 2,
+        interval: Duration.seconds(20),
+        timeout: Duration.seconds(15),
+        unhealthyThresholdCount: 10,
+        path: '/'
+      }
     });
 
     listener.addTargetGroups('FisTargetGroup',{
