@@ -293,6 +293,12 @@ export class AsgCdkTestStack extends Stack {
 
     const lbUrl = new cdk.CfnOutput(this, 'FisAsgUrl', {value: 'http://' + lb.loadBalancerDnsName});
 
+    // Getting AZs from LB because ASG construct doesn't seem to expose them
+    const fisAzs = lb.vpc?.availabilityZones || [ 'none', 'none' ];
+    
+    const outputFisAz1 = new cdk.CfnOutput(this, 'FisAlbAz1', {value: fisAzs[0] });
+    const outputFisAz2 = new cdk.CfnOutput(this, 'FisAlbAz2', {value: fisAzs[1] });
+
     // Set up logs, metrics, and dashboards
 
     const logGroupFisLogs = new log.LogGroup(this, 'FisLogGroupFisLogs', {
@@ -307,6 +313,7 @@ export class AsgCdkTestStack extends Stack {
       retention: log.RetentionDays.ONE_WEEK,
     });
     
+
     [2,4,5].forEach(element => {
       new log.MetricFilter(this, 'NginxMetricsFilter' + element + 'xx', {
         logGroup: logGroupNginxAccess,
@@ -342,6 +349,8 @@ export class AsgCdkTestStack extends Stack {
           asgName: myASG.autoScalingGroupName,
           lbName: lb.loadBalancerFullName,
           targetgroupName: tg1.targetGroupFullName,
+          az1: fisAzs[0],
+          az2: fisAzs[1],
         })
       }
     });

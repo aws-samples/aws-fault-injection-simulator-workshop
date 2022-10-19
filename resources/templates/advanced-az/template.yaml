@@ -155,9 +155,11 @@ Resources:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:SuspendProcesses
               - autoscaling:ResumeProcesses
+              - autoscaling:UpdateAutoScalingGroup
               - ec2:DescribeInstances
               - ec2:DescribeInstanceStatus
               - ec2:TerminateInstance
+              - ec2:DescribeSubnets
               Resource: "*"
 
 

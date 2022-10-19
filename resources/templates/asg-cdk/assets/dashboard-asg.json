@@ -196,14 +196,14 @@
             "properties":
             {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "UnHealthyHostCount", "TargetGroup", "{{{targetgroupName}}}", "LoadBalancer", "{{{lbName}}}", "AvailabilityZone", "us-west-2b", { "color": "#1f77b4" } ],
-                    [ ".", "HealthyHostCount", ".", ".", ".", ".", ".", ".", { "color": "#aec7e8" } ],
-                    [ ".", "UnHealthyHostCount", ".", ".", ".", ".", ".", "us-west-2a", { "color": "#ffbb78" } ],
-                    [ ".", "HealthyHostCount", ".", ".", ".", ".", ".", ".", { "color": "#ff7f0e" } ]
+                    [ "AWS/ApplicationELB", "HealthyHostCount",   "TargetGroup", "{{{targetgroupName}}}", "LoadBalancer", "{{{lbName}}}", "AvailabilityZone", "{{{az1}}}", { "color": "#1f77b4" } ],
+                    [ ".",                  "UnHealthyHostCount", ".",           ".",                     ".",            ".",            ".",                ".",         { "color": "#aec7e8" } ],
+                    [ ".",                  "HealthyHostCount",   ".",           ".",                     ".",            ".",            ".",                "{{{az2}}}", { "color": "#ff7f0e" } ],
+                    [ ".",                  "UnHealthyHostCount", ".",           ".",                     ".",            ".",            ".",                ".",         { "color": "#ffbb78" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
-                "region": "us-west-2",
+                "region": "{{{region}}}",
                 "stat": "Maximum",
                 "period": 10,
                 "title": "HealthyHostCount, UnHealthyHostCount"
@@ -219,7 +219,7 @@
                 "period": 10,
                 "metrics": [
                     [ "AWS/ApplicationELB", "HealthyHostCount",  "TargetGroup", "{{{targetgroupName}}}", "LoadBalancer", "{{{lbName}}}", { "label": "ELB healthy" } ],
-                    [ ".",                  "UnHealthyHostCount", ".",          ".",                   ".",            ".",          { "label": "ELB unhealthy" } ]
+                    [ ".",                  "UnHealthyHostCount", ".",          ".",                     ".",            ".",            { "label": "ELB unhealthy" } ]
                 ],
                 "region": "{{{region}}}",
                 "stat": "Average",
