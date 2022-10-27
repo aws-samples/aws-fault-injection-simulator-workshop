@@ -42,7 +42,8 @@ We hope that you have tried FIS before but might need a refresher. Since we are 
 
 * Create server role and populate environment variables
   ```bash
-  source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh 1 2 3
+  cd ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts
+  source ./cheat.sh 1 2 3
   ```
 
 Your environment should now be in a similar state to where you would have been after doing the following steps in the workshop:
@@ -73,7 +74,8 @@ In this section we explore how to extend FIS to use AWS Systems Manager (SSM) au
 
 * Create SSM role and populate environment variables
   ```bash
-  source ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts/cheat.sh 5
+  cd ~/environment/aws-fault-injection-simulator-workshop/resources/code/scripts
+  source ./cheat.sh 5
   ```
 
 Your environment should now be in a similar state to where you would have been after creating the `FisWorkshopSsmEc2DemoRole` SSM role and updating the `FisWorkshopServiceRole` as described in [**FIS SSM Start Automation Setup**]({{<ref "030_basic_content/040_ssm/050_direct_automation#configure-permissions">}}).
@@ -116,7 +118,6 @@ cd ~/environment/aws-fault-injection-simulator-workshop
 cd workshop/content/030_basic_content/040_ssm/050_direct_automation
 
 SSM_DOCUMENT_NAME=RemoveAZFromAsgWithSsm
-SSM_DOCUMENT2_NAME=TerminateAsgInstancesWithSsm
 
 # Create SSM documents
 aws ssm create-document \
@@ -124,12 +125,6 @@ aws ssm create-document \
   --document-format YAML \
   --document-type Automation \
   --content file://ssm-asg-remove-az.yaml
-aws ssm create-document \
-  --name ${SSM_DOCUMENT2_NAME} \
-  --document-format YAML \
-  --document-type Automation \
-  --content file://ssm-terminate-instances-asg-az.yaml
-
 ```
 
 Now Let's create an Experiment template that bring one AZ down
