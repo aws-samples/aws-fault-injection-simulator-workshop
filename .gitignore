@@ -7,3 +7,9 @@ resources/_gen
 .DS_Store
 .vscode/*
 resources/templates/eks/outputs.json
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
+cdk.context.json
+outputs.json

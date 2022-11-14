@@ -8,6 +8,8 @@
                 "autoscaling:DescribeAutoScalingGroups",
                 "autoscaling:SuspendProcesses",
                 "autoscaling:ResumeProcesses",
+                "ec2:DescribeSubnets",
+                "autoscaling:UpdateAutoScalingGroup",
                 "ec2:DescribeInstances",
                 "ec2:DescribeInstanceStatus",
                 "ec2:TerminateInstances"

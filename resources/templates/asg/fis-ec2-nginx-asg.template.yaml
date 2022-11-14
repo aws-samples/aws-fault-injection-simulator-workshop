@@ -571,12 +571,12 @@ Resources:
   ALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      HealthCheckIntervalSeconds: 30
-      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 3
+      HealthCheckIntervalSeconds: 20
+      HealthCheckTimeoutSeconds: 15
+      HealthyThresholdCount: 2
       Port: 80
       Protocol: HTTP
-      UnhealthyThresholdCount: 5
+      UnhealthyThresholdCount: 10
       VpcId: !Ref 'NginxVpcId'
 
   ALBSecurityGroup:

@@ -339,9 +339,11 @@ This SSM document requires an SSM role with the following permissions:
                 "autoscaling:DescribeAutoScalingGroups",
                 "autoscaling:SuspendProcesses",
                 "autoscaling:ResumeProcesses",
+                "autoscaling:UpdateAutoScalingGroup",
                 "ec2:DescribeInstances",
                 "ec2:DescribeInstanceStatus",
-                "ec2:TerminateInstances"
+                "ec2:TerminateInstance",
+                "ec2:DescribeSubnets"
             ],
             "Resource": "*"
         }
