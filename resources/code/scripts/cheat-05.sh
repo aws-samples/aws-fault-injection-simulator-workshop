@@ -8,7 +8,7 @@ export SSM_ROLE_NAME=FisWorkshopSsmEc2DemoRole
 export FIS_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${FIS_ROLE_NAME}'].Arn" --output text )
 export SSM_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${SSM_ROLE_NAME}'].Arn" --output text )
 
-if [ -z FIS_ROLE_ARN ]; then
+if [ -z "$FIS_ROLE_ARN" ]; then
   echo "Calling depenency cheat 2"
   source cheat-02.sh
   export FIS_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${FIS_ROLE_NAME}'].Arn" --output text )
@@ -28,6 +28,8 @@ if [ -z "$SSM_ROLE_ARN" ]; then
     --policy-document file://cheat-05/ssm-policy.json
 
     # Inject SSM role into FIS policy and attach to FIS role
+    export SSM_ROLE_ARN=$( aws iam list-roles --query "Roles[?RoleName=='${SSM_ROLE_NAME}'].Arn" --output text )
+
     cat cheat-05/workshop-policy2.json | envsubst > /tmp/workshop-policy2.json
 
     aws iam put-role-policy \
