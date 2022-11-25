@@ -57,8 +57,8 @@ wait
 # Plain CLI for SLR creation
 call_deploy_script "slr" "Service linked role stack" 
 
-# # Goad stack moved to CDK
-# call_deploy_script "goad-cdk" "Load generator stack" 
+# Goad stack moved to CDK
+call_deploy_script "goad-cdk" "Load generator stack" 
 
 # Access controls using CFN
 call_deploy_script "access-controls" "Access controls stack" 
@@ -112,6 +112,7 @@ wait
 EXIT_STATUS=0
 for substack in \
     vpc \
+    goad-cdk \
     access-controls \
     rds \
     asg-cdk \
