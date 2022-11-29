@@ -48,30 +48,30 @@ cdk bootstrap aws://${ACCOUNT_ID}/${REGION}
 rm -f deploy-output.*.txt */deploy-status.txt
 
 # VPC stack uses CDK
-call_deploy_script "vpc" "VPC stack" 
+call_deploy_script "vpc" "VPC stack"
 
 # VPC is needed for everything else so wait for completion
 echo "Waiting for VPC stack to finish"
 wait
 
 # Plain CLI for SLR creation
-call_deploy_script "slr" "Service linked role stack" 
+call_deploy_script "slr" "Service linked role stack"
 
 # Goad stack moved to CDK
-call_deploy_script "goad-cdk" "Load generator stack" 
+# call_deploy_script "goad-cdk" "Load generator stack"
 
 # Access controls using CFN
-call_deploy_script "access-controls" "Access controls stack" 
+call_deploy_script "access-controls" "Access controls stack"
 
 # # Serverless failures are fully self-contained SAM
-# call_deploy_script "serverless" "Serverless failure stack" 
+# call_deploy_script "serverless" "Serverless failure stack"
 
 
 # Need to sequence construction
 (
     # RDS/aurora stack uses CDK
     # ... depends on VPC
-    call_deploy_script "rds" "RDS stack" 
+    call_deploy_script "rds" "RDS stack"
 
     # RDS secrets are needed for ASG so wait for completion
     wait
@@ -79,7 +79,7 @@ call_deploy_script "access-controls" "Access controls stack"
     # ASG stack moved to CDK
     # ... depends on VPC
     # ... depends on RDS for secret
-    call_deploy_script "asg-cdk" "ASG stack" 
+    call_deploy_script "asg-cdk" "ASG stack"
 
     # Need to wait here to make sure outer wait has something to wait on
     wait
@@ -87,23 +87,23 @@ call_deploy_script "access-controls" "Access controls stack"
 
 # # EKS stack uses CDK
 # # ... depends on VPC
-# call_deploy_script "eks" "EKS stack" 
+# call_deploy_script "eks" "EKS stack"
 
 # # ECS stack uses CDK
 # # ... depends on VPC
-# call_deploy_script "ecs" "ECS stack" 
+# call_deploy_script "ecs" "ECS stack"
 
 # # Stress VM stack added as CFN
 # # ... depends on VPC
-# call_deploy_script "cpu-stress" "CPU stress stack" 
+# call_deploy_script "cpu-stress" "CPU stress stack"
 
 # # API failures are plain CFN
 # # ... depends on VPC
-# call_deploy_script "api-failures" "API failure stack" 
+# call_deploy_script "api-failures" "API failure stack"
 
 # # CFN spot example using SAM
 # # ... depends on VPC
-# call_deploy_script "spot" "Spot instance stack" 
+# call_deploy_script "spot" "Spot instance stack"
 
 # Wait for everything to finish
 echo "Waiting for remaining stacks and substacks to finish"
@@ -112,7 +112,6 @@ wait
 EXIT_STATUS=0
 for substack in \
     vpc \
-    goad-cdk \
     access-controls \
     rds \
     asg-cdk \
