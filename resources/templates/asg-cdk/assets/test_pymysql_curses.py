@@ -8,11 +8,15 @@ import curses
 import socket
 import boto3
 import json
+import time
 
 stdscr = curses.initscr()
+curses.cbreak()
 
 def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
+    curses.nocbreak()
+    curses.echo()
     curses.endwin()
     sys.exit(0)
 
@@ -21,7 +25,7 @@ signal.signal(signal.SIGINT, signal_handler)
 def init_aurora():
     client = boto3.client('secretsmanager')
     # response = json.loads(client.get_secret_value(SecretId={{{auroraSecretArn}}}))
-    response = json.loads(client.get_secret_value(SecretId='{{{auroraSecretArn}}}')['SecretString'])
+    response = json.loads(client.get_secret_value(SecretId='FisAuroraSecret')['SecretString'])
 
     mydb = pymysql.connect(
         user=response['username'],
@@ -32,12 +36,12 @@ def init_aurora():
         write_timeout=1,
         connect_timeout=1
     )
-    return mydb
+    return response['host'], mydb
 
 def init_rds():
     client = boto3.client('secretsmanager')
     # response = json.loads(client.get_secret_value(SecretId={{{mysqlSecretArn}}}))
-    response = json.loads(client.get_secret_value(SecretId='{{{mysqlSecretArn}}}')['SecretString'])
+    response = json.loads(client.get_secret_value(SecretId='FisMysqlSecret')['SecretString'])
 
     mydb = pymysql.connect(
         user=response['username'],
@@ -48,13 +52,13 @@ def init_rds():
         write_timeout=1,
         connect_timeout=1
     )
-    return mydb
+    return response['host'], mydb
 
-aur_con = init_aurora()
-aur_cur = aur_con.cursor()
+aur_host, aur_con = init_aurora()
+aur_cur           = aur_con.cursor()
 
-rds_con = init_rds()
-rds_cur = rds_con.cursor()
+rds_host, rds_con = init_rds()
+rds_cur           = rds_con.cursor()
 
 # for ii in range(1):
 while True:
@@ -66,7 +70,7 @@ while True:
         aur_cur.execute("insert into test (value) values (%d)" % int(32768*random.random()))
         aur_con.commit()
         aur_cur.execute("select * from test order by id desc limit 10")
-        aur_data.append("%-30s" % socket.gethostbyname("aurora-mysql-prod.cluster-ckbixk6kxbqw.us-west-2.rds.amazonaws.com"))
+        aur_data.append("%-30s" % socket.gethostbyname(aur_host))
         for line in aur_cur:
             aur_data.append("%-30s" % str(line))
     except:
@@ -81,7 +85,7 @@ while True:
         rds_cur.execute("insert into test (value) values (%d)" % int(32768*random.random()))
         rds_con.commit()
         rds_cur.execute("select * from test order by id desc limit 10")
-        rds_data.append("%-30s" % socket.gethostbyname("standard-mysql-prod.ckbixk6kxbqw.us-west-2.rds.amazonaws.com"))
+        rds_data.append("%-30s" % socket.gethostbyname(rds_host))
         for line in rds_cur:
             rds_data.append("%-30s" % str(line))
     except:
@@ -100,3 +104,4 @@ while True:
         stdscr.addstr(ii,0,"%s %s" % (aur_str,rds_str))
     stdscr.refresh()
 
+    time.sleep(0.05)

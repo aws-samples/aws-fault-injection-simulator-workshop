@@ -26,7 +26,7 @@ def init_aurora():
         database='testdb',
         connection_timeout=1
     )
-    return mydb
+    return response['host'], mydb
 
 def init_rds():
     client = boto3.client('secretsmanager')
@@ -40,13 +40,13 @@ def init_rds():
         database='testdb',
         connection_timeout=1
     )
-    return mydb
+    return response['host'], mydb
 
-aur_con = init_aurora()
-aur_cur = aur_con.cursor()
+aur_host, aur_con = init_aurora()
+aur_cur           = aur_con.cursor()
 
-rds_con = init_rds()
-rds_cur = rds_con.cursor()
+rds_host, rds_con = init_rds()
+rds_cur           = rds_con.cursor()
 
 for ii in range(1):
 # while True:
@@ -56,7 +56,7 @@ for ii in range(1):
     # Read aurora data
     try:
         aur_cur.execute("create table if not exists test (id int auto_increment, value int, primary key (id));")
-        aur_data.append("%-30s" % socket.gethostbyname("aurora-mysql-prod.cluster-ckbixk6kxbqw.us-west-2.rds.amazonaws.com"))
+        aur_data.append("%-30s" % socket.gethostbyname(aur_host))
         for line in aur_cur:
             aur_data.append("%-30s" % str(line))
     except:
@@ -65,7 +65,7 @@ for ii in range(1):
     # Read aurora data
     try:
         rds_cur.execute("create table if not exists test (id int auto_increment, value int, primary key (id));")
-        rds_data.append("%-30s" % socket.gethostbyname("standard-mysql-prod.ckbixk6kxbqw.us-west-2.rds.amazonaws.com"))
+        rds_data.append("%-30s" % socket.gethostbyname(rds_host))
         for line in rds_cur:
             rds_data.append("%-30s" % str(line))
     except:
