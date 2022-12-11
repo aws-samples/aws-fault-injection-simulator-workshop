@@ -101,6 +101,10 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
+                  - logs:CreateLogDelivery
+                Resource: '*'
+              - Effect: Allow
+                Action:
                   - ssm:ListCommands
                   - ssm:ListDocuments
                 Resource: '*'
