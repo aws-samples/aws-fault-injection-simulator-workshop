@@ -104,8 +104,8 @@ Resources:
       Environment:
         # Pick a container type and size
         Type: LINUX_CONTAINER
-        ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/standard:5.0
+        ComputeType: BUILD_GENERAL1_LARGE
+        Image: aws/codebuild/standard:6.0
         # Enable set this to true if you need docker in docker builds,
         # e.g. for Golang lambda deployments from CDK
         PrivilegedMode: True
@@ -133,6 +133,8 @@ Resources:
                 - export CUSTOM_RESOURCE_STATUS=FAILED
                 # Some debugging info 
                 - env | grep CUSTOM_RESOURCE_
+                # Fix broken apt install
+                - curl -sS https://raw.githubusercontent.com/yarnpkg/releases/gh-pages/debian/pubkey.gpg | sudo apt-key add -                
                 # Install sudo and jq for our installers
                 - "apt update && apt install -y jq time"
                 # Update AWS CLI just in case
@@ -143,8 +145,8 @@ Resources:
                 - export CUSTOM_RESOURCE_STATUS=SUCCESS
               finally:
                 - echo FINALLY
-                - "if [ ${CUSTOM_RESOURCE_STATUS:=FAIL} = FAIL ]; then echo \"Returning build status to custom resource: ${CUSTOM_RESOURCE_STATUS}\"; fi"
-                - "if [ ${CUSTOM_RESOURCE_STATUS:=FAIL} = FAIL ]; then curl  -H 'Content-Type: ''' -X PUT -d '{ \"Status\": \"'${CUSTOM_RESOURCE_STATUS}'\", \"PhysicalResourceId\": \"'${CUSTOM_RESOURCE_PHYSICAL_RESOURCE_ID}'\", \"StackId\": \"'${CUSTOM_RESOURCE_STACK_ID}'\", \"RequestId\": \"'${CUSTOM_RESOURCE_REQUEST_ID}'\", \"LogicalResourceId\": \"'${CUSTOM_RESOURCE_LOGICAL_RESOURCE_ID}'\" }' ${CUSTOM_RESOURCE_RESPONSE_URL}; fi"
+                - "if [ ${CUSTOM_RESOURCE_STATUS:=FAILED} = FAILED ]; then echo \"Returning build status to custom resource: ${CUSTOM_RESOURCE_STATUS}\"; fi"
+                - "if [ ${CUSTOM_RESOURCE_STATUS:=FAILED} = FAILED ]; then curl  -H 'Content-Type: ''' -X PUT -d '{ \"Status\": \"'${CUSTOM_RESOURCE_STATUS}'\", \"PhysicalResourceId\": \"'${CUSTOM_RESOURCE_PHYSICAL_RESOURCE_ID}'\", \"StackId\": \"'${CUSTOM_RESOURCE_STACK_ID}'\", \"RequestId\": \"'${CUSTOM_RESOURCE_REQUEST_ID}'\", \"LogicalResourceId\": \"'${CUSTOM_RESOURCE_LOGICAL_RESOURCE_ID}'\" }' ${CUSTOM_RESOURCE_RESPONSE_URL}; fi"
             build:
               commands:
                 # Default outcome of build is FAILED
