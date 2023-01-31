@@ -75,8 +75,8 @@ while True:
             aur_data.append("%-30s" % str(line))
     except:
         try:
-            aur_con = init_aurora()
-            aur_cur = aur_con.cursor()
+            aur_host, aur_con = init_aurora()
+            aur_cur           = aur_con.cursor()
         except:
             pass
 
@@ -90,8 +90,8 @@ while True:
             rds_data.append("%-30s" % str(line))
     except:
         try:
-            rds_con = init_aurora()
-            rds_cur = aur_con.cursor()
+            rds_host, rds_con = init_rds()
+            rds_cur           = rds_con.cursor()
         except:
             pass
 
