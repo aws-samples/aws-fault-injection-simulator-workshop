@@ -91,16 +91,15 @@ The instructions in this workshop assume you are using a bash shell in a linux-l
 Copy/Paste the following code in your Cloud9 terminal (you can paste the whole block at once).
 
 ```bash
-# Update to the latest stable release of npm and nodejs.
-nvm install --lts
-nvm use --lts 
+# Update to a supported version of node
+nvm install 16
+nvm use 16
 
 # Install typescript
 npm install -g typescript
 
 # Install CDK
-npm install -g aws-cdk
+npm update -g aws-cdk
 
 # Install the jq tool
-sudo yum install -y jq gettext
-```
+sudo yum install -y jq gettext```
