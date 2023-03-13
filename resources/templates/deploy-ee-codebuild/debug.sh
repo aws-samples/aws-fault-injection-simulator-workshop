@@ -17,7 +17,11 @@ for ii in ${LOG_GROUPS}; do
 done
 
 echo "${AWS_ACCOUNT}: Exporting custom resource lambda history"
-LOG_GROUPS=$( aws logs describe-log-groups --log-group-name-prefix /aws/lambda/mod- --query 'logGroups[*].logGroupName' --output text )
+LOG_GROUPS=$( 
+  aws logs describe-log-groups --log-group-name-prefix /aws/lambda/mod- --query 'logGroups[*].logGroupName' --output text;  
+  aws logs describe-log-groups --log-group-name-prefix /aws/lambda/github-loader-template- --query 'logGroups[*].logGroupName' --output text;  
+  aws logs describe-log-groups --log-group-name-prefix /aws/lambda/EE- --query 'logGroups[*].logGroupName' --output text;  
+)
 for ii in ${LOG_GROUPS}; do
   LOG_STREAMS=$( aws logs describe-log-streams --log-group-name ${ii} --query 'logStreams[*].logStreamName' --output text )
   for jj in ${LOG_STREAMS}; do
