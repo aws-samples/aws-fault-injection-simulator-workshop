@@ -34,7 +34,7 @@ export class FisStackRdsAurora extends cdk.Stack {
       defaultDatabaseName: 'testdb',
       instanceProps: {
         vpcSubnets: {
-          subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
         vpc,
         securityGroups: [rdsSecurityGroup],
@@ -47,7 +47,7 @@ export class FisStackRdsAurora extends cdk.Stack {
     const mysql = new rds.DatabaseInstance(this,"FisWorkshopRdsMySql",{
       vpc,
       vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+        subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
       },
       // engine: rds.DatabaseInstanceEngine.postgres({
       //   version: rds.PostgresEngineVersion.VER_13_1,
