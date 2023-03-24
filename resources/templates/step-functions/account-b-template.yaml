@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >-
   Demonstrate the use of Step Functions to orchestrate FIS across accounts. 
@@ -8,22 +8,109 @@ Description: >-
 Parameters:
   AccountIdA:
     Type: String
-    AllowedPattern: "[0-9]+"
+    AllowedPattern: '[0-9]+'
     Description: Account from which requests to orchestrate FIS will originate
 
 Resources:
-  FisAccountExecutionRoleB:
+  FisLocalAccountExperimentRole:
     Type: AWS::IAM::Role
     Properties:
-      Description: !Sub "Role to allow AWS account ${AccountIdA} to run FIS actions in this account"
+      Description: !Sub 'Role used by FIS to execute experiments in this AWS account.'
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - fis.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: allowFisActions
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: AllowFISExperimentLoggingActionsCloudwatch
+                Effect: Allow
+                Action:
+                  - 'logs:CreateLogDelivery'
+                  - 'logs:PutResourcePolicy'
+                  - 'logs:DescribeResourcePolicies'
+                  - 'logs:DescribeLogGroups'
+                Resource: '*'
+              # - Sid: AllowFISExperimentRoleReadOnly
+              #   Effect: Allow
+              #   Action:
+              #     - 'ec2:DescribeInstances'
+              #     - 'ecs:DescribeClusters'
+              #     - 'ecs:ListContainerInstances'
+              #     - 'eks:DescribeNodegroup'
+              #     - 'iam:ListRoles'
+              #     - 'rds:DescribeDBInstances'
+              #     - 'rds:DescribeDbClusters'
+              #     - 'ssm:ListCommands'
+              #   Resource: '*'
+              # - Sid: AllowFISExperimentRoleEC2Actions
+              #   Effect: Allow
+              #   Action:
+              #     - 'ec2:RebootInstances'
+              #     - 'ec2:StopInstances'
+              #     - 'ec2:StartInstances'
+              #     - 'ec2:TerminateInstances'
+              #   Resource: 'arn:aws:ec2:*:*:instance/*'
+              # - Sid: AllowFISExperimentRoleECSActions
+              #   Effect: Allow
+              #   Action:
+              #     - 'ecs:UpdateContainerInstancesState'
+              #     - 'ecs:ListContainerInstances'
+              #   Resource: 'arn:aws:ecs:*:*:container-instance/*'
+              # - Sid: AllowFISExperimentRoleEKSActions
+              #   Effect: Allow
+              #   Action:
+              #     - 'ec2:TerminateInstances'
+              #   Resource: 'arn:aws:ec2:*:*:instance/*'
+              # - Sid: AllowFISExperimentRoleFISActions
+              #   Effect: Allow
+              #   Action:
+              #     - 'fis:InjectApiInternalError'
+              #     - 'fis:InjectApiThrottleError'
+              #     - 'fis:InjectApiUnavailableError'
+              #   Resource: 'arn:*:fis:*:*:experiment/*'
+              # - Sid: AllowFISExperimentRoleRDSReboot
+              #   Effect: Allow
+              #   Action:
+              #     - 'rds:RebootDBInstance'
+              #   Resource: 'arn:aws:rds:*:*:db:*'
+              # - Sid: AllowFISExperimentRoleRDSFailOver
+              #   Effect: Allow
+              #   Action:
+              #     - 'rds:FailoverDBCluster'
+              #   Resource: 'arn:aws:rds:*:*:cluster:*'
+              # - Sid: AllowFISExperimentRoleSSMSendCommand
+              #   Effect: Allow
+              #   Action:
+              #     - 'ssm:SendCommand'
+              #   Resource:
+              #     - 'arn:aws:ec2:*:*:instance/*'
+              #     - 'arn:aws:ssm:*:*:document/*'
+              # - Sid: AllowFISExperimentRoleSSMCancelCommand
+              #   Effect: Allow
+              #   Action:
+              #     - 'ssm:CancelCommand'
+              #   Resource: '*'
+
+  FisRemoteAccountAssumableRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: !Sub 'Role to allow AWS account ${AccountIdA} to run FIS actions in this account. This role is assumed to start experiments and passes another role to FIS for running the experiment.'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Principal:
               AWS:
                 # We should probably change this from "root" to a role/user
-                - !Sub "arn:aws:iam::${AccountIdA}:root"
+                - !Sub 'arn:aws:iam::${AccountIdA}:root'
             Action:
               - 'sts:AssumeRole'
       Policies:
@@ -37,8 +124,14 @@ Resources:
                   - fis:StartExperiment
                   - fis:CreateExperimentTemplate
                   - fis:TagResource
-                Resource: "*"
-  
+                Resource: '*'
+              - Sid: AllowPassRole
+                Effect: Allow
+                Action: 
+                  - 'iam:PassRole'
+                Resource: 
+                  - !GetAtt FisLocalAccountExperimentRole.Arn
+
   FisTrivialTemplate:
     Type: AWS::FIS::ExperimentTemplate
     Properties:
@@ -51,7 +144,7 @@ Resources:
             Duration: PT1M
       StopConditions:
         - Source: none
-      RoleArn: !Ref FisAccountExecutionRoleB
+      RoleArn: !Ref FisLocalAccountExperimentRole
       # Probably too complicated - do without logging?
       # LogConfiguration:
       #   cloudWatchLogsConfiguration:
@@ -60,12 +153,13 @@ Resources:
       Tags:
         Name: FisWaitDemo
 
-
 Outputs:
-  FisAccountExecutionRoleBArn:
-    Description: "ARN of Role to allow other AWS account to run FIS actions in this account"
-    Value: !GetAtt FisAccountExecutionRoleB.Arn
+  FisRemoteAccountAssumableRoleArn:
+    Description: 'ARN of Role to allow other AWS account to run FIS actions in this account'
+    Value: !GetAtt FisRemoteAccountAssumableRole.Arn
+  FisLocalAccountExperimentRoleArn:
+    Description: 'ARN of Role used by FIS while running experiments.'
+    Value: !GetAtt FisLocalAccountExperimentRole.Arn
   FisTrivialTemplateId:
-    Description: "FIS template ID for remote trigger"
+    Description: 'FIS template ID for remote trigger'
     Value: !Ref FisTrivialTemplate
-  
