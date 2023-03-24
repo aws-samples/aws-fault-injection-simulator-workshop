@@ -46,9 +46,9 @@ Resources:
       Targets: {}
       Actions:
         Wait:
-          actionId: 'aws:fis:wait'
-          parameters:
-            duration: PT1M
+          ActionId: 'aws:fis:wait'
+          Parameters:
+            Duration: PT1M
       StopConditions:
         - Source: none
       RoleArn: !Ref FisAccountExecutionRoleB
