@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >-
+  Demonstrate the use of Step Functions to orchestrate FIS across accounts. 
+  This is the template for the targeted account. It will create a place holder
+  FIS template and a role granting remote execution privileges to another account.
+
+Parameters:
+  AccountIdA:
+    Type: String
+    AllowedPattern: "[0-9]+"
+    Description: Account from which requests to orchestrate FIS will originate
+
+Resources:
+  FisAccountExecutionRoleB:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: !Sub "Role to allow AWS account ${AccountIdA} to run FIS actions in this account"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                # We should probably change this from "root" to a role/user
+                - !Sub "arn:aws:iam::${AccountIdA}:root"
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: allowFisActions
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: FisExecutionRole
+                Effect: Allow
+                Action:
+                  - fis:StartExperiment
+                  - fis:CreateExperimentTemplate
+                  - fis:TagResource
+                Resource: "*"
+  
+  FisTrivialTemplate:
+    SpotFailureTest:
+    Type: AWS::FIS::ExperimentTemplate
+    Properties:
+      Description: Define a simple wait action for cross-account demo purposes only
+      Targets: {}
+      Actions:
+        Wait:
+          actionId: 'aws:fis:wait'
+          parameters:
+            duration: PT1M
+      StopConditions:
+        - source: none
+      RoleArn: !Ref FisAccountExecutionRoleB
+      # Probably too complicated - do without logging?
+      # LogConfiguration:
+      #   cloudWatchLogsConfiguration:
+      #     logGroupArn: 'arn:aws:logs:us-west-2:313373485031:log-group:/fis-workshop/fis-logs:*'
+      #   logSchemaVersion: 1
+      Tags:
+        Name: FisWaitDemo
+
+
+Outputs:
+  FisAccountExecutionRoleBArn:
+    Description: "ARN of Role to allow other AWS account to run FIS actions in this account"
+    Value: !GetAtt FisAccountExecutionRoleB.Arn
+  FisTrivialTemplateId:
+    Description: "FIS template ID for remote trigger"
+    Value: !Ref FisTrivialTemplate
+  
