@@ -40,7 +40,6 @@ Resources:
                 Resource: "*"
   
   FisTrivialTemplate:
-    SpotFailureTest:
     Type: AWS::FIS::ExperimentTemplate
     Properties:
       Description: Define a simple wait action for cross-account demo purposes only
@@ -51,7 +50,7 @@ Resources:
           parameters:
             duration: PT1M
       StopConditions:
-        - source: none
+        - Source: none
       RoleArn: !Ref FisAccountExecutionRoleB
       # Probably too complicated - do without logging?
       # LogConfiguration:
