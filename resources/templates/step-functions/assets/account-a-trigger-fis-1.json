@@ -1,0 +1,18 @@
+{
+  "Comment": "Simple cross-account trigger of FIS experiment in controlled Account B",
+  "StartAt": "FisCrossAccountRun",
+  "States": {
+    "FisCrossAccountRun": {
+      "Type": "Task",
+      "Parameters": {
+        "ClientToken": "MyData",
+        "ExperimentTemplateId": "${FisExperimentToRun}"
+      },
+      "Resource": "arn:aws:states:::aws-sdk:fis:startExperiment",
+      "Credentials": {
+        "RoleArn": "${AssumableRoleInAccountB}"
+      },
+      "End": true
+    }
+  }
+}
