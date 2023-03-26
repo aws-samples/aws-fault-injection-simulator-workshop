@@ -124,6 +124,7 @@ Resources:
                   - fis:StartExperiment
                   - fis:CreateExperimentTemplate
                   - fis:TagResource
+                  - fis:DeleteExperimentTemplate
                 Resource: '*'
               - Sid: AllowPassRole
                 Effect: Allow
