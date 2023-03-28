@@ -51,16 +51,17 @@ Resources:
         AssumableRoleInAccountB: !Ref AssumableRoleInAccountB
         FisExperimentToRun: !Ref FisTemplateIdTrivialExecution
         FisExperimentExecutionRole: !Ref FisExecutionRoleInAccountB
-      # This is confusing but looks like policy mappings in step functions
-      # Policies:
-      #   - LambdaInvokePolicy:
-      #       FunctionName: !Ref DataCheckingFunction
-      #   - LambdaInvokePolicy:
-      #       FunctionName: !Ref FlagApplicationFunction
-      #   - LambdaInvokePolicy:
-      #       FunctionName: !Ref ApproveApplicationFunction
-      #   - LambdaInvokePolicy:
-      #       FunctionName: !Ref RejectApplicationFunction
+
+  StepFunctionsOrchestratorStateMachine3:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: assets/account-a-x-account.json
+      # Execution role in Account A
+      Role: !GetAtt StepFunctionsOrchestratorStateMachineRole.Arn
+      # Insert "${VARIABLE}" in statemachine code
+      DefinitionSubstitutions:
+        # AssumableRoleInAccountB: !Ref AssumableRoleInAccountB
+        # FisExperimentExecutionRole: !Ref FisExecutionRoleInAccountB
 
   FisWorkshopStepFunctionsFisExecutionRole:
     Type: AWS::IAM::Role
