@@ -118,13 +118,18 @@ Resources:
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
-              - Sid: FisExecutionRole
+              - Sid: FisExecutionPermissions
                 Effect: Allow
                 Action:
                   - fis:StartExperiment
                   - fis:CreateExperimentTemplate
                   - fis:TagResource
                   - fis:DeleteExperimentTemplate
+                Resource: '*'
+              - Sid: AllowLambdaExecution
+                Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
                 Resource: '*'
               - Sid: AllowPassRole
                 Effect: Allow
