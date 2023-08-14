@@ -55,6 +55,12 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           
       - name: run deploy
+        continue-on-error: true
         run: |
           cd resources/templates/
           bash -x deploy-parallel.sh
+
+      - name: finally report
+        run: |
+          cd resources/templates/
+          for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done
