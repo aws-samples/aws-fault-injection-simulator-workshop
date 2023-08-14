@@ -12,13 +12,13 @@ echo "Cleanup in Region: ${REGION}"
 
 function call_cleanup_script() {
     INSTALLER_DIR=$1
-    INSTALLER_NAME=$(echo ${INSTALLER_DIR} | sed -e 's/[^a-zA-Z0-9]/-/g; s/^-*//; s/-*$//' )
+    INSTALLER_NAME=$(echo ${INSTALLER_DIR} | sed -e 's/[^a-zA-Z0-9]/-/g; s/^-*//; s/-*$//')
     INSTALLER_COMMENT=$2
     echo "Cleanup from ${INSTALLER_DIR}: ${INSTALLER_COMMENT}"
     (
         cd ${INSTALLER_DIR}
         bash cleanup.sh
-    ) > cleanup-output.${INSTALLER_NAME}.txt 2>&1 &
+    ) >cleanup-output.${INSTALLER_NAME}.txt 2>&1 &
 }
 
 # Clean up previous cleanup record
@@ -26,46 +26,44 @@ rm -f cleanup-output.*.txt */cleanup-status.txt
 
 # Optional demo infrastructure stack used in the CiCd lab
 # This stack uses IAM role from the Cicd stack: it must be deleted before starting the deletion of the Cicd stack
-call_cleanup_script "../code/cdk/cicd/" "Optional CiCd stack" 
+call_cleanup_script "../code/cdk/cicd/" "Optional CiCd stack"
 
 # Stress VM stack added as CFN
-call_cleanup_script "cpu-stress" "CPU stress stack" 
+call_cleanup_script "cpu-stress" "CPU stress stack"
 
 # Spot stack added as SAM
-call_cleanup_script "spot" "Spot stack" 
+call_cleanup_script "spot" "Spot stack"
 
 # Fault stacks added as CFN
-call_cleanup_script "api-failures" "API failure stacks" 
-
-
+call_cleanup_script "api-failures" "API failure stacks"
 
 # ECS using CDK
-call_cleanup_script "ecs" "ECS stack" 
+call_cleanup_script "ecs" "ECS stack"
 
 # EKS using CDK
-call_cleanup_script "eks" "EKS stack" 
+call_cleanup_script "eks" "EKS stack"
 
 # ASG stack moved to CDK
-call_cleanup_script "asg-cdk" "ASG stack" 
+call_cleanup_script "asg-cdk" "ASG stack"
 
 # RDS/aurora stack uses CDK
-call_cleanup_script "rds" "RDS stack" 
+call_cleanup_script "rds" "RDS stack"
 
 # Serverless controls using SAM
-call_cleanup_script "serverless" "Serverless stack" 
+call_cleanup_script "serverless" "Serverless stack"
 
 # Access controls using CDK
-call_cleanup_script "access-controls" "Access controls stack" 
+call_cleanup_script "access-controls" "Access controls stack"
 
 # Goad stack moved to CDK
-call_cleanup_script "goad-cdk" "Load generator (goad) stack" 
+call_cleanup_script "goad-cdk" "Load generator (goad) stack"
 
 # Wait before deleting VPC
 echo "Waiting before starting VPC deletion"
 wait
 
 # VPC stack uses CDK
-call_cleanup_script "vpc" "VPC stack" 
+call_cleanup_script "vpc" "VPC stack"
 
 # Delete log groups because they break future deployments
 echo "Deleting log groups ..."
@@ -75,18 +73,18 @@ echo "Deleting log groups ..."
     set +o pipefail
 
     aws logs delete-log-group \
-        --log-group-name /fis-workshop/asg-access-log \
-    || echo "Log group /fis-workshop/asg-access-log already deleted"
+        --log-group-name /fis-workshop/asg-access-log ||
+        echo "Log group /fis-workshop/asg-access-log already deleted"
     aws logs delete-log-group \
-        --log-group-name /fis-workshop/asg-error-log \
-    || echo "Log group /fis-workshop/asg-error-log already deleted"
-) > cleanup-output.loggroups.txt 2>&1 &
+        --log-group-name /fis-workshop/asg-error-log ||
+        echo "Log group /fis-workshop/asg-error-log already deleted"
+) >cleanup-output.loggroups.txt 2>&1 &
 
 # Remove cdk context files
 echo "Deleting cdk state files ..."
 (
     rm */cdk.context.json
-) > cleanup-output.cdkstate.txt 2>&1 &
+) >cleanup-output.cdkstate.txt 2>&1 &
 
 # Wait for everything to finish
 echo "Waiting for finish"
@@ -96,12 +94,17 @@ wait
 
 (
     for ii in \
-      /fis-workshop/fis-logs \
-      /fis-workshop/asg-error-log \
-      /fis-workshop/asg-access-log \
+        /fis-workshop/fis-logs \
+        /fis-workshop/asg-error-log \
+        /fis-workshop/asg-access-log \
     ; do
-      echo Deleting log group $ii
-      aws logs delete-log-group --log-group-name $ii >/dev/null 2>&1
+        jj=$( aws logs describe-log-groups --query 'logGroups[?logGroupName==`/fis-workshop/fis-logs`].logGroupName' --output text )
+        if [ "$ii" == "$jj" ]; then
+            echo Deleting log group $ii
+            aws logs delete-log-group --log-group-name $ii >/dev/null 2>&1
+        else
+            echo Log gropu $ii not found. Skipping
+        fi
     done
 )
 
@@ -118,8 +121,7 @@ for substack in \
     ecs \
     cpu-stress \
     api-failures \
-    spot \
-; do
+    spot; do
     touch $substack/cleanup-status.txt
     RES=$(cat $substack/cleanup-status.txt)
     if [ "$RES" != "OK" ]; then
