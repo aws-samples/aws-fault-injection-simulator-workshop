@@ -54,7 +54,7 @@ jobs:
           role-session-name: GitHubFisWorkshopCleanup
           aws-region: ${{ env.AWS_REGION }}
           
-      - name: run cleanup
+      - name: run deploy
         run: |
           cd resources/templates/
           bash -x deploy-parallel.sh
