@@ -1,0 +1,34 @@
+# Run the cleanup script in AWS account
+name: AwsCleanup
+
+# Controls when the workflow will run
+on:
+  schedule:
+    # Run weekly on Friday at ~8am MT - infrequent runs to allow merging PRs
+    - cron: '0 14 * * FRI'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  AWS_REGION="eu-west-1"
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
+jobs:
+  # Run linck checker
+  cleanup:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Git clone action 
+        uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::1234567890:role/example-role
+          role-session-name: samplerolesession
+          aws-region: ${{ env.AWS_REGION }}
+      - name: run cleanup
+        run: |
+          cd resources/templates/
+          bash -x cleanup-parallel.sh
