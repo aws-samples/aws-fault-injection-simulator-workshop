@@ -9,30 +9,50 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+concurrency: FisWorkshopBuildDestroy
+
 permissions:
   id-token: write   # This is required for requesting the JWT
   contents: read    # This is required for actions/checkout
       
 env:
   AWS_REGION: "eu-west-1"
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 
-concurrency: FisWorkshopBuildDestroy
+  # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 
 jobs:
-  # Run linck checker
-  cleanup:
+  deploy:
     runs-on: ubuntu-latest
     
     steps:
+      - name: install pre-reqs
+        run: |
+          set -x
+          # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+          # nvm install stable
+          npm install -g typescript
+          npm install -g aws-cdk
+          npm install -g npm-check-updates
+          #
+          # nvm version
+          node --version
+          npm version
+          npm view typescript version
+          npm view aws-cdk version
+          cdk --version
+          npm view npm-check-updates version
+          aws --version
+
       - name: Git clone action 
         uses: actions/checkout@v3
+
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::313373485031:role/GitHubOidcRole
           role-session-name: GitHubFisWorkshopCleanup
           aws-region: ${{ env.AWS_REGION }}
+          
       - name: run cleanup
         run: |
           cd resources/templates/
