@@ -17,6 +17,7 @@ permissions:
       
 env:
   AWS_REGION: "eu-west-1"
+  AWS_ROLE: "arn:aws:iam::575981814685:role/GitHubAutomationFisWorkshop"
 
   # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 
@@ -49,7 +50,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::313373485031:role/GitHubOidcRole
+          role-to-assume: ${{ env.AWS_ROLE }}
           role-session-name: GitHubFisWorkshopCleanup
           aws-region: ${{ env.AWS_REGION }}
           
