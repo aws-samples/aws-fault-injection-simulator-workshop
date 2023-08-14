@@ -23,10 +23,10 @@ jobs:
       - name: Git clone action 
         uses: actions/checkout@v3
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::1234567890:role/example-role
-          role-session-name: samplerolesession
+          role-to-assume: arn:aws:iam::313373485031:role/GitHubOidcRole
+          role-session-name: GitHubFisWorkshopCleanup
           aws-region: ${{ env.AWS_REGION }}
       - name: run cleanup
         run: |
