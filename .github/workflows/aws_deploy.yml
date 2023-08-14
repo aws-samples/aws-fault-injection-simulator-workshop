@@ -1,0 +1,37 @@
+# Run the cleanup script in AWS account
+name: AwsDeploy
+# Controls when the workflow will run
+on:
+  schedule:
+    # Run weekly on Friday at ~8am MT - infrequent runs to allow merging PRs
+    - cron: '0 14 * * FRI'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+      
+env:
+  AWS_REGION: "eu-west-1"
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
+jobs:
+  # Run linck checker
+  cleanup:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Git clone action 
+        uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::313373485031:role/GitHubOidcRole
+          role-session-name: GitHubFisWorkshopCleanup
+          aws-region: ${{ env.AWS_REGION }}
+      - name: run cleanup
+        run: |
+          cd resources/templates/
+          bash -x deploy-parallel.sh
