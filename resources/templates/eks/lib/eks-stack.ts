@@ -20,7 +20,7 @@ export class EksStack extends cdk.Stack {
     // The EKS cluster, without worker nodes as we'll add them later
     const eksCluster = new eks.Cluster(this, 'Cluster', {
       vpc: vpc,
-      version: eks.KubernetesVersion.V1_24,
+      version: eks.KubernetesVersion.V1_26,
       defaultCapacity: 0,
       clusterName: "FisWorkshop-EksCluster"
     });
