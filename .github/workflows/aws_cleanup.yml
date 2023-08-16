@@ -23,7 +23,7 @@ on:
         type: string
         default: eu-west-1
         
-concurrency: FisWorkshopBuildDestroy
+concurrency: FisWorkshopBuildDestroy-${{ inputs.region }}
 
 permissions:
   id-token: write   # This is required for requesting the JWT
