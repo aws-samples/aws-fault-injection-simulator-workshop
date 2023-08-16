@@ -33,7 +33,7 @@ env:
   AWS_REGION: ${{ inputs.region }}
   AWS_ROLE: "arn:aws:iam::575981814685:role/GitHubAutomationFisWorkshop"
 
-run-name: AwsDeploy in ${{ inputs.region }}
+run-name: AwsCleanup in ${{ inputs.region }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 
