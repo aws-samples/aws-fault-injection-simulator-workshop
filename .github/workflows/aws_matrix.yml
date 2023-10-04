@@ -1,5 +1,5 @@
 # Run the cleanup script in AWS account
-name: AwsCleanup
+name: AwsMatrix
 
 # Controls when the workflow will run
 on:
