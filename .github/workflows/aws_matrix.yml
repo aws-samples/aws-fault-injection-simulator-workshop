@@ -38,7 +38,7 @@ run-name: AwsMatrix in ${{ inputs.region }}
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 
 jobs:
-  cleanup:
+  matrix:
     runs-on: ubuntu-latest
     
     steps:
@@ -67,15 +67,10 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.AWS_ROLE }}
-          role-session-name: GitHubFisWorkshopCleanup
+          role-session-name: GitHubFisWorkshopMatrix
           aws-region: ${{ env.AWS_REGION }}
           
-      # - name: deploy
-      #   uses: ./.github/worflows/aws_deploy.yml 
-      #   with:
-      #     region: ${{ env.AWS_REGION }}
-
-      # -name: cleanup
-      #   uses: ./.github/worflows/aws_cleanup.yml 
-      #   with:
-      #     region: ${{ env.AWS_REGION }}
+      # - name: run cleanup
+      #   run: |
+      #     cd resources/templates/
+      #     bash -x cleanup-parallel.sh
