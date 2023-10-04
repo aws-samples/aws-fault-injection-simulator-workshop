@@ -7,6 +7,14 @@ on:
   #   # Run weekly on Friday at ~8am MT - infrequent runs to allow merging PRs
   #   - cron: '0 14 * * FRI'
 
+  # Testing
+  push:
+    inputs:
+      region:
+        required: true
+        type: string
+        default: eu-west-1
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
