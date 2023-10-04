@@ -70,12 +70,12 @@ jobs:
           role-session-name: GitHubFisWorkshopCleanup
           aws-region: ${{ env.AWS_REGION }}
           
-      - name: deploy
-        uses: ./.github/worflows/aws_deploy.yml 
-        with:
-          region: ${{ env.AWS_REGION }}
+      # - name: deploy
+      #   uses: ./.github/worflows/aws_deploy.yml 
+      #   with:
+      #     region: ${{ env.AWS_REGION }}
 
-      -name: cleanup
-        uses: ./.github/worflows/aws_cleanup.yml 
-        with:
-          region: ${{ env.AWS_REGION }}
+      # -name: cleanup
+      #   uses: ./.github/worflows/aws_cleanup.yml 
+      #   with:
+      #     region: ${{ env.AWS_REGION }}
