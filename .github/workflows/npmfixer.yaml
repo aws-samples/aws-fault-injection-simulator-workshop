@@ -65,12 +65,12 @@ jobs:
     steps: 
       # This configures git including credentials and allows push
       - name: checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: main
 
       - name: install node / nvm
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with: 
           node-version: 16
 
