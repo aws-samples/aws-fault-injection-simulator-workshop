@@ -31,54 +31,20 @@ on:
         type: string
         default: eu-west-1
         
-concurrency: FisWorkshopBuildDestroy-${{ inputs.region }}
-
-permissions:
-  id-token: write   # This is required for requesting the JWT
-  contents: read    # This is required for actions/checkout
-      
-env:
-  AWS_REGION: ${{ inputs.region }}
-  AWS_ROLE: "arn:aws:iam::575981814685:role/GitHubAutomationFisWorkshop"
+concurrency: FisWorkshopBuildDestroy
 
 run-name: AwsMatrix in ${{ inputs.region }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 
 jobs:
-  matrix:
+  matrix-deploy:
+    uses: ./.github/workflows/aws_deploy.yml
+    with:
+      region: eu-west-1
+
+  matrix-cleanup:
+    uses: ./.github/workflows/aws_cleanup.yml
+    with:
+      region: eu-west-1
     runs-on: ubuntu-latest
-    
-    steps:
-      - name: install pre-reqs
-        run: |
-          set -x
-          # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-          # nvm install stable
-          npm install -g typescript
-          npm install -g aws-cdk
-          npm install -g npm-check-updates
-          #
-          # nvm version
-          node --version
-          npm version
-          npm view typescript version
-          npm view aws-cdk version
-          cdk --version
-          npm view npm-check-updates version
-          aws --version
-
-      - name: Git clone action 
-        uses: actions/checkout@v4
-
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.AWS_ROLE }}
-          role-session-name: GitHubFisWorkshopMatrix
-          aws-region: ${{ inputs.region }}
-          
-      # - name: run cleanup
-      #   run: |
-      #     cd resources/templates/
-      #     bash -x cleanup-parallel.sh
