@@ -23,7 +23,7 @@ on:
         type: string
         default: eu-west-1
         
-concurrency: FisWorkshopBuildDestroy-${{ inputs.region }}
+concurrency: FisWorkshopBuildDestroy
 
 permissions:
   id-token: write   # This is required for requesting the JWT
@@ -61,10 +61,10 @@ jobs:
           aws --version
 
       - name: Git clone action 
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.AWS_ROLE }}
           role-session-name: GitHubFisWorkshopCleanup

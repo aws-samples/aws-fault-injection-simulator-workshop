@@ -1,0 +1,43 @@
+# Run the cleanup script in AWS account
+name: AwsRegionTest
+
+# Controls when the workflow will run
+on:
+  # schedule:
+  #   # Run weekly on Friday at ~8am MT - infrequent runs to allow merging PRs
+  #   - cron: '0 14 * * FRI'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      region:
+        required: true
+        type: string
+        default: eu-west-1
+
+  # Allows this workflow to be called
+  workflow_call:
+    inputs:
+      region:
+        required: true
+        type: string
+        default: eu-west-1
+        
+concurrency: FisWorkshopBuildRegionTest
+
+run-name: RegionTest in ${{ inputs.region }}
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
+jobs:
+  region-deploy:
+    uses: ./.github/workflows/aws_deploy.yml
+    with:
+      region: ${{ inputs.region }}
+
+  region-cleanup:
+    needs: region-deploy
+    if: ${{ always() }}
+    uses: ./.github/workflows/aws_cleanup.yml
+    with:
+      region: ${{ inputs.region }}
