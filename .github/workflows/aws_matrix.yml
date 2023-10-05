@@ -31,7 +31,7 @@ on:
         type: string
         default: eu-west-1
         
-concurrency: FisWorkshopBuildDestroy
+concurrency: FisWorkshopBuildDestroyMatrix
 
 run-name: AwsMatrix in ${{ inputs.region }}
 
@@ -44,6 +44,7 @@ jobs:
       region: eu-west-1
 
   matrix-cleanup:
+    needs: matrix-deploy
     uses: ./.github/workflows/aws_cleanup.yml
     with:
       region: eu-west-1
