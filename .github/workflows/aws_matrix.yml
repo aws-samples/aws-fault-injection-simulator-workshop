@@ -47,4 +47,3 @@ jobs:
     uses: ./.github/workflows/aws_cleanup.yml
     with:
       region: eu-west-1
-    runs-on: ubuntu-latest
