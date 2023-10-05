@@ -45,6 +45,7 @@ jobs:
 
   matrix-cleanup:
     needs: matrix-deploy
+    if: ${{ always() }}
     uses: ./.github/workflows/aws_cleanup.yml
     with:
       region: eu-west-1
