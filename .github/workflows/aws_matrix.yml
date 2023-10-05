@@ -22,6 +22,7 @@ run-name: AwsMatrix
 jobs:
   matrix-deploy:
     strategy:
+      fail-fast: false
       matrix:
         region: # From https://docs.aws.amazon.com/general/latest/gr/fis.html
           - us-east-2 # US East (Ohio)
