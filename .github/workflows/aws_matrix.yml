@@ -23,6 +23,7 @@ jobs:
   matrix-deploy:
     strategy:
       fail-fast: false
+      max-parallel: 1 # we should create 20 isengard accounts and run fully parallel instead
       matrix:
         region: # From https://docs.aws.amazon.com/general/latest/gr/fis.html
           - us-east-2 # US East (Ohio)
