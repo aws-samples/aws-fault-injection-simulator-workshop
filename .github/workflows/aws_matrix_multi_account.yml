@@ -74,3 +74,4 @@ jobs:
     with:
       region: ${{ matrix.mappings.region }}
       account_id: ${{ matrix.mappings.account_id }}
+      concurrency: run-${{ matrix.mappings.account_id }}
