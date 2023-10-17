@@ -1,0 +1,77 @@
+# Run the cleanup script in AWS account
+name: AwsMatrix
+
+# Controls when the workflow will run
+on:
+  # schedule:
+  #   # Run weekly on Friday at ~8am MT - infrequent runs to allow merging PRs
+  #   - cron: '0 14 * * FRI'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+  # Allows this workflow to be called
+  workflow_call:
+        
+concurrency: FisWorkshopBuildDestroyMatrix
+
+run-name: AwsMatrix
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
+jobs:
+  matrix-deploy:
+    strategy:
+      fail-fast: false
+      max-parallel: 1 # we should create 20 isengard accounts and run fully parallel instead
+      matrix:
+        #                     af-south-1                   
+        # rudpot+workshoptest-ap-east-1       834763257438  rudpot+workshoptest-ap-east-1
+        # rudpot+workshoptest-ap-northeast-1  624272761222  rudpot+workshoptest-ap-northeast-1
+        # rudpot+workshoptest-ap-northeast-2  717747630822  rudpot+workshoptest-ap-northeast-2
+        # rudpot+workshoptest-ap-south-1      526313654770  rudpot+workshoptest-ap-south-1
+        # rudpot+workshoptest-ap-southeast-1  776776207417  rudpot+workshoptest-ap-southeast-1
+        # rudpot+workshoptest-ap-southeast-2  353025150235  rudpot+workshoptest-ap-southeast-2
+        # rudpot+workshoptest-ca-central-1    876379805930  rudpot+workshoptest-ca-central-1
+        # rudpot+workshoptest-eu-central-1    797093929135  rudpot+workshoptest-eu-central-1
+        # rudpot+workshoptest-eu-north-1      404664949762  rudpot+workshoptest-eu-north-1
+        #                     eu-south-1                             
+        # rudpot+workshoptest-eu-west-1       096785028781  rudpot+workshoptest-eu-west-1
+        # rudpot+workshoptest-eu-west-2       122956193170  rudpot+workshoptest-eu-west-2
+        # rudpot+workshoptest-eu-west-3       289331759274  rudpot+workshoptest-eu-west-3
+        #                     me-south-1                       
+        # rudpot+workshoptest-sa-east-1       229345112622  rudpot+workshoptest-sa-east-1
+        # rudpot+workshoptest-us-east-1       945342178881  rudpot+workshoptest-us-east-1
+        # rudpot+workshoptest-us-east-2       163700057736  rudpot+workshoptest-us-east-2
+        #                     us-gov-east-1                     
+        #                     us-gov-west-1                   
+        # rudpot+workshoptest-us-west-1       523483904916  rudpot+workshoptest-us-west-1
+        # rudpot+workshoptest-us-west-2       532417486699  rudpot+workshoptest-us-west-2
+        region: # From https://docs.aws.amazon.com/general/latest/gr/fis.html
+          # - { af-south-1    ,              } ## Africa (Cape Town) # opt-in
+          - { region: ap-east-1     , account_id: "834763257438" } # Asia Pacific (Hong Kong)
+          - { region: ap-northeast-1, account_id: "624272761222" } # Asia Pacific (Tokyo)
+          - { region: ap-northeast-2, account_id: "717747630822" } # Asia Pacific (Seoul)
+          - { region: ap-south-1    , account_id: "526313654770" } # Asia Pacific (Mumbai)
+          - { region: ap-southeast-1, account_id: "776776207417" } # Asia Pacific (Singapore)
+          - { region: ap-southeast-2, account_id: "353025150235" } # Asia Pacific (Sydney)
+          - { region: ca-central-1  , account_id: "876379805930" } # Canada (Central)
+          - { region: eu-central-1  , account_id: "797093929135" } # Europe (Frankfurt)
+          - { region: eu-north-1    , account_id: "404664949762" } # Europe (Stockholm)
+        # - { region: eu-south-1    , account_id: "            " } ## Europe (Milan) # opt-in
+          - { region: eu-west-1     , account_id: "096785028781" } # Europe (Ireland)
+          - { region: eu-west-2     , account_id: "122956193170" } # Europe (London)
+          - { region: eu-west-3     , account_id: "289331759274" } # Europe (Paris)
+        # - { region: me-south-1    , account_id: "            " } ## Middle East (Bahrain) - opt-in
+          - { region: sa-east-1     , account_id: "229345112622" } # South America (São Paulo)
+          - { region: us-east-1     , account_id: "945342178881" } # US East (N. Virginia)
+          - { region: us-east-2     , account_id: "163700057736" } # US East (Ohio)
+        # - { region: us-gov-east-1 , account_id: "            " } ## AWS GovCloud (US-East)
+        # - { region: us-gov-west-1 , account_id: "            " } ## AWS GovCloud (US-West), }
+          - { region: us-west-1     , account_id: "523483904916" } # US West (N. California)
+          - { region: us-west-2     , account_id: "532417486699" } # US West (Oregon)
+
+    uses: ./.github/workflows/aws_region_test_multi_account.yml
+    with:
+      region: ${{ matrix.region }}
+      account_id: ${{ matrix.account_id }}
