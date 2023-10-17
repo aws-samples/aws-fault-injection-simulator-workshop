@@ -1,5 +1,5 @@
 # Run the cleanup script in AWS account
-name: AwsDeploy
+name: AwsDeployMultiAccount
 # Controls when the workflow will run
 on:
   # schedule:
