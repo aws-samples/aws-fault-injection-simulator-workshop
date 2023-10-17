@@ -31,9 +31,9 @@ on:
         type: string
         default: "096785028781"
         
-concurrency: FisWorkshopBuildRegionTest
+concurrency: FisWorkshopBuildRegionTest-${{ inputs.account_id }}
 
-run-name: RegionTest in ${{ inputs.region }}
+run-name: RegionTest in ${{ inputs.region }} / ${{ inputs.account_id }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 
