@@ -1,0 +1,89 @@
+# Run the cleanup script in AWS account
+name: AwsDeploy
+# Controls when the workflow will run
+on:
+  # schedule:
+  #   # Run weekly on Friday at ~8am MT - infrequent runs to allow merging PRs
+  #   - cron: '0 14 * * FRI'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      region:
+        required: true
+        type: string
+        default: eu-west-1
+      account_id:
+        required: true
+        type: string
+        default: "096785028781"
+
+  # Allows this workflow to be called
+  workflow_call:
+    inputs:
+      region:
+        required: true
+        type: string
+        default: eu-west-1
+      account_id:
+        required: true
+        type: string
+        default: "096785028781"
+        
+concurrency: FisWorkshopBuildDestroy-{{ inputs.account_id }}
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+      
+env:
+  AWS_REGION: ${{ inputs.region }}
+  AWS_ROLE: "arn:aws:iam::${{ inputs.account_id }}:role/GitHubAutomationFisWorkshop"
+
+run-name: AwsDeploy in ${{ inputs.region }} / ${{ inputs.account_id }}
+
+  # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: install pre-reqs
+        run: |
+          set -x
+          # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+          # nvm install stable
+          npm install -g typescript
+          npm install -g aws-cdk
+          npm install -g npm-check-updates
+          #
+          # nvm version
+          node --version
+          npm version
+          npm view typescript version
+          npm view aws-cdk version
+          cdk --version
+          npm view npm-check-updates version
+          aws --version
+
+      - name: Git clone action 
+        uses: actions/checkout@v4
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE }}
+          role-session-name: GitHubFisWorkshopCleanup
+          aws-region: ${{ env.AWS_REGION }}
+          
+      - name: run deploy
+        continue-on-error: true
+        run: |
+          cd resources/templates/
+          bash -x deploy-parallel.sh
+
+      - name: finally report
+        run: |
+          cd resources/templates/
+          for ii in deploy-output*.txt; do echo --- $ii --- ; cat $ii; done
