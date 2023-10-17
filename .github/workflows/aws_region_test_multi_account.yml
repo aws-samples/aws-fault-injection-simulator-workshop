@@ -31,15 +31,15 @@ on:
         type: string
         default: "096785028781"
         
-concurrency: FisWorkshopBuildRegionTest
+# concurrency: FisWorkshopBuildRegionTest-${{ inputs.account_id }}
 
-run-name: RegionTest in ${{ inputs.region }}
+run-name: RegionTest in ${{ inputs.region }} / ${{ inputs.account_id }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 
 jobs:
   region-deploy:
-    uses: ./.github/workflows/aws_deploy.yml
+    uses: ./.github/workflows/aws_deploy_multi_account.yml
     with:
       region: ${{ inputs.region }}
       account_id: ${{ inputs.account_id }}
@@ -47,7 +47,7 @@ jobs:
   region-cleanup:
     needs: region-deploy
     if: ${{ always() }}
-    uses: ./.github/workflows/aws_cleanup.yml
+    uses: ./.github/workflows/aws_cleanup_multi_account.yml
     with:
       region: ${{ inputs.region }}
       account_id: ${{ inputs.account_id }}

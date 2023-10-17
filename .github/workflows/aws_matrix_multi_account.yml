@@ -13,7 +13,7 @@ on:
   # Allows this workflow to be called
   workflow_call:
         
-concurrency: FisWorkshopBuildDestroyMatrix
+# concurrency: FisWorkshopBuildDestroyMatrixMultiAccount
 
 run-name: AwsMatrix
 
@@ -23,7 +23,6 @@ jobs:
   matrix-deploy:
     strategy:
       fail-fast: false
-      max-parallel: 1 # we should create 20 isengard accounts and run fully parallel instead
       matrix:
         #                     af-south-1                   
         # rudpot+workshoptest-ap-east-1       834763257438  rudpot+workshoptest-ap-east-1
@@ -47,7 +46,7 @@ jobs:
         #                     us-gov-west-1                   
         # rudpot+workshoptest-us-west-1       523483904916  rudpot+workshoptest-us-west-1
         # rudpot+workshoptest-us-west-2       532417486699  rudpot+workshoptest-us-west-2
-        region: # From https://docs.aws.amazon.com/general/latest/gr/fis.html
+        mappings: # From https://docs.aws.amazon.com/general/latest/gr/fis.html
           # - { af-south-1    ,              } ## Africa (Cape Town) # opt-in
           - { region: ap-east-1     , account_id: "834763257438" } # Asia Pacific (Hong Kong)
           - { region: ap-northeast-1, account_id: "624272761222" } # Asia Pacific (Tokyo)
@@ -73,5 +72,6 @@ jobs:
 
     uses: ./.github/workflows/aws_region_test_multi_account.yml
     with:
-      region: ${{ matrix.region }}
-      account_id: ${{ matrix.account_id }}
+      region: ${{ matrix.mappings.region }}
+      account_id: ${{ matrix.mappings.account_id }}
+    concurrency: run-${{ matrix.mappings.account_id }}

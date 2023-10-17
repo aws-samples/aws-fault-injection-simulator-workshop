@@ -30,7 +30,7 @@ on:
         type: string
         default: "096785028781"
         
-concurrency: FisWorkshopBuildDestroy-{{ inputs.account_id }}
+# concurrency: FisWorkshopBuildDestroy-{{ inputs.account_id }}
 
 permissions:
   id-token: write   # This is required for requesting the JWT
