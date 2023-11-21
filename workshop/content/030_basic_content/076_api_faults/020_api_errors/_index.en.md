@@ -135,7 +135,7 @@ In [**FIS**](https://console.aws.amazon.com/fis/home) ensure the experiment is s
 When the experiment begins running issue a new curl request to the `/terminate` path, but this time with a `POST` action.  HTTP `POST` methods are usually used for mutating actions.  
 
 ```bash
-curl -X POST curl ${TERMINATION_URL}
+curl -X POST ${TERMINATION_URL}
 ```
 
 Even with the experiment running you should receive a response that looks similar to
