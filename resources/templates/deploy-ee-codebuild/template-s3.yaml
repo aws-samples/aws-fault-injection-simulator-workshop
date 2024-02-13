@@ -164,6 +164,10 @@ Resources:
                 - time aws s3 cp s3://${EE_ASSETS_BUCKET}/${EE_ASSETS_BUCKET_KEY_PREFIX}resources.zip ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources.zip
                 - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/ && unzip resources.zip'
                 # Build and deploy via CDK
+                - echo "this is AWS DEFAULT Region: ${AWS_DEFAULT_REGION}"
+                - echo "this is AWS Region: ${AWS_REGION}"
+                - export AWS_DEFAULT_REGION=$AWS_REGION
+                - echo "this is AWS DEFAULT Region: ${AWS_DEFAULT_REGION}"
                 - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh $CUSTOM_RESOURCE_REQUEST'
                 # We didn't fail so reset build outcome to SUCCESS
                 - export CUSTOM_RESOURCE_STATUS=SUCCESS
