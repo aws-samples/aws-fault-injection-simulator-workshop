@@ -150,6 +150,10 @@ Resources:
                 # - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time git switch rudpot/fix-315'
                 # - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time git checkout f5eb1ae657d3eb1bbd63bbda269a7bfc8c88a0f5'
                 # Build and deploy via CDK
+                - echo "this is AWS DEFAULT Region: ${AWS_DEFAULT_REGION}"
+                - echo "this is AWS Region: ${AWS_REGION}"
+                - export AWS_DEFAULT_REGION=$AWS_REGION
+                - echo "this is AWS DEFAULT Region: ${AWS_DEFAULT_REGION}"
                 - 'cd ${CODEBUILD_SRC_DIR}/aws-fault-injection-simulator-workshop/resources/templates && time ./deploy-parallel.sh $CUSTOM_RESOURCE_REQUEST'
                 # We didn't fail so reset build outcome to SUCCESS
                 - export CUSTOM_RESOURCE_STATUS=SUCCESS
