@@ -9,11 +9,11 @@ export class GoadCdkTestStack extends cdk.Stack {
 
     // The code that defines your stack goes here
     const goadLambda = new lambda.Function(this, 'LoadGenerator', {
-      runtime: lambda.Runtime.GO_1_X,
+      runtime: lambda.Runtime.PROVIDED_AL2023,
       code: lambda.Code.fromAsset('load-gen',{
         bundling: {
           // lambci/lambda:build-go1.x
-          image: lambda.Runtime.GO_1_X.bundlingImage,
+          image: lambda.Runtime.PROVIDED_AL2023.bundlingImage,
           command: [
             'bash', '-xc', [
               // looks like the ca certs are a bit too old by default
@@ -53,6 +53,6 @@ export class GoadCdkTestStack extends cdk.Stack {
 
     new cdk.CfnOutput(this,'LoadGenArn',{value:goadLambda.functionArn});
     new cdk.CfnOutput(this,'LoadGenName',{value:goadLambda.functionName});
-    new cdk.CfnOutput(this,"Image",{value:lambda.Runtime.GO_1_X.bundlingImage.toJSON()})
+    new cdk.CfnOutput(this,"Image",{value:lambda.Runtime.PROVIDED_AL2023.bundlingImage.toJSON()})
   }
 }
