@@ -13,3 +13,4 @@ resources/templates/eks/outputs.json
 cdk.out
 cdk.context.json
 outputs.json
+resources/code/cdk/cicd/cleanup-status.txt

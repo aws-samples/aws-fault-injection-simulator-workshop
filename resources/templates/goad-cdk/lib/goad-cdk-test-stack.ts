@@ -17,7 +17,7 @@ export class GoadCdkTestStack extends cdk.Stack {
           command: [
             'bash', '-xc', [
               // looks like the ca certs are a bit too old by default
-              'yum install -y ca-certificates',
+              'dnf install -y ca-certificates',
               'pwd',
               'ls /',
               // 'export GOPATH=/asset-output',
