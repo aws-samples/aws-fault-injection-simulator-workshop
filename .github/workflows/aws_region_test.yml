@@ -29,6 +29,9 @@ run-name: RegionTest in ${{ inputs.region }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 
+permissions:
+  contents: read
+
 jobs:
   region-deploy:
     uses: ./.github/workflows/aws_deploy.yml
