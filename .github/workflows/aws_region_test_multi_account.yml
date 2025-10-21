@@ -37,6 +37,9 @@ run-name: RegionTest in ${{ inputs.region }} / ${{ inputs.account_id }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 
+permissions:
+  contents: read
+
 jobs:
   region-deploy:
     uses: ./.github/workflows/aws_deploy_multi_account.yml
