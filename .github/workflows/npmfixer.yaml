@@ -52,6 +52,10 @@ on:
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   # Run linck checker
   npmfixer:
